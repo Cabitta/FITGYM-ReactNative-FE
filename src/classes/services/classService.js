@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../../config/axios';
 
 const batchFetchByIds = async (ids, buildUrl, pick) => {
   const uniq = Array.from(new Set(ids.filter(Boolean)));

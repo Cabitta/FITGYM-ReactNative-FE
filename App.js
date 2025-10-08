@@ -16,13 +16,13 @@ export default function App() {
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       >
-        <Stack.Screen name="FITGYM" component={ClassesScreen} />
-      <Stack.Navigator>
-        <Stack.Screen 
+      <Stack.Screen name="FITGYM" component={ClassesScreen} />
+      <Stack.Screen 
           name="Login" 
           component={LoginScreen} 
           options={{ headerShown: false }}
         />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
