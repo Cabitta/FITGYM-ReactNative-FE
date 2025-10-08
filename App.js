@@ -9,16 +9,19 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: '#6C63FF' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: 'bold' },
+        }}
+      >
+        <Stack.Screen name="FITGYM" component={ClassesScreen} />
       <Stack.Navigator>
         <Stack.Screen 
           name="Login" 
           component={LoginScreen} 
           options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="Classes" 
-          component={ClassesScreen}
-          options={{ title: 'Clases' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
