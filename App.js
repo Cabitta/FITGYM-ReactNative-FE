@@ -15,7 +15,7 @@ export default function App() {
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       >
-        <Stack.Screen name="Clases" component={ClassesScreen} />
+        <Stack.Screen name="FITGYM" component={ClassesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
