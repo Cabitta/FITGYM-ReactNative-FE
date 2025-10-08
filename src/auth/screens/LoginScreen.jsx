@@ -127,14 +127,6 @@ const LoginScreen = ({ navigation }) => {
                 error={errors.password}
               />
 
-              {/* Botón de prueba simple */}
-              <TouchableOpacity
-                style={styles.testButton}
-                onPress={() => Alert.alert("Test", "Botón funcionando")}
-              >
-                <Text style={styles.testButtonText}>Test Button</Text>
-              </TouchableOpacity>
-
               <AuthButton
                 title="Iniciar Sesión"
                 onPress={handleLogin}
