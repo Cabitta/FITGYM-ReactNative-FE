@@ -105,8 +105,7 @@ const LoginScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Bienvenido</Text>
-            <Text style={styles.subtitle}>Inicia sesión en tu cuenta</Text>
+            <Text style={styles.title}>Iniciar Sesión</Text>
 
             <View style={styles.form}>
               <AuthInput
