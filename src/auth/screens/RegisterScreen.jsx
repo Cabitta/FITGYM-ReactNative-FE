@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
-import authService from "../services/authService";
+import { useAuth } from "../AuthProvider";
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -22,6 +22,7 @@ const RegisterScreen = ({ navigation }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
 
   const validateForm = () => {
     const newErrors = {};
@@ -87,19 +88,9 @@ const RegisterScreen = ({ navigation }) => {
         password: formData.password,
       };
 
-      const result = await authService.register(userData);
+      const result = await register(userData);
 
-      if (result.success) {
-        Alert.alert("Éxito", "Registro exitoso", [
-          {
-            text: "OK",
-            onPress: () => {
-              // Navegar a la pantalla principal o dashboard
-              // navigation.navigate('Dashboard'); // Descomenta cuando tengas la navegación configurada
-            },
-          },
-        ]);
-      } else {
+      if (!result.success) {
         Alert.alert("Error", result.error);
       }
     } catch (error) {
@@ -110,8 +101,7 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const handleLoginPress = () => {
-    // navigation.navigate('Login'); // Descomenta cuando tengas la navegación configurada
-    Alert.alert("Info", "Navegar a pantalla de login");
+    navigation.navigate("Login");
   };
 
   return (

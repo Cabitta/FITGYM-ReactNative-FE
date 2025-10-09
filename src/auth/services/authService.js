@@ -54,7 +54,9 @@ class AuthService {
       const response = await axiosInstance.post('/auth/register', userData);
       
       const { id, nombre, email, password, foto } = response.data;
-      
+
+      console.debug('Usuario registrado:', { id, nombre, email, foto });
+            
       // Guardar datos del usuario en storage
       await storage.setItem('user_data', JSON.stringify({
         id,
