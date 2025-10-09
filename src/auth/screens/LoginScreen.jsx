@@ -8,7 +8,6 @@ import {
   Platform,
   ScrollView,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
@@ -71,15 +70,7 @@ const LoginScreen = ({ navigation }) => {
       const result = await authService.login(formData.email, formData.password);
 
       if (result.success) {
-        // Navegar a la pantalla principal
-        Alert.alert("Éxito", "Inicio de sesión exitoso", [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate("Classes");
-            },
-          },
-        ]);
+        navigation.navigate("Classes");
       } else {
         Alert.alert("Error", result.error);
       }
@@ -105,8 +96,7 @@ const LoginScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Bienvenido</Text>
-            <Text style={styles.subtitle}>Inicia sesión en tu cuenta</Text>
+            <Text style={styles.title}>Iniciar Sesión</Text>
 
             <View style={styles.form}>
               <AuthInput
@@ -126,14 +116,6 @@ const LoginScreen = ({ navigation }) => {
                 secureTextEntry
                 error={errors.password}
               />
-
-              {/* Botón de prueba simple */}
-              <TouchableOpacity
-                style={styles.testButton}
-                onPress={() => Alert.alert("Test", "Botón funcionando")}
-              >
-                <Text style={styles.testButtonText}>Test Button</Text>
-              </TouchableOpacity>
 
               <AuthButton
                 title="Iniciar Sesión"

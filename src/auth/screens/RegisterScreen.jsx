@@ -125,8 +125,7 @@ const RegisterScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Crear Cuenta</Text>
-            <Text style={styles.subtitle}>Regístrate para comenzar</Text>
+            <Text style={styles.title}>Registrarse</Text>
 
             <View style={styles.form}>
               <AuthInput

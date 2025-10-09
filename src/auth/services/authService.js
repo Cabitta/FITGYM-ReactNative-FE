@@ -20,7 +20,10 @@ class AuthService {
         username,
         email: userEmail
       }));
-      
+      // Log para indicar inicio de sesión exitoso
+      // eslint-disable-next-line no-console
+      console.log('[AuthService] Inicio de sesión exitoso:', { id: user_Id, username, email: userEmail });
+
       return { 
         success: true, 
         user: { id: user_Id, username, email: userEmail },
