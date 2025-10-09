@@ -1,5 +1,6 @@
 import axiosInstance from '../../config/axios';
 import storage from '../../utils/storage';
+import authEvents from '../../utils/authEvents';
 
 class AuthService {
   // Función para hacer login
@@ -23,6 +24,13 @@ class AuthService {
       // Log para indicar inicio de sesión exitoso
       // eslint-disable-next-line no-console
       console.log('[AuthService] Inicio de sesión exitoso:', { id: user_Id, username, email: userEmail });
+
+      // Emitir evento de login para que la app pueda actualizar UI //TODO: cambiar por AuthProvider
+      try {
+        authEvents.emit({ type: 'login', user: { id: user_Id, username, email: userEmail } });
+      } catch (e) {
+        // ignorar
+      }
 
       return { 
         success: true, 
@@ -73,6 +81,11 @@ class AuthService {
       await storage.removeItem('access_token');
       await storage.removeItem('refresh_token');
       await storage.removeItem('user_data');
+      try { //TODO: cambiar por AuthProvider
+        authEvents.emit({ type: 'logout' });
+      } catch (e) {
+        // ignorar
+      }
       return { success: true };
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
