@@ -30,20 +30,6 @@ const AuthButton = ({
     (disabled || loading) && styles.disabledText,
   ];
 
-  // Debug: en web, imprime las props para confirmar que están llegando
-  useEffect(() => {
-    if (Platform.OS === "web") {
-      // eslint-disable-next-line no-console
-      console.log("[AuthButton] props:", {
-        title,
-        loading,
-        disabled,
-        variant,
-        style,
-      });
-    }
-  }, [title, loading, disabled, variant, style]);
-
   return (
     <TouchableOpacity
       style={buttonStyle}
