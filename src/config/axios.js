@@ -39,12 +39,6 @@ axiosInstance.interceptors.request.use(
         if (token) tokenManager.setToken(token);
       }
 
-      // Mostrar token parcialmente sólo en entorno de desarrollo
-      if (typeof __DEV__ !== 'undefined' && __DEV__) {
-        // eslint-disable-next-line no-console
-        console.debug('[axios] Token obtenido para la solicitud:', token ? `${token.slice(0, 6)}...` : null);
-      }
-
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
