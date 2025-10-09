@@ -69,11 +69,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const result = await login(formData.email, formData.password);
-
-      if (result.success) {
-        // La navegación cambiará automáticamente por AuthProvider
-        navigation.navigate("Classes");
-      } else {
+      if (!result.success) {
         Alert.alert("Error", result.error);
       }
     } catch (error) {
@@ -84,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleRegisterPress = () => {
-    Alert.alert("Info", "Funcionalidad de registro disponible próximamente");
+    navigation.navigate("Register");
   };
 
   return (
