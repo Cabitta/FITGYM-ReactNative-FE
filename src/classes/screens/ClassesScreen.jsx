@@ -1,76 +1,142 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, Alert } from "react-native";
-import AuthButton from "../../auth/components/AuthButton";
-import authService from "../../auth/services/authService";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import Filters from "../components/Filters";
+import ClassCard from "../components/ClassCard";
+import { getClasesEnriched } from "../services/classService";
 
-const ClassesScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
+export default function ClassesScreen({ navigation }) {
+  const [clases, setClases] = useState([]);
+  const [filtered, setFiltered] = useState([]);
 
-  const handleLogout = async () => {
-    Alert.alert("Confirmar", "¿Deseas cerrar sesión?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Sí",
-        onPress: async () => {
-          setLoading(true);
-          try {
-            await authService.logout();
-            // eslint-disable-next-line no-console
-            console.log("[ClassesScreen] Usuario deslogueado");
-            navigation.navigate("Login");
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error("[ClassesScreen] Error al cerrar sesión:", error);
-            Alert.alert("Error", "No se pudo cerrar la sesión");
-          } finally {
-            setLoading(false);
-          }
-        },
-      },
-    ]);
+  const [sedes, setSedes] = useState([]);
+  const [disciplinas, setDisciplinas] = useState([]);
+
+  const [sede, setSede] = useState(null);
+  const [disciplina, setDisciplina] = useState(null);
+  const [fecha, setFecha] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [sedeOpen, setSedeOpen] = useState(false);
+  const [disciplinaOpen, setDisciplinaOpen] = useState(false);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+
+  const ymd = (d) => {
+    if (!d) return null;
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
   };
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Clases</Text>
-        <Text style={styles.subtitle}>
-          ¡Bienvenido! Has iniciado sesión correctamente.
-        </Text>
 
-        <AuthButton
-          title="Cerrar sesión"
-          onPress={handleLogout}
-          variant="secondary"
-          loading={loading}
-          style={styles.logoutButton}
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getClasesEnriched();
+        setClases(data);
+        setFiltered(data);
+
+        const sedesUnicas = Array.from(
+          new Set(data.map((c) => c.sedeNombre))
+        ).filter(Boolean);
+        const disciplinasUnicas = Array.from(
+          new Set(data.map((c) => c.disciplina))
+        ).filter(Boolean);
+
+        setSedes([
+          { label: "Todas las sedes", value: null },
+          ...sedesUnicas.map((s) => ({ label: s, value: s })),
+        ]);
+        setDisciplinas([
+          { label: "Todas las disciplinas", value: null },
+          ...disciplinasUnicas.map((d) => ({ label: d, value: d })),
+        ]);
+      } catch (error) {
+        console.error("❌ Error al obtener clases:", error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    let result = [...clases];
+    if (sede) result = result.filter((c) => c.sedeNombre === sede);
+    if (disciplina) result = result.filter((c) => c.disciplina === disciplina);
+    if (fecha) result = result.filter((c) => c.fecha === ymd(fecha));
+    setFiltered(result);
+  }, [sede, disciplina, fecha, clases]);
+
+  const limpiarFiltros = () => {
+    setSede(null);
+    setDisciplina(null);
+    setFecha(null);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.headerTitle}>Clases Disponibles</Text>
+
+      <Filters
+        sede={sede}
+        setSede={setSede}
+        sedes={sedes}
+        sedeOpen={sedeOpen}
+        setSedeOpen={setSedeOpen}
+        disciplina={disciplina}
+        setDisciplina={setDisciplina}
+        disciplinas={disciplinas}
+        disciplinaOpen={disciplinaOpen}
+        setDisciplinaOpen={setDisciplinaOpen}
+        fecha={fecha}
+        setFecha={setFecha}
+        limpiarFiltros={limpiarFiltros}
+        datePickerVisible={datePickerVisible}
+        setDatePickerVisible={setDatePickerVisible}
+      />
+
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#6C63FF"
+          style={{ marginTop: 50 }}
         />
-      </View>
-    </SafeAreaView>
+      ) : filtered.length > 0 ? (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.idClase}
+          renderItem={({ item }) => (
+            <ClassCard
+              clase={item}
+              onPress={() =>
+                navigation.navigate("ClassDetail", { clase: item })
+              }
+            />
+          )}
+        />
+      ) : (
+        <Text style={styles.empty}>No hay clases disponibles</Text>
+      )}
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 16,
+  container: { flex: 1, backgroundColor: "#f7f8fc", padding: 14 },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 12,
+    color: "#1c1c1e",
     textAlign: "center",
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#666",
+  empty: {
     textAlign: "center",
-    lineHeight: 24,
+    marginTop: 40,
+    color: "#8e8e93",
+    fontSize: 16,
   },
 });
