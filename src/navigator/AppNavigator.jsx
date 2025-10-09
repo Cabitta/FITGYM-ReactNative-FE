@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 
 import LoginScreen from "../auth/screens/LoginScreen";
 import RegisterScreen from "../auth/screens/RegisterScreen";
 import ClassesScreen from "../classes/screens/ClassesScreen";
+import LogoutScreen from "../auth/screens/LogoutScreen";
 import authService from "../auth/services/authService";
+import { AuthProvider, useAuth } from "../auth/AuthProvider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -19,35 +24,46 @@ const AuthStack = () => (
 
 function AppTab() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Classes" component={ClassesScreen} />
-    </Stack.Navigator>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: "#6C63FF",
+        tabBarInactiveTintColor: "#8e8e93",
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === "Classes") {
+            return (
+              <MaterialCommunityIcons
+                name="calendar-month-outline"
+                size={size}
+                color={color}
+              />
+            );
+          }
+          if (route.name === "Logout") {
+            return (
+              <MaterialCommunityIcons name="logout" size={size} color={color} />
+            );
+          }
+          return null;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Classes"
+        component={ClassesScreen}
+        options={{ tabBarLabel: "Clases" }}
+      />
+      <Tab.Screen
+        name="Logout"
+        component={LogoutScreen}
+        options={{ tabBarLabel: "Cerrar sesión" }}
+      />
+    </Tab.Navigator>
   );
 }
 
-export default function AppNavigator() {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    const checkAuth = async () => {
-      try {
-        const isAuth = await authService.isAuthenticated();
-        if (mounted) setAuthenticated(!!isAuth);
-      } catch (e) {
-        if (mounted) setAuthenticated(false);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+function InnerNavigator() {
+  const { loading, token } = useAuth();
 
   if (loading) {
     return (
@@ -59,8 +75,16 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      {authenticated ? <AppTab /> : <AuthStack />}
+      {token ? <AppTab /> : <AuthStack />}
     </NavigationContainer>
+  );
+}
+
+export default function AppNavigator() {
+  return (
+    <AuthProvider>
+      <InnerNavigator />
+    </AuthProvider>
   );
 }
 
