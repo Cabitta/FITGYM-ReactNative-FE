@@ -3,7 +3,7 @@ import storage from '../../utils/storage';
 import tokenManager from '../../utils/tokenManager';
 
 class AuthService {
-  // Función para hacer login
+
   async login(email, password) {
     try {
       const response = await axiosInstance.post('/auth/login', {
@@ -27,11 +27,6 @@ class AuthService {
       } catch (e) {
         // ignorar
       }
-      // Log para indicar inicio de sesión exitoso
-      // eslint-disable-next-line no-console
-      console.log('[AuthService] Inicio de sesión exitoso:', { id: user_Id, username, email: userEmail });
-
-      // Nota: AuthProvider se encargará de sincronizar estado de la app
 
       return { 
         success: true, 
@@ -48,7 +43,6 @@ class AuthService {
     }
   }
 
-  // Función para hacer registro
   async register(userData) {
     try {
       const response = await axiosInstance.post('/auth/register', userData);
@@ -78,7 +72,6 @@ class AuthService {
     }
   }
 
-  // Función para cerrar sesión
   async logout() {
     try {
       await storage.removeItem('access_token');
@@ -89,7 +82,6 @@ class AuthService {
       } catch (e) {
         // ignorar
       }
-      // Nota: AuthProvider se encargará de sincronizar estado de la app
       return { success: true };
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -97,7 +89,6 @@ class AuthService {
     }
   }
 
-  // Función para verificar si el usuario está autenticado
   async isAuthenticated() {
     try {
       const token = await storage.getItem('access_token');
@@ -108,7 +99,6 @@ class AuthService {
     }
   }
 
-  // Función para obtener datos del usuario
   async getUserData() {
     try {
       const userData = await storage.getItem('user_data');

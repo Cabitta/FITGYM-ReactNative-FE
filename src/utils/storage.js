@@ -48,7 +48,6 @@ class StorageService {
         await AsyncStorage.clear();
       } else {
         // Para SecureStore, necesitamos eliminar elementos individualmente
-        // ya que no tiene un método clear
         const keys = ['access_token', 'refresh_token', 'user_data'];
         for (const key of keys) {
           try {

@@ -8,8 +8,7 @@ import LoginScreen from "../auth/screens/LoginScreen";
 import RegisterScreen from "../auth/screens/RegisterScreen";
 import ClassesScreen from "../classes/screens/ClassesScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen";
-import authService from "../auth/services/authService";
-import { AuthProvider, useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../auth/AuthProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
@@ -81,11 +80,7 @@ function InnerNavigator() {
 }
 
 export default function AppNavigator() {
-  return (
-    <AuthProvider>
-      <InnerNavigator />
-    </AuthProvider>
-  );
+  return <InnerNavigator />;
 }
 
 const styles = StyleSheet.create({
