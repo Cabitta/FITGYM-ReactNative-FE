@@ -1,11 +1,13 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import authService from "../services/authService";
+import { useAuth } from "../AuthProvider";
 
 export default function LogoutScreen({ navigation }) {
   //TODO: cambiar por AuthProvider
+  const { logout } = useAuth();
+
   const handleLogout = async () => {
-    await authService.logout();
+    await logout();
     // Navegar al stack de auth (Login)
     navigation.reset({ index: 0, routes: [{ name: "Login" }] });
   };

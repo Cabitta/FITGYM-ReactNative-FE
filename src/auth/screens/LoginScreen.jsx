@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
-import authService from "../services/authService";
+import { useAuth } from "../AuthProvider";
 
 const LoginScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const validateForm = () => {
     const newErrors = {};
@@ -67,9 +68,10 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const result = await authService.login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password);
 
       if (result.success) {
+        // La navegación cambiará automáticamente por AuthProvider
         navigation.navigate("Classes");
       } else {
         Alert.alert("Error", result.error);

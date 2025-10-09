@@ -9,7 +9,7 @@ import RegisterScreen from "../auth/screens/RegisterScreen";
 import ClassesScreen from "../classes/screens/ClassesScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen";
 import authService from "../auth/services/authService";
-import authEvents from "../utils/authEvents";
+import { AuthProvider, useAuth } from "../auth/AuthProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
@@ -62,37 +62,8 @@ function AppTab() {
   );
 }
 
-export default function AppNavigator() {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    const checkAuth = async () => {
-      try {
-        const isAuth = await authService.isAuthenticated();
-        if (mounted) setAuthenticated(!!isAuth);
-      } catch (e) {
-        if (mounted) setAuthenticated(false);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    // Suscribirse a eventos de auth para actualizar el estado cuando haya logout/login //TODO: cambiar por AuthProvider
-    const unsubscribe = authEvents.subscribe((payload) => {
-      if (!mounted) return;
-      if (payload?.type === "logout") setAuthenticated(false);
-      if (payload?.type === "login") setAuthenticated(true);
-    });
-
-    return () => {
-      mounted = false;
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
+function InnerNavigator() {
+  const { loading, token } = useAuth();
 
   if (loading) {
     return (
@@ -104,8 +75,16 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      {authenticated ? <AppTab /> : <AuthStack />}
+      {token ? <AppTab /> : <AuthStack />}
     </NavigationContainer>
+  );
+}
+
+export default function AppNavigator() {
+  return (
+    <AuthProvider>
+      <InnerNavigator />
+    </AuthProvider>
   );
 }
 

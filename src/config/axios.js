@@ -1,5 +1,6 @@
 import axios from 'axios';
 import storage from '../utils/storage';
+import tokenManager from '../utils/tokenManager';
 import { Platform } from 'react-native';
 
 // Configurar la URL base según la plataforma
@@ -25,7 +26,25 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
-      const token = await storage.getItem('access_token');
+      // Si el request pide saltar auth, no agregar Authorization
+      if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
+        return config;
+      }
+
+      // Intentar primero obtener token desde el cache en memoria
+      let token = tokenManager.getToken();
+      if (!token) {
+        token = await storage.getItem('access_token');
+        // sincronizar cache
+        if (token) tokenManager.setToken(token);
+      }
+
+      // Mostrar token parcialmente sólo en entorno de desarrollo
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.debug('[axios] Token obtenido para la solicitud:', token ? `${token.slice(0, 6)}...` : null);
+      }
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
