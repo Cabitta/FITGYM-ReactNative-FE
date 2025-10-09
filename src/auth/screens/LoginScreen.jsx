@@ -8,7 +8,6 @@ import {
   Platform,
   ScrollView,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
@@ -71,15 +70,7 @@ const LoginScreen = ({ navigation }) => {
       const result = await authService.login(formData.email, formData.password);
 
       if (result.success) {
-        // Navegar a la pantalla principal
-        Alert.alert("Éxito", "Inicio de sesión exitoso", [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate("Classes");
-            },
-          },
-        ]);
+        navigation.navigate("Classes");
       } else {
         Alert.alert("Error", result.error);
       }
