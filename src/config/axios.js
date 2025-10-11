@@ -4,7 +4,7 @@ import tokenManager from '../utils/tokenManager';
 import { Platform } from 'react-native';
 
 // Configurar la URL base según la plataforma
-const getBaseURL = () => {
+export const getBaseURL = () => {
   if (Platform.OS === 'web') {
     // Para web, usar localhost en lugar de 10.0.2.2
     return 'http://localhost:9090/api/';
