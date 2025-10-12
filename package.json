@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --port 8080",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "set WEB_PORT=8080 && expo start --web"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -21,6 +21,7 @@
     "expo-status-bar": "~3.0.8",
     "nanoid": "^5.1.6",
     "ofetch": "^1.4.1",
+    "nativewind": "^4.2.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
@@ -32,5 +33,9 @@
     "react-native-web": "^0.21.0",
     "swr": "^2.3.6"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
+    "babel-preset-expo": "^54.0.3"
+  }
 }

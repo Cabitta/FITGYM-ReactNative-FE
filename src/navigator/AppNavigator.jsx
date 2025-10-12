@@ -10,6 +10,7 @@ import LogoutScreen from "../auth/screens/LogoutScreen";
 import RegisterScreen from "../auth/screens/RegisterScreen";
 import ClassDetail from "../classes/screens/ClassDetail";
 import ClassesScreen from "../classes/screens/ClassesScreen";
+import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
 
 const Stack = createNativeStackNavigator();
@@ -89,6 +90,14 @@ function AppTab() {
         component={LogoutScreen}
         options={{ tabBarLabel: "Cerrar sesión" }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: "Perfil" }}
+      />
+
+
+
     </Tab.Navigator>
   );
 }
