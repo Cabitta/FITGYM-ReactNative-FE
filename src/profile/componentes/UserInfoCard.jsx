@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image } from "react-native";
 
 const UserInfoCard = ({ user }) => {
-  // Validar que user exista y tenga las propiedades esperadas
   if (!user) {
     return (
       <View className="items-center bg-white p-6 rounded-2xl shadow-md mx-5">
@@ -11,28 +10,36 @@ const UserInfoCard = ({ user }) => {
     );
   }
 
-  // Verificar si foto es un string Base64 válido
-  const isValidBase64 = (str) => {
-    if (typeof str !== "string" || str === "") return false;
-    // Verifica que el string sea un Base64 válido (sin prefijo data:image)
-    const base64Regex = /^[A-Za-z0-9+/=]+$/;
-    return base64Regex.test(str);
-  };
+  const cleanBase64 = user.foto?.replace(/\s/g, ""); // limpia saltos y espacios
+
+  const imageUri = cleanBase64
+    ? cleanBase64.startsWith("data:image")
+      ? cleanBase64
+      : `data:image/png;base64,${cleanBase64}`
+    : null;
 
   return (
     <View className="items-center bg-white p-6 rounded-2xl shadow-md mx-5">
-      {user.foto && isValidBase64(user.foto) ? (
-        <Image
-          source={{ uri: `data:image/png;base64,${user.foto}` }}
-          className="w-32 h-32 rounded-full mb-3"
-          onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
-        />
+      {imageUri ? (
+        <>
+          <Image
+            source={{ uri: imageUri }}
+            style={{ width: 128, height: 128, borderRadius: 64, marginBottom: 12 }}
+            onError={(e) =>
+              console.log("❌ Error al cargar la imagen:", e.nativeEvent.error)
+            }
+          />
+          {console.log("✅ Cargando imagen desde Base64")}
+        </>
       ) : (
-        <View className="w-32 h-32 rounded-full bg-gray-300 justify-center items-center mb-3">
-          <Text className="text-5xl text-white">
-            {user.nombre?.[0]?.toUpperCase() || "?"}
-          </Text>
-        </View>
+        <>
+          <View className="w-32 h-32 rounded-full bg-gray-300 justify-center items-center mb-3">
+            <Text className="text-5xl text-white">
+              {user.nombre?.[0]?.toUpperCase() || "?"}
+            </Text>
+          </View>
+          {console.log("🟡 Imagen Base64 no encontrada, mostrando inicial")}
+        </>
       )}
 
       <Text className="text-2xl font-semibold text-gray-800">
