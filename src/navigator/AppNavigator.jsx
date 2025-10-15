@@ -12,6 +12,7 @@ import ClassDetail from "../classes/screens/ClassDetail";
 import ClassesScreen from "../classes/screens/ClassesScreen";
 import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
+import Historial from "../historial/Historial";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -72,6 +73,11 @@ function AppTab() {
               <MaterialCommunityIcons name="logout" size={size} color={color} />
             );
           }
+          if (route.name === "Profile"){
+            return(
+              <MaterialCommunityIcons name = "account"size={size} color={color} />
+            )
+          }
           if (route.name === "Historial"){
             return(
               <MaterialCommunityIcons
@@ -107,7 +113,7 @@ function AppTab() {
       />
       <Tab.Screen
       name="Historial"
-      component={LoginScreen}
+      component={Historial}
       options={{tabBarLabel: "Historial"}}
       />
 
