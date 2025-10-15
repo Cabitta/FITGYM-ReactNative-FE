@@ -16,6 +16,7 @@ import Reservas from "../reservas";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Login" component={LoginScreen} />
@@ -71,6 +72,15 @@ function AppTab() {
               <MaterialCommunityIcons name="logout" size={size} color={color} />
             );
           }
+          if (route.name === "Historial"){
+            return(
+              <MaterialCommunityIcons
+              name = "history"
+              size={size}
+              color={color}
+              />
+            );
+          }
           return null;
         },
       })}
@@ -94,6 +104,11 @@ function AppTab() {
         name="Profile"
         component={ProfileScreen}
         options={{ tabBarLabel: "Perfil" }}
+      />
+      <Tab.Screen
+      name="Historial"
+      component={LoginScreen}
+      options={{tabBarLabel: "Historial"}}
       />
 
 
