@@ -60,8 +60,11 @@ export default function Reservas({ navigation }) {
               })
             }
           >
-            <Text style={styles.detailText}>Clase: {item.idClase}</Text>
-            <Text style={styles.detailText}>Fecha: {item.fecha}</Text>
+            <Text style={styles.detailText}>
+              Clase: {item.clase?.disciplina}
+            </Text>
+            <Text style={styles.detailText}>Fecha: {item.clase?.fecha}</Text>
+            <Text style={styles.detailText}>Sede: {item.sede?.nombre}</Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.idReserva}
