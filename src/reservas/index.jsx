@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -26,7 +27,33 @@ export default function Reservas({ navigation }) {
     (url) => fetcher(url, { headers: { Authorization: `Bearer ${token}` } })
   );
 
-  console.log("Reservas data:", data);
+  const [selectedReservaId, setSelectedReservaId] = useState(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  async function handleCancelar(idReserva) {
+    if (!idReserva || !token) return;
+    const ok = confirm("¿Cancelar la reserva?");
+    if (!ok) return;
+
+    setIsCancelling(true);
+
+    await fetcher(`/reservas/${idReserva}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+      onResponse({ response }) {
+        if (response.ok) {
+          alert("Reserva cancelada.");
+          setSelectedReservaId(null);
+          mutate(); // refresh
+        } else {
+          console.error("Error cancelando reserva:", err);
+          alert("Error al cancelar la reserva.");
+        }
+      },
+    });
+
+    setIsCancelling(false);
+  }
 
   if (error) {
     return (
@@ -53,18 +80,32 @@ export default function Reservas({ navigation }) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.detail}
-            onPress={() =>
-              navigation.navigate("Reserva", {
-                reserva: item,
-                actualizar: mutate,
-              })
-            }
+            onPress={() => {
+              setSelectedReservaId(
+                selectedReservaId === item.idReserva ? null : item.idReserva
+              );
+            }}
           >
             <Text style={styles.detailText}>
               Clase: {item.clase?.disciplina}
             </Text>
             <Text style={styles.detailText}>Fecha: {item.clase?.fecha}</Text>
             <Text style={styles.detailText}>Sede: {item.sede?.nombre}</Text>
+
+            {selectedReservaId === item.idReserva && (
+              <TouchableOpacity
+                style={[
+                  styles.cancelButton,
+                  isCancelling && styles.cancelButtonDisabled,
+                ]}
+                onPress={() => handleCancelar(item.idReserva)}
+                disabled={isCancelling}
+              >
+                <Text style={styles.cancelButtonText}>
+                  {isCancelling ? "Cancelando..." : "Cancelar reserva"}
+                </Text>
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.idReserva}
@@ -95,5 +136,20 @@ const styles = {
   detailText: {
     fontSize: 18,
     marginBottom: 10,
+  },
+  cancelButton: {
+    marginTop: 8,
+    backgroundColor: "#FF4D4F",
+    paddingVertical: 10,
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  cancelButtonDisabled: {
+    backgroundColor: "#f3b8b8",
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
   },
 };
