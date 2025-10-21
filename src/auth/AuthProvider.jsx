@@ -47,10 +47,19 @@ export function AuthProvider({ children }) {
   const register = async (userData) => {
     // userData should contain at least { nombre, email, password }
     const res = await authService.register(userData);
+    return res;
+  };
+
+  const verifyOtp = async (email, otp) => {
+    const res = await authService.verifyOtp(email, otp);
     if (res?.success) {
-      // Como el backend no devuelve tokens en register, hacemos login automático
-      const loginRes = await login(userData.email, userData.password);
-      return loginRes;
+      try {
+        tokenManager.setToken(res.access_token);
+      } catch (e) {
+        // ignore
+      }
+      setToken(res.access_token);
+      if (res.user) setUser(res.user);
     }
     return res;
   };
@@ -65,7 +74,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, login, logout, register }}
+      value={{ user, token, loading, login, logout, register, verifyOtp }}
     >
       {children}
     </AuthContext.Provider>

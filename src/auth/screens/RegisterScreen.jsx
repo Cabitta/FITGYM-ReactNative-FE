@@ -92,6 +92,10 @@ const RegisterScreen = ({ navigation }) => {
 
       if (!result.success) {
         Alert.alert("Error", result.error);
+      } else {
+        // Si el registro fue exitoso, navegar a la pantalla de OTP para
+        // completar la verificación y obtener los tokens.
+        navigation.navigate("Otp", { email: userData.email });
       }
     } catch (error) {
       Alert.alert("Error", "Ocurrió un error inesperado");
