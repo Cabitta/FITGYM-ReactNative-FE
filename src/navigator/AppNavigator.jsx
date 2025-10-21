@@ -13,15 +13,16 @@ import ClassesScreen from "../classes/screens/ClassesScreen";
 import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
 import Historial from "../historial/Historial";
+import OtpScreen from "../auth/screens/OtpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen name="Otp" component={OtpScreen} />
   </Stack.Navigator>
 );
 
@@ -73,17 +74,21 @@ function AppTab() {
               <MaterialCommunityIcons name="logout" size={size} color={color} />
             );
           }
-          if (route.name === "Profile"){
-            return(
-              <MaterialCommunityIcons name = "account"size={size} color={color} />
-            )
-          }
-          if (route.name === "Historial"){
-            return(
+          if (route.name === "Profile") {
+            return (
               <MaterialCommunityIcons
-              name = "history"
-              size={size}
-              color={color}
+                name="account"
+                size={size}
+                color={color}
+              />
+            );
+          }
+          if (route.name === "Historial") {
+            return (
+              <MaterialCommunityIcons
+                name="history"
+                size={size}
+                color={color}
               />
             );
           }
@@ -112,13 +117,10 @@ function AppTab() {
         options={{ tabBarLabel: "Perfil" }}
       />
       <Tab.Screen
-      name="Historial"
-      component={Historial}
-      options={{tabBarLabel: "Historial"}}
+        name="Historial"
+        component={Historial}
+        options={{ tabBarLabel: "Historial" }}
       />
-
-
-
     </Tab.Navigator>
   );
 }

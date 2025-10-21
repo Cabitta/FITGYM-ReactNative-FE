@@ -72,6 +72,57 @@ class AuthService {
     }
   }
 
+  // Trigger 2FA: sends otp to the user's email and stores otp fields in DB
+  async login2fa(email, password) {
+    try {
+      // This endpoint does not return a body; server will send OTP to email
+      await axiosInstance.post('/auth/login-2fa', { email, password });
+      return { success: true };
+    } catch (error) {
+      console.error('Error en login2fa:', error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Error en login 2FA',
+      };
+    }
+  }
+
+  // Verify OTP and receive tokens (same response shape as login)
+  async verifyOtp(email, otp) {
+    try {
+      const response = await axiosInstance.post('/auth/verify-otp', { email, otp });
+      const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
+
+      // Persist tokens and user data
+      await storage.setItem('access_token', access_token);
+      await storage.setItem('refresh_token', refresh_token);
+      await storage.setItem('user_data', JSON.stringify({
+        id: user_Id,
+        username,
+        email: userEmail,
+      }));
+
+      try {
+        tokenManager.setToken(access_token);
+      } catch (e) {
+        // ignore
+      }
+
+      return { 
+        success: true, 
+        user: { id: user_Id, username, email: userEmail },
+        access_token,
+        refresh_token
+      };
+    } catch (error) {
+      console.error('Error en verifyOtp:', error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Error al verificar OTP',
+      };
+    }
+  }
+
   async logout() {
     try {
       await storage.removeItem('access_token');
