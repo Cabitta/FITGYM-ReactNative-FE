@@ -6,7 +6,6 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../auth/AuthProvider";
 import LoginScreen from "../auth/screens/LoginScreen";
-import LogoutScreen from "../auth/screens/LogoutScreen";
 import RegisterScreen from "../auth/screens/RegisterScreen";
 import ClassDetail from "../classes/screens/ClassDetail";
 import ClassesScreen from "../classes/screens/ClassesScreen";
@@ -106,11 +105,7 @@ function AppTab() {
         component={Reservas}
         options={{ tabBarLabel: "Reservas" }}
       />
-      <Tab.Screen
-        name="Logout"
-        component={LogoutScreen}
-        options={{ tabBarLabel: "Cerrar sesión" }}
-      />
+      
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}

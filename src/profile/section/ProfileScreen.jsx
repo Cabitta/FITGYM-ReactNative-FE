@@ -1,40 +1,30 @@
-// src/screens/ProfileScreen.jsx
+// src/profile/section/ProfileScreen.jsx
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Button, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator, Button, StyleSheet, Modal } from "react-native";
 import UserInfoCard from "../componentes/UserInfoCard";
 import User from "../modelo/User";
 import api from "../../config/axios";
 import storage from "../../utils/storage";
+import LogoutScreen from "../../auth/screens/LogoutScreen"; // ✅ sigue importado
 
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
+  const [showLogout, setShowLogout] = useState(false); 
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // 🔹 Primero intento recuperar desde storage
         const datosStorage = await storage.getItem("user_data");
         if (datosStorage) {
-         const parsedData = JSON.parse(datosStorage);
-      
-          const id = parsedData.id; // Ahora id tendrá el valor correcto
-          console.log("ID de usuario:", id);
+          const parsedData = JSON.parse(datosStorage);
+          const id = parsedData.id;
           const { data: userData } = await api.get(`/users/${id}`);
-          console.log("Datos de usuario cargados desde api:", userData);
-
           setUser(new User(userData));
-          
         }
-        console.log("Datos de usuario cargados desde storage:", datosStorage);
-       
-
-
-        //setTimeout(() => setUser(mockUser), 1000);
       } catch (error) {
         console.error("Error al obtener el usuario:", error);
       }
     };
-
     fetchUser();
   }, []);
 
@@ -59,6 +49,19 @@ export default function ProfileScreen({ navigation }) {
           color="#007bff"
         />
       </View>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Cerrar sesión"
+          color="#dc3545"
+          onPress={() => setShowLogout(true)} // ✅ abre modal
+        />
+      </View>
+
+      {/* ✅ Modal con LogoutScreen (no afecta AppNavigation) */}
+      <Modal visible={showLogout} animationType="fade" transparent={false}>
+        <LogoutScreen navigation={navigation} />
+      </Modal>
     </View>
   );
 }
