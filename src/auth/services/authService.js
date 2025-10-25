@@ -123,6 +123,19 @@ class AuthService {
     }
   }
 
+  async resendOtp(email) {
+    try {
+      await axiosInstance.post('auth/send-otp', { email });
+      return { success: true };
+    } catch (error) {
+      console.error('Error en resendOtp:', error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Error al reenviar OTP',
+      };
+    }
+  }
+
   async logout() {
     try {
       await storage.removeItem('access_token');

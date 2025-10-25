@@ -18,7 +18,8 @@ const OtpScreen = ({ navigation, route }) => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { verifyOtp } = useAuth();
+  const { verifyOtp, resendOtp } = useAuth();
+  const [resendLoading, setResendLoading] = useState(false);
 
   const handleVerify = async () => {
     if (!email.trim() || !otp.trim()) {
@@ -44,6 +45,26 @@ const OtpScreen = ({ navigation, route }) => {
     navigation.navigate("Login");
   };
 
+  const handleResend = async () => {
+    if (!email.trim()) {
+      Alert.alert("Error", "Por favor ingresa el email para reenviar");
+      return;
+    }
+    setResendLoading(true);
+    try {
+      const r = await resendOtp(email.trim());
+      if (r.success) {
+        Alert.alert("OK", "Código reenviado al email si existe");
+      } else {
+        Alert.alert("Error", r.error || "No se pudo reenviar el código");
+      }
+    } catch (e) {
+      Alert.alert("Error", "Ocurrió un error inesperado");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -51,7 +72,7 @@ const OtpScreen = ({ navigation, route }) => {
         style={styles.container}
       >
         <View style={styles.content}>
-          <Text style={styles.title}>Verificar Código OTP</Text>
+          <Text style={styles.title}>Habilitar Cuenta</Text>
 
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -79,6 +100,19 @@ const OtpScreen = ({ navigation, route }) => {
           >
             <Text style={styles.buttonText}>
               {loading ? "Verificando..." : "Verificar"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.buttonSecondary,
+              resendLoading && styles.buttonDisabled,
+            ]}
+            onPress={handleResend}
+            disabled={resendLoading}
+          >
+            <Text style={styles.buttonText}>
+              {resendLoading ? "Enviando..." : "Reenviar código"}
             </Text>
           </TouchableOpacity>
 
@@ -117,6 +151,13 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 8,
     marginTop: 20,
+    alignItems: "center",
+  },
+  buttonSecondary: {
+    backgroundColor: "#007bff",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 12,
     alignItems: "center",
   },
   buttonDisabled: { opacity: 0.7 },

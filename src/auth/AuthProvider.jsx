@@ -64,6 +64,12 @@ export function AuthProvider({ children }) {
     return res;
   };
 
+  const resendOtp = async (email) => {
+    // Calls authService.resendOtp which uses POST /api/auth/send-otp
+    const res = await authService.resendOtp(email);
+    return res;
+  };
+
   const logout = async () => {
     const res = await authService.logout();
     tokenManager.clear();
@@ -74,7 +80,16 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, login, logout, register, verifyOtp }}
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        logout,
+        register,
+        verifyOtp,
+        resendOtp,
+      }}
     >
       {children}
     </AuthContext.Provider>
