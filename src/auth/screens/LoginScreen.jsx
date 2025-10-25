@@ -128,7 +128,7 @@ const LoginScreen = ({ navigation }) => {
                   title="Registrarse"
                   onPress={handleRegisterPress}
                   variant="secondary"
-                  style={styles.registerButton}
+                  style={[styles.registerButton, styles.linkButton]}
                 />
               </View>
             </View>
@@ -203,6 +203,14 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     minHeight: "auto",
+  },
+  linkButton: {
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    minHeight: 44,
+    marginLeft: 8,
   },
 });
 

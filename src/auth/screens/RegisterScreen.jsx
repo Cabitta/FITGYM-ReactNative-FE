@@ -172,7 +172,20 @@ const RegisterScreen = ({ navigation }) => {
                   title="Iniciar Sesión"
                   onPress={handleLoginPress}
                   variant="secondary"
-                  style={styles.loginButton}
+                  style={[styles.loginButton, styles.linkButton]}
+                />
+              </View>
+              <View style={styles.loginContainer}>
+                <Text style={styles.loginText}>
+                  ¿Tu cuenta esta deshabilitada?{" "}
+                </Text>
+                <AuthButton
+                  title="Reenvia el código"
+                  onPress={() =>
+                    navigation.navigate("Otp", { email: formData.email.trim() })
+                  }
+                  variant="secondary"
+                  style={[styles.loginButton, styles.linkButton]}
                 />
               </View>
             </View>
@@ -219,6 +232,9 @@ const styles = StyleSheet.create({
   registerButton: {
     marginTop: 24,
     marginBottom: 16,
+    borderWidth: 0,
+    minHeight: 48,
+    paddingVertical: 12,
   },
   loginContainer: {
     flexDirection: "row",
@@ -234,6 +250,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     minHeight: "auto",
+  },
+  linkButton: {
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    minHeight: 44,
+    marginLeft: 8,
+  },
+  resendContainer: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  resendText: {
+    fontSize: 16,
+    color: "#666",
   },
 });
 
