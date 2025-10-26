@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../auth/AuthProvider";
 import LoginScreen from "../auth/screens/LoginScreen";
@@ -13,6 +12,7 @@ import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
 import Historial from "../historial/Historial";
 import OtpScreen from "../auth/screens/OtpScreen";
+import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,6 +115,11 @@ function AppTab() {
         name="Historial"
         component={Historial}
         options={{ tabBarLabel: "Historial" }}
+      />
+      <Tab.Screen
+        name="Logout"
+        component={LogoutScreen}
+        options={{ tabBarLabel: "Cerrar Sesión" }}
       />
     </Tab.Navigator>
   );

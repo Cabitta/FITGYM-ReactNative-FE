@@ -3,14 +3,13 @@ import storage from '../../utils/storage';
 import tokenManager from '../../utils/tokenManager';
 
 class AuthService {
-
+  
   async login(email, password) {
     try {
       const response = await axiosInstance.post('/auth/login', {
         email,
         password,
       });
-      
       const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
       
       // Guardar tokens en storage
@@ -25,6 +24,7 @@ class AuthService {
       try {
         tokenManager.setToken(access_token);
       } catch (e) {
+        console.log('Error setting token in tokenManager:', e);
         // ignorar
       }
 
@@ -35,7 +35,14 @@ class AuthService {
         refresh_token 
       };
     } catch (error) {
-      console.error('Error en login:', error);
+            console.log("🟥 Axios error:", JSON.stringify(error, null, 2));
+        if (error.response) {
+          console.log("➡️ Respuesta recibida:", error.response.status, error.response.data);
+        } else if (error.request) {
+          console.log("➡️ Sin respuesta (request):", error.request);
+        } else {
+          console.log("➡️ Error general:", error.message);
+        }
       return {
         success: false,
         error: error.response?.data?.message || 'Error al iniciar sesión',
@@ -105,6 +112,7 @@ class AuthService {
       try {
         tokenManager.setToken(access_token);
       } catch (e) {
+        console.log('Error setting token in tokenManager:', e);
         // ignore
       }
 
@@ -138,13 +146,15 @@ class AuthService {
 
   async logout() {
     try {
-      await storage.removeItem('access_token');
-      await storage.removeItem('refresh_token');
-      await storage.removeItem('user_data');
+//      await storage.removeItem('access_token');
+//      await storage.removeItem('refresh_token');
+//      await storage.removeItem('user_data');
       try {
         tokenManager.clear();
       } catch (e) {
+        console.log('Error clearing token in tokenManager:', e);
         // ignorar
+
       }
       return { success: true };
     } catch (error) {
@@ -171,6 +181,50 @@ class AuthService {
       console.error('Error al obtener datos del usuario:', error);
       return null;
     }
+  }
+
+  getAccessTokenSync() {
+  return tokenManager.getToken();
+  }
+
+
+  async refreshToken() {
+  try {
+    const refreshToken = await storage.getItem('refresh_token');
+    if (!refreshToken) {
+      console.warn('No refresh token found.');
+      return { success: false, error: 'No hay token de refresco' };
+    }
+
+    // Llamada a tu backend
+    const response = await axiosInstance.post('/auth/refresh', {
+      refresh_token: refreshToken,
+    });
+
+    const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
+
+    // Guardar nuevos tokens
+    await storage.setItem('access_token', access_token);
+    await storage.setItem('refresh_token', newRefresh);
+    await storage.setItem('user_data', JSON.stringify({ id: user_Id, username, email }));
+
+    tokenManager.setToken(access_token);
+
+    console.log('🔄 Token refrescado correctamente');
+
+    return {
+      success: true,
+      access_token,
+      refresh_token: newRefresh,
+      user: { id: user_Id, username, email },
+    };
+  } catch (error) {
+    console.error('Error al refrescar token:', error.response?.data || error);
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Error al refrescar el token',
+    };
+  }
   }
 }
 

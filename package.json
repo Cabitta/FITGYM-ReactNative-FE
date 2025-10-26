@@ -17,6 +17,7 @@
     "axios": "^1.12.2",
     "expo": "~54.0.12",
     "expo-linear-gradient": "^15.0.7",
+    "expo-local-authentication": "~17.0.7",
     "expo-secure-store": "^15.0.7",
     "expo-status-bar": "~3.0.8",
     "nanoid": "^5.1.6",

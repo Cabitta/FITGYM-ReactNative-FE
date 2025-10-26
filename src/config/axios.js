@@ -2,18 +2,18 @@ import axios from 'axios';
 import storage from '../utils/storage';
 import tokenManager from '../utils/tokenManager';
 import { Platform } from 'react-native';
+import AuthService from '../auth/services/authService';
 
-// Configurar la URL base según la plataforma
 export const getBaseURL = () => {
   if (Platform.OS === 'web') {
-    // Para web, usar localhost en lugar de 10.0.2.2
     return 'http://localhost:9090/api/';
   }
-  // Para móvil, usar 10.0.2.2 (Android emulator) o localhost (iOS simulator)
-  return Platform.OS === 'ios' ? 'http://localhost:9090/api/' : 'http://10.0.2.2:9090/api/';
+  return Platform.OS === 'ios'
+    ? 'http://localhost:9090/api/'
+   // : 'http://10.0.2.2:9090/api/';
+    :'http://192.168.100.7:9090/api/';
 };
 
-// Configuración base de axios
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
   timeout: 10000,
@@ -22,53 +22,98 @@ const axiosInstance = axios.create({
   },
 });
 
-// Interceptor para agregar el token automáticamente
+// ---------------------------
+// INTERCEPTOR REQUEST
+// ---------------------------
 axiosInstance.interceptors.request.use(
   async (config) => {
-    try {
-      // Si el request pide saltar auth, no agregar Authorization
-      if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
-        return config;
-      }
+    if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
+      return config;
+    }
 
-      // Intentar primero obtener token desde el cache en memoria
-      let token = tokenManager.getToken();
-      if (!token) {
-        token = await storage.getItem('access_token');
-        // sincronizar cache
+    try {
+      let tokenM = tokenManager.getToken();
+      if (!tokenM) {
+       let token = await storage.getItem('access_token');
         if (token) tokenManager.setToken(token);
       }
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      if (tokenM) {
+        config.headers.Authorization = `Bearer ${tokenM}`;
       }
     } catch (error) {
       console.error('Error al obtener token:', error);
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor para manejar respuestas y errores globalmente
+// ---------------------------
+// INTERCEPTOR RESPONSE
+// ---------------------------
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+  failedQueue = [];
+};
+
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Token expirado o inválido
+    const originalRequest = error.config;
+
+    // ⚠️ Importante: verificar 401 o 403
+    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        // Esperar a que termine el refresh actual
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      isRefreshing = true;
+
       try {
-        await storage.removeItem('access_token');
-        await storage.removeItem('refresh_token');
-        await storage.removeItem('user_data');
-        // Aquí podrías navegar al login o mostrar un modal
-      } catch (storageError) {
-        console.error('Error al limpiar token:', storageError);
+        const refreshResult = await AuthService.refreshToken();
+
+        if (!refreshResult.success) {
+          throw new Error(refreshResult.error || 'Error al refrescar token');
+        }
+
+        const { access_token } = refreshResult;
+
+        processQueue(null, access_token);
+        isRefreshing = false;
+
+        // Reintentar request original
+        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        isRefreshing = false;
+
+        console.error('❌ Falló el refresh:', refreshError);
+
+        // Si falla, limpiar sesión
+        await AuthService.logout();
+
+        return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );

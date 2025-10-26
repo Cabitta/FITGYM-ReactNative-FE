@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import storage from "../utils/storage";
 import tokenManager from "../utils/tokenManager";
 import authService from "./services/authService";
+import { authenticateBiometric } from "../utils/biometriaAuth";
+
 
 const AuthContext = createContext(null);
 
@@ -22,6 +24,7 @@ export function AuthProvider({ children }) {
           if (userData) setUser(JSON.parse(userData));
         }
       } catch (e) {
+        console.log("Error initializing auth state:", e);
         // ignore
       } finally {
         if (mounted) setLoading(false);
@@ -50,12 +53,23 @@ export function AuthProvider({ children }) {
     return res;
   };
 
+  const loginWithBiometric = async () => {
+  const res = await authenticateBiometric();
+  if (res.success) {
+    tokenManager.setToken(res.token);
+    setToken(res.token);
+    setUser(res.user);
+  }
+  return res;
+  };
+
   const verifyOtp = async (email, otp) => {
     const res = await authService.verifyOtp(email, otp);
     if (res?.success) {
       try {
         tokenManager.setToken(res.access_token);
       } catch (e) {
+        console.log('Error setting token in tokenManager:', e);
         // ignore
       }
       setToken(res.access_token);
@@ -89,6 +103,7 @@ export function AuthProvider({ children }) {
         register,
         verifyOtp,
         resendOtp,
+        loginWithBiometric,
       }}
     >
       {children}

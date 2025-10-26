@@ -1,17 +1,23 @@
-import React ,{ useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, ActivityIndicator, StyleSheet, Alert } from "react-native";
 import { useAuth } from "../AuthProvider";
 
 export default function LogoutScreen({ navigation }) {
   const { logout } = useAuth();
 
   useEffect(() => {
+   
     const doLogout = async () => {
-      await logout();
-      navigation.replace("Login");  // 👈 redirige al login después del logout
+      try {
+        await logout(); // esto elimina el token
+        // No necesitas navigation.replace; el navigator ya cambiará automáticamente
+      } catch (error) {
+        Alert.alert("Error", "No se pudo cerrar sesión. Intenta de nuevo.");
+        console.error("Logout error:", error);
+      }
     };
     doLogout();
-  }, []);
+  }, [logout]);
 
   return (
     <View style={styles.container}>

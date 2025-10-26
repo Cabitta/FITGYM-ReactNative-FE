@@ -3,12 +3,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 class StorageService {
+
   async setItem(key, value) {
     try {
       if (Platform.OS === 'web') {
         await AsyncStorage.setItem(key, value);
       } else {
+        // Guardamos en SecureStore y en AsyncStorage como respaldo
         await SecureStore.setItemAsync(key, value);
+        console.log(`Set ${key} in SecureStore`);
+        await AsyncStorage.setItem(key, value);
+        console.log(`Set ${key} in AsyncStorage`);
       }
     } catch (error) {
       console.error(`Error setting ${key}:`, error);
@@ -21,7 +26,13 @@ class StorageService {
       if (Platform.OS === 'web') {
         return await AsyncStorage.getItem(key);
       } else {
-        return await SecureStore.getItemAsync(key);
+        // Primero intentamos SecureStore
+        let value = await SecureStore.getItemAsync(key);
+        if (value === null) {
+          // Si falla, leemos desde AsyncStorage
+          value = await AsyncStorage.getItem(key);
+        }
+        return value;
       }
     } catch (error) {
       console.error(`Error getting ${key}:`, error);
@@ -33,8 +44,13 @@ class StorageService {
     try {
       if (Platform.OS === 'web') {
         await AsyncStorage.removeItem(key);
+        console.log(`Removed ${key} from AsyncStorage`);
       } else {
         await SecureStore.deleteItemAsync(key);
+        console.log(`Removed ${key} from SecureStore`);
+
+        await AsyncStorage.removeItem(key);
+        console.log(`Removed ${key} from AsyncStorage`);
       }
     } catch (error) {
       console.error(`Error removing ${key}:`, error);
@@ -47,13 +63,15 @@ class StorageService {
       if (Platform.OS === 'web') {
         await AsyncStorage.clear();
       } else {
-        // Para SecureStore, necesitamos eliminar elementos individualmente
         const keys = ['access_token', 'refresh_token', 'user_data'];
         for (const key of keys) {
           try {
             await SecureStore.deleteItemAsync(key);
+            console.log(`Cleared SecureStore key: ${key}`);
+            await AsyncStorage.removeItem(key);
+            console.log(`Cleared AsyncStorage key: ${key}`);
           } catch (error) {
-            // Ignorar errores si la clave no existe
+            console.error(`Error clearing key ${key}:`, error);
           }
         }
       }
@@ -62,6 +80,8 @@ class StorageService {
       throw error;
     }
   }
+
+
 }
 
 export default new StorageService();
