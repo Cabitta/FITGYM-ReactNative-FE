@@ -5,68 +5,65 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native-web";
+} from "react-native";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
-import { fetcher } from "../config/fetcher";
-
-// confirmedCheckin: false;
-// estado: "CONFIRMADA";
-// idClase: "68cf26265d3df22427a30e61";
-// idReserva: "82zFm8yBs-nmfAzIzvaQM";
-// idUsuario: "68e95944e1c402616e2a443c";
-// timestampCheckin: null;
-// timestampCreacion: "2025-10-10T22:43:41.821";
-
-// Debería traerme el nombre de la clase y fecha/hora
+import axiosInstance from "../config/interceptors";
 
 export default function Reservas({ navigation }) {
-  const { user, token } = useAuth();
-  const { data, error, isLoading, mutate } = useSWR(
-    `/reservas/usuario/${user?.id}`,
-    (url) => fetcher(url, { headers: { Authorization: `Bearer ${token}` } })
-  );
-
+  const { user } = useAuth();
   const [selectedReservaId, setSelectedReservaId] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
+  // SWR obtiene automáticamente los datos
+  const { data, error, isLoading, mutate } = useSWR(
+    user?.id ? `/reservas/usuario/${user.id}` : null,
+    async (url) => {
+      const response = await axiosInstance.get(url);
+      return response.data;
+    }
+  );
+
+  // Cancelar reserva
   async function handleCancelar(idReserva) {
-    if (!idReserva || !token) return;
+    if (!idReserva) return;
     const ok = confirm("¿Cancelar la reserva?");
     if (!ok) return;
 
     setIsCancelling(true);
-
-    await fetcher(`/reservas/${idReserva}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-      onResponse({ response }) {
-        if (response.ok) {
-          alert("Reserva cancelada.");
-          setSelectedReservaId(null);
-          mutate(); // refresh
-        } else {
-          console.error("Error cancelando reserva:", err);
-          alert("Error al cancelar la reserva.");
-        }
-      },
-    });
-
-    setIsCancelling(false);
+    try {
+      await axiosInstance.delete(`/reservas/${idReserva}`);
+      alert("Reserva cancelada correctamente.");
+      setSelectedReservaId(null);
+      mutate(); // recarga la lista automáticamente
+    } catch (err) {
+      console.error("Error cancelando reserva:", err?.response?.data || err.message);
+      alert("Error al cancelar la reserva.");
+    } finally {
+      setIsCancelling(false);
+    }
   }
 
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Error al cargar las reservas</Text>
+      <View style={styles.center}>
+        <Text>Error al cargar las reservas.</Text>
       </View>
     );
   }
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.center}>
         <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text>No tienes reservas registradas.</Text>
       </View>
     );
   }
@@ -80,15 +77,13 @@ export default function Reservas({ navigation }) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.detail}
-            onPress={() => {
+            onPress={() =>
               setSelectedReservaId(
                 selectedReservaId === item.idReserva ? null : item.idReserva
-              );
-            }}
+              )
+            }
           >
-            <Text style={styles.detailText}>
-              Clase: {item.clase?.disciplina}
-            </Text>
+            <Text style={styles.detailText}>Clase: {item.clase?.disciplina}</Text>
             <Text style={styles.detailText}>Fecha: {item.clase?.fecha}</Text>
             <Text style={styles.detailText}>Sede: {item.sede?.nombre}</Text>
 
@@ -108,7 +103,7 @@ export default function Reservas({ navigation }) {
             )}
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.idReserva}
+        keyExtractor={(item) => item.idReserva.toString()}
       />
     </View>
   );
@@ -151,5 +146,10 @@ const styles = {
     color: "#fff",
     fontWeight: "700",
     fontSize: 16,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 };

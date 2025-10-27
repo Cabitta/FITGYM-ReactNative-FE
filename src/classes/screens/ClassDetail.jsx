@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "react-native-web";
+import { Text, View } from "react-native";
 import useSWR from "swr";
 import { useAuth } from "../../auth/AuthProvider";
 import { fetcher } from "../../config/fetcher";
