@@ -1,230 +1,30 @@
-import axiosInstance from '../../config/axios';
+import axiosInstance from '../../config/interceptors';
 import storage from '../../utils/storage';
 import tokenManager from '../../utils/tokenManager';
+import { clearSession } from '../../utils/sesionManager';
 
 class AuthService {
-  
   async login(email, password) {
-    try {
-      const response = await axiosInstance.post('/auth/login', {
-        email,
-        password,
-      });
-      const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
-      
-      // Guardar tokens en storage
-      await storage.setItem('access_token', access_token);
-      await storage.setItem('refresh_token', refresh_token);
-      await storage.setItem('user_data', JSON.stringify({
-        id: user_Id,
-        username,
-        email: userEmail
-      }));
-      // Guardar token en cache en memoria para evitar race conditions
-      try {
-        tokenManager.setToken(access_token);
-      } catch (e) {
-        console.log('Error setting token in tokenManager:', e);
-        // ignorar
-      }
+    const response = await axiosInstance.post('/auth/login', { email, password });
 
-      return { 
-        success: true, 
-        user: { id: user_Id, username, email: userEmail },
-        access_token,
-        refresh_token 
-      };
-    } catch (error) {
-            console.log("🟥 Axios error:", JSON.stringify(error, null, 2));
-        if (error.response) {
-          console.log("➡️ Respuesta recibida:", error.response.status, error.response.data);
-        } else if (error.request) {
-          console.log("➡️ Sin respuesta (request):", error.request);
-        } else {
-          console.log("➡️ Error general:", error.message);
-        }
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Error al iniciar sesión',
-      };
-    }
-  }
+    const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
 
-  async register(userData) {
-    try {
-      const response = await axiosInstance.post('/auth/register', userData);
-      
-      const { id, nombre, email, password, foto } = response.data;
-
-      console.debug('Usuario registrado:', { id, nombre, email, foto });
-            
-      // Guardar datos del usuario en storage
-      await storage.setItem('user_data', JSON.stringify({
-        id,
-        nombre,
-        email,
-        foto
-      }));
-      
-      return { 
-        success: true, 
-        user: { id, nombre, email, foto }
-      };
-    } catch (error) {
-      console.error('Error en registro:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Error al registrarse',
-      };
-    }
-  }
-
-  // Trigger 2FA: sends otp to the user's email and stores otp fields in DB
-  async login2fa(email, password) {
-    try {
-      // This endpoint does not return a body; server will send OTP to email
-      await axiosInstance.post('/auth/login-2fa', { email, password });
-      return { success: true };
-    } catch (error) {
-      console.error('Error en login2fa:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Error en login 2FA',
-      };
-    }
-  }
-
-  // Verify OTP and receive tokens (same response shape as login)
-  async verifyOtp(email, otp) {
-    try {
-      const response = await axiosInstance.post('/auth/verify-otp', { email, otp });
-      const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
-
-      // Persist tokens and user data
-      await storage.setItem('access_token', access_token);
-      await storage.setItem('refresh_token', refresh_token);
-      await storage.setItem('user_data', JSON.stringify({
-        id: user_Id,
-        username,
-        email: userEmail,
-      }));
-
-      try {
-        tokenManager.setToken(access_token);
-      } catch (e) {
-        console.log('Error setting token in tokenManager:', e);
-        // ignore
-      }
-
-      return { 
-        success: true, 
-        user: { id: user_Id, username, email: userEmail },
-        access_token,
-        refresh_token
-      };
-    } catch (error) {
-      console.error('Error en verifyOtp:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Error al verificar OTP',
-      };
-    }
-  }
-
-  async resendOtp(email) {
-    try {
-      await axiosInstance.post('auth/send-otp', { email });
-      return { success: true };
-    } catch (error) {
-      console.error('Error en resendOtp:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Error al reenviar OTP',
-      };
-    }
-  }
-
-  async logout() {
-    try {
-//      await storage.removeItem('access_token');
-//      await storage.removeItem('refresh_token');
-//      await storage.removeItem('user_data');
-      try {
-        tokenManager.clear();
-      } catch (e) {
-        console.log('Error clearing token in tokenManager:', e);
-        // ignorar
-
-      }
-      return { success: true };
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      return { success: false, error: 'Error al cerrar sesión' };
-    }
-  }
-
-  async isAuthenticated() {
-    try {
-      const token = await storage.getItem('access_token');
-      return !!token;
-    } catch (error) {
-      console.error('Error al verificar autenticación:', error);
-      return false;
-    }
-  }
-
-  async getUserData() {
-    try {
-      const userData = await storage.getItem('user_data');
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('Error al obtener datos del usuario:', error);
-      return null;
-    }
-  }
-
-  getAccessTokenSync() {
-  return tokenManager.getToken();
-  }
-
-
-  async refreshToken() {
-  try {
-    const refreshToken = await storage.getItem('refresh_token');
-    if (!refreshToken) {
-      console.warn('No refresh token found.');
-      return { success: false, error: 'No hay token de refresco' };
-    }
-
-    // Llamada a tu backend
-    const response = await axiosInstance.post('/auth/refresh', {
-      refresh_token: refreshToken,
-    });
-
-    const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
-
-    // Guardar nuevos tokens
     await storage.setItem('access_token', access_token);
-    await storage.setItem('refresh_token', newRefresh);
-    await storage.setItem('user_data', JSON.stringify({ id: user_Id, username, email }));
+    await storage.setItem('refresh_token', refresh_token);
+    await storage.setItem('user_data', JSON.stringify({ id: user_Id, username, email: userEmail }));
 
     tokenManager.setToken(access_token);
 
-    console.log('🔄 Token refrescado correctamente');
-
     return {
       success: true,
+      user: { id: user_Id, username, email: userEmail },
       access_token,
-      refresh_token: newRefresh,
-      user: { id: user_Id, username, email },
-    };
-  } catch (error) {
-    console.error('Error al refrescar token:', error.response?.data || error);
-    return {
-      success: false,
-      error: error.response?.data?.message || 'Error al refrescar el token',
+      refresh_token,
     };
   }
+
+  async logout() {
+    await clearSession();
   }
 }
 
