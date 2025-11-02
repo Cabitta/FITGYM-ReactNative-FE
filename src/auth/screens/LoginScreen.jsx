@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
+  Alert,Linking,
 } from "react-native";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
@@ -25,15 +25,36 @@ const LoginScreen = ({ navigation }) => {
   const { login, loginWithBiometric } = useAuth();
 
   // Detectar si el dispositivo tiene biometría disponible
-  useEffect(() => {
-    const checkBiometrics = async () => {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      const enrolled = await LocalAuthentication.isEnrolledAsync();
-      setBiometricAvailable(compatible && enrolled);
-    };
-    checkBiometrics();
-  }, []);
+    useEffect(() => {
+      const checkBiometrics = async () => {
 
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        const enrolled = await LocalAuthentication.getEnrolledLevelAsync();
+        console.log("Biometría compatible:", compatible);
+        console.log("niveles_enrolados:", enrolled);
+        if (compatible ) {
+          setBiometricAvailable(true);
+        } else {
+          setBiometricAvailable(false);
+        }
+        if (!enrolled){
+          Alert.alert('Autenticación de usuario', 'Es necesario que configure una authenticación en el dispositivo', [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => Linking.openSettings()},
+          ]);
+          
+        }
+
+        
+        
+      };
+
+      checkBiometrics();
+    }, []);
   const validateForm = () => {
     const newErrors = {};
 

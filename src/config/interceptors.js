@@ -13,11 +13,9 @@ async function refreshAccessToken() {
       console.warn('No refresh token found.');
       return { success: false, error: 'No hay token de refresco' };
     }
-
     const response = await axiosInstance.post('/auth/refresh', {
-      refresh_token: refreshToken,
+      refreshToken: refreshToken,
     });
-
     const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
 
     await storage.setItem('access_token', access_token);
@@ -64,7 +62,7 @@ axiosInstance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${tokenM}`;
       }
     } catch (error) {
-      console.error('Error al obtener token:', error);
+      console.log('Usuario sin  token:', error);
     }
 
     return config;

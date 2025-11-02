@@ -10,7 +10,6 @@ export default function LogoutScreen({ navigation }) {
     const doLogout = async () => {
       try {
         await logout(); // esto elimina el token
-        // No necesitas navigation.replace; el navigator ya cambiará automáticamente
       } catch (error) {
         Alert.alert("Error", "No se pudo cerrar sesión. Intenta de nuevo.");
         console.error("Logout error:", error);

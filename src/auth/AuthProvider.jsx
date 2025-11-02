@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const init = async () => {
       try {
-        const saved = await storage.getItem("access_token");
+        const saved = tokenManager.getToken();
         const userData = await storage.getItem("user_data");
         if (mounted && saved) {
           tokenManager.setToken(saved);
@@ -55,11 +55,12 @@ export function AuthProvider({ children }) {
 
   const loginWithBiometric = async () => {
   const res = await authenticateBiometric();
-  if (res.success) {
+    if (res.success) {
     tokenManager.setToken(res.token);
     setToken(res.token);
     setUser(res.user);
   }
+
   return res;
   };
 
