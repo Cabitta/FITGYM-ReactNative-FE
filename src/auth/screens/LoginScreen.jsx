@@ -1,67 +1,73 @@
+// src/auth/screens/LoginScreen.jsx
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
+  
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,Linking,
+  Alert,
+  Linking,
+  View,
 } from "react-native";
-import AuthInput from "../components/AuthInput";
-import AuthButton from "../components/AuthButton";
-import { useAuth } from "../AuthProvider";
+import {
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+  Surface,
+  useTheme as usePaperTheme,
+  HelperText,
+  Portal,
+  Card,
+} from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as LocalAuthentication from "expo-local-authentication";
+import { useAuth } from "../AuthProvider";
+import { useTheme } from "../../config/theme";
 
 const LoginScreen = ({ navigation }) => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { theme, isDarkMode } = useTheme();
+  const paperTheme = usePaperTheme();
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const { login, loginWithBiometric } = useAuth();
 
-  // Detectar si el dispositivo tiene biometría disponible
-    useEffect(() => {
-      const checkBiometrics = async () => {
+  // Detectar biometría
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      const enrolled = await LocalAuthentication.getEnrolledLevelAsync();
 
-        const compatible = await LocalAuthentication.hasHardwareAsync();
-        const enrolled = await LocalAuthentication.getEnrolledLevelAsync();
-        console.log("Biometría compatible:", compatible);
-        console.log("niveles_enrolados:", enrolled);
-        if (compatible ) {
-          setBiometricAvailable(true);
-        } else {
-          setBiometricAvailable(false);
+      if (compatible && enrolled > 0) {
+        setBiometricAvailable(true);
+      } else {
+        setBiometricAvailable(false);
+        if (compatible && enrolled === 0) {
+          Alert.alert(
+            "Autenticación requerida",
+            "Configura huella o reconocimiento facial en Ajustes.",
+            [
+              { text: "Cancelar", style: "cancel" },
+              { text: "Ir a Ajustes", onPress: () => Linking.openSettings() },
+            ]
+          );
         }
-        if (!enrolled){
-          Alert.alert('Autenticación de usuario', 'Es necesario que configure una authenticación en el dispositivo', [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => Linking.openSettings()},
-          ]);
-          
-        }
+      }
+    };
 
-        
-        
-      };
+    checkBiometrics();
+  }, []);
 
-      checkBiometrics();
-    }, []);
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.email.trim()) {
       newErrors.email = "El email es requerido";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "El email no es válido";
+      newErrors.email = "Email inválido";
     }
 
     if (!formData.password.trim()) {
@@ -73,23 +79,14 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const handleLogin = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
@@ -98,19 +95,18 @@ const LoginScreen = ({ navigation }) => {
         Alert.alert("Error", result.error);
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
+      Alert.alert("Error", "Ocurrió un error inesperado "+ error.message());
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔐 Manejar login biométrico
   const handleBiometricLogin = async () => {
     const res = await loginWithBiometric();
     if (res.success) {
-      Alert.alert("Bienvenido", `Inicio de sesión como ${res.user.username}`);
+      Alert.alert("Éxito", `Bienvenido, ${res.user.username}`);
     } else {
-      Alert.alert("Error", res.error || "No se pudo autenticar con biometría");
+      Alert.alert("Error", res.error || "Autenticación biométrica fallida");
     }
   };
 
@@ -119,65 +115,115 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidingView}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
-            <Text style={styles.title}>Iniciar Sesión</Text>
+          <Surface style={{ paddingHorizontal: 24, paddingVertical: 32 }}>
+            {/* Título */}
+            <Text
+              variant="headlineMedium"
+              style={{
+                textAlign: "center",
+                marginBottom: 32,
+                color: theme.colors.primary,
+                fontWeight: "bold",
+              }}
+            >
+              Iniciar Sesión
+            </Text>
 
-            <View style={styles.form}>
-              <AuthInput
-                label="Email"
-                value={formData.email}
-                onChangeText={(value) => handleInputChange("email", value)}
-                placeholder="Ingresa tu email"
-                keyboardType="email-address"
-                error={errors.email}
-              />
+            <Card elevation={2} style={{ padding: 16, borderRadius: 16, backgroundColor: theme.colors.surface }}>
+              <Card.Content style={{ gap: 16 }}>
+                {/* Email */}
+                <View>
+                  <TextInput
+                    label="Email"
+                    value={formData.email}
+                    onChangeText={(v) => handleInputChange("email", v)}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    mode="outlined"
+                    error={!!errors.email}
+                    theme={{ roundness: 12 }}
+                    style={{ backgroundColor: theme.colors.surface }}
+                    outlineColor={errors.email ? theme.colors.error : theme.colors.outline}
+                    activeOutlineColor={theme.colors.primary}
+                  />
+                  <HelperText type="error" visible={!!errors.email}>
+                    {errors.email}
+                  </HelperText>
+                </View>
 
-              <AuthInput
-                label="Contraseña"
-                value={formData.password}
-                onChangeText={(value) => handleInputChange("password", value)}
-                placeholder="Ingresa tu contraseña"
-                secureTextEntry
-                error={errors.password}
-              />
+                {/* Contraseña */}
+                <View>
+                  <TextInput
+                    label="Contraseña"
+                    value={formData.password}
+                    onChangeText={(v) => handleInputChange("password", v)}
+                    secureTextEntry
+                    mode="outlined"
+                    error={!!errors.password}
+                    theme={{ roundness: 12 }}
+                    style={{ backgroundColor: theme.colors.surface }}
+                    outlineColor={errors.password ? theme.colors.error : theme.colors.outline}
+                    activeOutlineColor={theme.colors.primary}
+                  />
+                  <HelperText type="error" visible={!!errors.password}>
+                    {errors.password}
+                  </HelperText>
+                </View>
 
-              <AuthButton
-                title="Iniciar Sesión"
-                onPress={handleLogin}
-                loading={loading}
-                style={styles.loginButton}
-              />
+                {/* Botón Iniciar Sesión */}
+                <Button
+                  mode="contained"
+                  onPress={handleLogin}
+                  loading={loading}
+                  disabled={loading}
+                  contentStyle={{ height: 50 }}
+                  labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                  style={{ borderRadius: 12 }}
+                  buttonColor={theme.colors.primary}
+                >
+                  {loading ? "Iniciando..." : "Iniciar Sesión"}
+                </Button>
 
-              {/* 🔹 Botón opcional biométrico */}
-              {biometricAvailable && (
-                <AuthButton
-                  title="Usar huella o reconocimiento facial"
-                  onPress={handleBiometricLogin}
-                  variant="secondary"
-                  style={{ marginBottom: 16 }}
-                />
-              )}
+                {/* Biometría */}
+                {biometricAvailable && (
+                  <Button
+                    mode="outlined"
+                    onPress={handleBiometricLogin}
+                    icon={isDarkMode ? "fingerprint" : "face-recognition"}
+                    contentStyle={{ height: 48 }}
+                    style={{ borderRadius: 12, borderColor: theme.colors.secondary }}
+                    labelStyle={{ color: theme.colors.secondary }}
+                  >
+                    Usar Huella / Rostro
+                  </Button>
+                )}
 
-              <View style={styles.registerContainer}>
-                <Text style={styles.registerText}>¿No tienes una cuenta? </Text>
-                <AuthButton
-                  title="Registrarse"
-                  onPress={handleRegisterPress}
-                  variant="secondary"
-                  style={[styles.registerButton, styles.linkButton]}
-                />
-              </View>
-            </View>
-          </View>
+                {/* Registro */}
+                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 8 }}>
+                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                    ¿No tienes cuenta?{" "}
+                  </Text>
+                  <Button
+                    mode="text"
+                    onPress={handleRegisterPress}
+                    compact
+                    labelStyle={{ color: theme.colors.tertiary, fontWeight: "600" }}
+                  >
+                    Regístrate
+                  </Button>
+                </View>
+              </Card.Content>
+            </Card>
+          </Surface>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

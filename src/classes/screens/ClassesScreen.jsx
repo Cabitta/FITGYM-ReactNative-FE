@@ -1,19 +1,24 @@
+// src/classes/ClassesScreen.jsx
 import React, { useState, useEffect } from "react";
+import { FlatList, Alert } from "react-native";
 import {
-  View,
-  FlatList,
+  Surface,
   Text,
-  StyleSheet,
   ActivityIndicator,
-} from "react-native";
+  List,
+  Divider,
+  IconButton,
+} from "react-native-paper";
 import Filters from "../components/Filters";
 import ClassCard from "../components/ClassCard";
 import { getClasesEnriched } from "../services/classService";
+import { useTheme } from "../../config/theme";
 
 export default function ClassesScreen({ navigation }) {
+  const { theme } = useTheme();
+
   const [clases, setClases] = useState([]);
   const [filtered, setFiltered] = useState([]);
-
   const [sedes, setSedes] = useState([]);
   const [disciplinas, setDisciplinas] = useState([]);
 
@@ -39,12 +44,8 @@ export default function ClassesScreen({ navigation }) {
         setClases(data);
         setFiltered(data);
 
-        const sedesUnicas = Array.from(
-          new Set(data.map((c) => c.sedeNombre))
-        ).filter(Boolean);
-        const disciplinasUnicas = Array.from(
-          new Set(data.map((c) => c.disciplina))
-        ).filter(Boolean);
+        const sedesUnicas = Array.from(new Set(data.map((c) => c.sedeNombre))).filter(Boolean);
+        const disciplinasUnicas = Array.from(new Set(data.map((c) => c.disciplina))).filter(Boolean);
 
         setSedes([
           { label: "Todas las sedes", value: null },
@@ -55,7 +56,8 @@ export default function ClassesScreen({ navigation }) {
           ...disciplinasUnicas.map((d) => ({ label: d, value: d })),
         ]);
       } catch (error) {
-        console.error("❌ Error al obtener clases:", error);
+        console.error("Error al obtener clases:", error);
+        Alert.alert("Error", "No se pudieron cargar las clases. Intenta más tarde.");
       } finally {
         setLoading(false);
       }
@@ -76,10 +78,90 @@ export default function ClassesScreen({ navigation }) {
     setFecha(null);
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>Clases Disponibles</Text>
+  const renderEmpty = () => (
+    <Surface
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 32,
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      <IconButton
+        icon="calendar-remove"
+        size={64}
+        color={theme.colors.onSurfaceVariant}
+      />
+      <Text
+        variant="titleLarge"
+        style={{
+          color: theme.colors.onSurfaceVariant,
+          marginTop: 16,
+          textAlign: "center",
+        }}
+      >
+        No hay clases disponibles
+      </Text>
+      <Text
+        variant="bodyMedium"
+        style={{
+          color: theme.colors.onSurfaceVariant,
+          textAlign: "center",
+          marginTop: 8,
+        }}
+      >
+        Intenta cambiar los filtros o vuelve más tarde.
+      </Text>
+    </Surface>
+  );
 
+  if (loading) {
+    return (
+      <Surface
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text
+          variant="titleMedium"
+          style={{
+            marginTop: 16,
+            color: theme.colors.onSurfaceVariant,
+          }}
+        >
+          Cargando clases...
+        </Text>
+      </Surface>
+    );
+  }
+
+  return (
+    <Surface
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: 14,
+      }}
+    >
+      {/* Título */}
+      <Text
+        variant="headlineMedium"
+        style={{
+          textAlign: "center",
+          marginBottom: 16,
+          color: theme.colors.primary,
+          fontWeight: "bold",
+        }}
+      >
+        Clases Disponibles
+      </Text>
+
+      {/* Filtros */}
       <Filters
         sede={sede}
         setSede={setSede}
@@ -98,45 +180,25 @@ export default function ClassesScreen({ navigation }) {
         setDatePickerVisible={setDatePickerVisible}
       />
 
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#6C63FF"
-          style={{ marginTop: 50 }}
-        />
-      ) : filtered.length > 0 ? (
+      <Divider style={{ marginVertical: 8 }} />
+
+      {/* Lista de Clases */}
+      {filtered.length > 0 ? (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.idClase}
           renderItem={({ item }) => (
             <ClassCard
               clase={item}
-              onPress={() =>
-                navigation.navigate("ClassDetail", { clase: item })
-              }
+              onPress={() => navigation.navigate("ClassDetail", { clase: item })}
             />
           )}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 16 }}
         />
       ) : (
-        <Text style={styles.empty}>No hay clases disponibles</Text>
+        renderEmpty()
       )}
-    </View>
+    </Surface>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f7f8fc", padding: 14 },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 12,
-    color: "#1c1c1e",
-    textAlign: "center",
-  },
-  empty: {
-    textAlign: "center",
-    marginTop: 40,
-    color: "#8e8e93",
-    fontSize: 16,
-  },
-});

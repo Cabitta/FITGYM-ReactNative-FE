@@ -6,7 +6,7 @@ const UserInfoCard = ({ user }) => {
   if (!user) {
     return (
       <View className="items-center bg-white p-6 rounded-2xl shadow-md mx-5">
-        <Text className="text-base text-gray-500">Usuario no disponible</Text>
+        <Text variant="displayMedium">Usuario no disponible</Text>
       </View>
     );
   }
@@ -35,7 +35,7 @@ const UserInfoCard = ({ user }) => {
       ) : (
         <>
           <View className="w-32 h-32 rounded-full bg-gray-300 justify-center items-center mb-3">
-            <Text className="text-5xl text-white">
+            <Text variant="displayMedium">
               {user.nombre?.[0]?.toUpperCase() || "?"}
             </Text>
           </View>
@@ -43,10 +43,10 @@ const UserInfoCard = ({ user }) => {
         </>
       )}
 
-      <Text className="text-2xl font-semibold text-gray-800">
+      <Text variant="displayMedium">
         {user.nombre || "Sin nombre"}
       </Text>
-      <Text className="text-base text-gray-500 mt-1">
+      <Text variant="titleMedium">
         {user.email || "Sin email"}
       </Text>
     </View>

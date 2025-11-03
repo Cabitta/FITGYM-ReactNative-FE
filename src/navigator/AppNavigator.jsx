@@ -13,7 +13,7 @@ import Reservas from "../reservas";
 import Historial from "../historial/Historial";
 import OtpScreen from "../auth/screens/OtpScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
-
+import { useTheme } from "../config/theme";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -43,12 +43,14 @@ function AppStack() {
 }
 
 function AppTab() {
+    const { theme } = useTheme();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#6C63FF",
-        tabBarInactiveTintColor: "#8e8e93",
+        tabBarActiveTintColor: theme.colors.ActivityIndicator,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarIcon: ({ color, size }) => {
           if (route.name === "Classes") {
             return (

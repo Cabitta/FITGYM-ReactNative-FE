@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const init = async () => {
       try {
-        const saved = tokenManager.getToken();
+        const saved = await storage.getItem("access_token");
         const userData = await storage.getItem("user_data");
         if (mounted && saved) {
           tokenManager.setToken(saved);

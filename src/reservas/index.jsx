@@ -1,21 +1,30 @@
-import { useState } from "react";
+// src/screens/Reservas.jsx
+import React, { useState } from "react";
+import { FlatList, View } from "react-native";
 import {
   ActivityIndicator,
-  FlatList,
+  Button,
+  Card,
+  Divider,
   Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+  Dialog,
+  Portal,
+} from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
 import axiosInstance from "../config/interceptors";
+import { useTheme } from "../config/theme";
 
 export default function Reservas({ navigation }) {
   const { user } = useAuth();
+  const { theme } = useTheme();
+
   const [selectedReservaId, setSelectedReservaId] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [reservaToCancel, setReservaToCancel] = useState(null);
 
-  // SWR obtiene automáticamente los datos
+  // Obtener reservas
   const { data, error, isLoading, mutate } = useSWR(
     user?.id ? `/reservas/usuario/${user.id}` : null,
     async (url) => {
@@ -24,132 +33,239 @@ export default function Reservas({ navigation }) {
     }
   );
 
-  // Cancelar reserva
-  async function handleCancelar(idReserva) {
-    if (!idReserva) return;
-    const ok = confirm("¿Cancelar la reserva?");
-    if (!ok) return;
+  // Confirmar cancelación
+  const handleOpenConfirm = (idReserva) => {
+    setReservaToCancel(idReserva);
+    setConfirmVisible(true);
+  };
 
+  const handleCloseConfirm = () => {
+    setConfirmVisible(false);
+    setReservaToCancel(null);
+  };
+
+  // Cancelar reserva
+  const handleCancelar = async () => {
+    if (!reservaToCancel) return;
     setIsCancelling(true);
     try {
-      await axiosInstance.delete(`/reservas/${idReserva}`);
-      alert("Reserva cancelada correctamente.");
+      await axiosInstance.delete(`/reservas/${reservaToCancel}`);
+      setConfirmVisible(false);
       setSelectedReservaId(null);
-      mutate(); // recarga la lista automáticamente
+      mutate();
     } catch (err) {
       console.error("Error cancelando reserva:", err?.response?.data || err.message);
-      alert("Error al cancelar la reserva.");
     } finally {
       setIsCancelling(false);
     }
-  }
+  };
 
+  // Estados: error / carga / vacío
   if (error) {
     return (
-      <View style={styles.center}>
-        <Text>Error al cargar las reservas.</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <Text
+          style={{
+            color: theme.colors.error,
+            textAlign: "center",
+            fontWeight: "bold",
+          }}
+        >
+          Error al cargar las reservas.
+        </Text>
       </View>
     );
   }
 
   if (isLoading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   if (!data || data.length === 0) {
     return (
-      <View style={styles.center}>
-        <Text>No tienes reservas registradas.</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <Text
+          style={{
+            color: theme.colors.primary,
+            textAlign: "center",
+            fontWeight: "bold",
+          }}
+        >
+          No tienes reservas registradas.
+        </Text>
       </View>
     );
   }
 
+  // Render principal
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Mis Reservas</Text>
+    <View
+      style={{
+        flex: 1,
+        padding: 16,
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      <Text
+        variant="titleLarge"
+        style={{
+          color: theme.colors.primary,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 8,
+        }}
+      >
+        Mis Reservas
+      </Text>
+      <Divider style={{ marginBottom: 16 }} />
 
       <FlatList
         data={data}
+        keyExtractor={(item) => item.idReserva.toString()}
+        contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.detail}
+          <Card
             onPress={() =>
               setSelectedReservaId(
                 selectedReservaId === item.idReserva ? null : item.idReserva
               )
             }
+            style={{
+              marginBottom: 12,
+              borderRadius: 16,
+              backgroundColor: theme.colors.surface,
+              elevation: 4,
+            }}
+            mode="elevated"
           >
-            <Text style={styles.detailText}>Clase: {item.clase?.disciplina}</Text>
-            <Text style={styles.detailText}>Fecha: {item.clase?.fecha}</Text>
-            <Text style={styles.detailText}>Sede: {item.sede?.nombre}</Text>
-
-            {selectedReservaId === item.idReserva && (
-              <TouchableOpacity
-                style={[
-                  styles.cancelButton,
-                  isCancelling && styles.cancelButtonDisabled,
-                ]}
-                onPress={() => handleCancelar(item.idReserva)}
-                disabled={isCancelling}
+            <Card.Content style={{ padding: 16, gap: 12 }}>
+              {/* Header: clase */}
+              <Card.Content
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <Text style={styles.cancelButtonText}>
-                  {isCancelling ? "Cancelando..." : "Cancelar reserva"}
+                <Text
+                  variant="titleMedium"
+                  style={{
+                    color: theme.colors.primary,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {item.clase?.disciplina || "Clase sin nombre"}
                 </Text>
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
+                <Text
+                  variant="titleSmall"
+                  style={{
+                    color: theme.colors.secondary,
+                    fontWeight: "600",
+                  }}
+                >
+                  #{item.idReserva}
+                </Text>
+              </Card.Content>
+
+              {/* Fecha */}
+              
+              <Text
+                variant="bodyMedium"
+                style={{ color: theme.colors.onSurfaceVariant }}
+              >
+                Fecha:{' '}
+                <Text
+                  style={{
+                    color: theme.colors.tertiary,
+                    fontWeight: "600",
+                  }}
+                >
+                  {item.clase?.fecha || "Fecha no disponible"}
+                </Text>
+              </Text>
+              {/* Sede */}
+              <Text
+                variant="bodyMedium"
+                style={{ color: theme.colors.onSurfaceVariant }}
+              >
+                Sede:{' '}
+                <Text
+                  style={{
+                    color: theme.colors.tertiary,
+                    fontWeight: "600",
+                  }}
+                >
+                  {item.sede?.nombre || "No disponible"}
+                </Text>
+              </Text>
+
+              {selectedReservaId === item.idReserva && (
+                <Button
+                  mode="contained-tonal"
+                  buttonColor={theme.colors.errorContainer}
+                  textColor={theme.colors.onErrorContainer}
+                  style={{ marginTop: 8, borderRadius: 8 }}
+                  onPress={() => handleOpenConfirm(item.idReserva)}
+                  loading={isCancelling}
+                  disabled={isCancelling}
+                >
+                  {isCancelling ? "Cancelando..." : "Cancelar reserva"}
+                </Button>
+              )}
+            </Card.Content>
+          </Card>
         )}
-        keyExtractor={(item) => item.idReserva.toString()}
       />
+
+      {/* Diálogo de confirmación */}
+      <Portal>
+        <Dialog visible={confirmVisible} onDismiss={handleCloseConfirm}>
+          <Dialog.Title style={{ color: theme.colors.primary }}>
+            Confirmar cancelación
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text
+              variant="bodyMedium"
+              style={{ color: theme.colors.onSurfaceVariant }}
+            >
+              ¿Seguro que deseas cancelar esta reserva?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={handleCloseConfirm}>No</Button>
+            <Button
+              onPress={handleCancelar}
+              textColor={theme.colors.error}
+              disabled={isCancelling}
+            >
+              Sí, cancelar
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }
-
-const styles = {
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#f7f8fc",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#1c1c1e",
-    textAlign: "center",
-  },
-  detail: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  detailText: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  cancelButton: {
-    marginTop: 8,
-    backgroundColor: "#FF4D4F",
-    paddingVertical: 10,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  cancelButtonDisabled: {
-    backgroundColor: "#f3b8b8",
-  },
-  cancelButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-};

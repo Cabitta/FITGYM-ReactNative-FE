@@ -1,42 +1,108 @@
+// src/components/ClassCard.jsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  Card,
+  Text,
+  useTheme as usePaperTheme,
+} from 'react-native-paper';
+import { useTheme } from '../../config/theme';
 
 export default function ClassCard({ clase, onPress }) {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{clase.disciplina}</Text>
-        <Text style={styles.cupo}>{clase.cupo > 0 ? `Cupos: ${clase.cupo}` : 'Sin cupo'}</Text>
-      </View>
-      <Text style={styles.meta}>
-        {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
-      </Text>
-      <Text style={styles.meta}>
-        Sede: <Text style={styles.metaValue}>{clase.sedeNombre || 'No disponible'}</Text>
-      </Text>
-      <Text style={styles.meta}>
-        Profesor: <Text style={styles.metaValue}>{clase.profesorNombre || 'No asignado'}</Text>
-      </Text>
+  const { theme } = useTheme();
 
-    </TouchableOpacity>
+  const cupoText = clase.cupo > 0 ? `Cupos: ${clase.cupo}` : 'Sin cupo';
+  const cupoColor = clase.cupo > 0 ? theme.colors.secondary : theme.colors.error;
+
+  return (
+    <Card
+      onPress={onPress}
+      style={{
+        marginBottom: 12,
+        borderRadius: 16,
+        backgroundColor: theme.colors.surface,
+        elevation: 4,
+      }}
+      mode="elevated"
+    >
+      <Card.Content
+        style={{
+          padding: 16,
+          gap: 12,
+        }}
+      >
+        {/* Header: Disciplina + Cupos */}
+        <Card.Content
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            variant="titleMedium"
+            style={{color: theme.colors.primary, 
+              fontWeight: 'bold',
+            }}
+          >
+            {clase.disciplina}
+          </Text>
+          <Text
+            variant="titleSmall"
+            style={{
+              color: cupoColor,
+              fontWeight: '600',
+            }}
+          >
+            {cupoText}
+          </Text>
+        </Card.Content>
+
+        {/* Fecha y Horario */}
+        <Text
+          variant="bodyMedium"
+          style={{
+            color: theme.colors.tertiary, 
+          }}
+        >
+          {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
+        </Text>
+
+        {/* Sede */}
+        <Text
+          variant="bodyMedium"
+          style={{color: theme.colors.onSurfaceVariant}}
+        >
+          Sede:{' '}
+          <Text
+            variant="bodyMedium"
+            style={{
+              color: theme.colors.tertiary,
+              fontWeight: '600',
+            }}
+          >
+            {clase.sedeNombre || 'No disponible'}
+          </Text>
+        </Text>
+
+        {/* Profesor */}
+        <Text
+          variant="bodyMedium"
+          style={{
+            color: theme.colors.onSurfaceVariant,
+          }}
+        >
+          Profesor:{' '}
+          <Text
+            variant="bodyMedium"
+            style={{
+              color: theme.colors.tertiary,
+              fontWeight: '600',
+            }}
+          >
+            {clase.profesorNombre || 'No asignado'}
+          </Text>
+        </Text>
+      </Card.Content>
+    </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  header: { flexDirection: 'row', justifyContent: 'space-between' },
-  title: { fontSize: 18, fontWeight: 'bold', color: '#2A2D43' },
-  cupo: { color: '#6C63FF', fontWeight: '600' },
-  meta: { color: '#6C63FF', marginVertical: 4 },
-  sub: { color: '#555', fontSize: 14 },
-});

@@ -1,15 +1,29 @@
 // src/profile/section/ProfileScreen.jsx
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Button, StyleSheet, Modal } from "react-native";
+import { ActivityIndicator, View,Modal } from "react-native";
+import {
+  Button,
+  Card,
+  Text,
+  Switch,
+  Surface,
+  
+  useTheme as usePaperTheme,
+  Portal,
+} from "react-native-paper";
+
 import UserInfoCard from "../componentes/UserInfoCard";
 import User from "../modelo/User";
 import api from "../../config/axios";
 import storage from "../../utils/storage";
-import LogoutScreen from "../../auth/screens/LogoutScreen"; // ✅ sigue importado
+import LogoutScreen from "../../auth/screens/LogoutScreen";
+import { useTheme } from "../../config/theme";
 
 export default function ProfileScreen({ navigation }) {
+  const { isDarkMode, toggleTheme, theme } = useTheme();
+
   const [user, setUser] = useState(null);
-  const [showLogout, setShowLogout] = useState(false); 
+  const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,63 +44,120 @@ export default function ProfileScreen({ navigation }) {
 
   if (!user) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#000" />
-      </View>
+      <Surface
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </Surface>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Perfil del Usuario</Text>
+    <Surface
+      style={{
+        flex: 1,
+        padding: 16,
+      }}
+    >
+      {/* Título del Tema */}
+      <Text
+        variant="headlineMedium"
+        style={{
+          color: theme.colors.primary,
+          textAlign: "center",
+          marginBottom: 16,
+          fontWeight: "bold",
+        }}
+      >
+        {isDarkMode ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
+      </Text>
 
-      <UserInfoCard user={user} />
+      {/* Control de Tema */}
+      <Surface
+        style={{
+          padding: 16,
+          borderRadius: 12,
+          marginBottom: 24,
+          backgroundColor: theme.colors.surface,
+          elevation: 2,
+        }}
+      >
+        <Card.Content style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+            {isDarkMode ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
+          </Text>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleTheme}
+            color={theme.colors.secondary}
+          />
+        </Card.Content>
+        <Text
+          variant="bodyMedium"
+          style={{
+            color: theme.colors.onSurfaceVariant,
+            marginTop: 8,
+            marginLeft: 16,
+          }}
+        >
+          Cambia entre tema claro y oscuro
+        </Text>
+      </Surface>
 
-      <View style={styles.buttonContainer}>
+      {/* Título de Perfil */}
+      <Text
+        variant="titleLarge"
+        style={{
+          color: theme.colors.tertiary,
+          textAlign: "center",
+          marginBottom: 16,
+          fontWeight: "600",
+        }}
+      >
+        Perfil del Usuario
+      </Text>
+
+      {/* Tarjeta de Información del Usuario */}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <UserInfoCard user={user} theme={theme} />
+      </View>
+      {/* Botones */}
+      <Card.Content style={{ marginTop: 24, gap: 12 }}>
         <Button
-          title="Volver"
+          mode="contained"
           onPress={() => navigation.goBack()}
-          color="#007bff"
-        />
-      </View>
+          contentStyle={{ height: 48 }}
+          labelStyle={{ fontSize: 16 }}
+          style={{ borderRadius: 8 }}
+          buttonColor={theme.colors.tertiary}
+        >
+          Volver
+        </Button>
 
-      <View style={styles.buttonContainer}>
         <Button
-          title="Cerrar sesión"
-          color="#dc3545"
-          onPress={() => setShowLogout(true)} // ✅ abre modal
-        />
-      </View>
+          mode="contained"
+          onPress={() => setShowLogout(true)}
+          contentStyle={{ height: 48 }}
+          labelStyle={{ fontSize: 16 }}
+          style={{ borderRadius: 8 }}
+          buttonColor="#dc3545"
+        >
+          Cerrar Sesión
+        </Button>
+      </Card.Content>
 
-      {/* ✅ Modal con LogoutScreen (no afecta AppNavigation) */}
-      <Modal visible={showLogout} animationType="fade" transparent={false}>
-        <LogoutScreen navigation={navigation} />
-      </Modal>
-    </View>
+      {/* Modal de Logout */}
+      <Portal>
+        <Modal visible={showLogout} animationType="slide" transparent={false}>
+          <Surface style={{ flex: 1, backgroundColor: theme.colors.background }}>
+            <LogoutScreen navigation={navigation} onClose={() => setShowLogout(false)} />
+          </Surface>
+        </Modal>
+      </Portal>
+    </Surface>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    width: "60%",
-  },
-});
