@@ -92,7 +92,6 @@ const LoginScreen = ({ navigation }) => {
     }
 
     setLoading(true);
-
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
@@ -184,61 +183,5 @@ const LoginScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  form: {
-    width: "100%",
-  },
-  loginButton: {
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  registerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  registerText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  registerButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minHeight: "auto",
-  },
-  linkButton: {
-    borderWidth: 0,
-    backgroundColor: "transparent",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    minHeight: 44,
-    marginLeft: 8,
-  },
-});
 
 export default LoginScreen;
