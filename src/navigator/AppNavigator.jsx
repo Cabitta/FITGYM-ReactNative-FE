@@ -13,6 +13,7 @@ import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
 import Historial from "../historial/Historial";
 import OtpScreen from "../auth/screens/OtpScreen";
+import HistorialAxios from "../historial/HistorialAxios";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,7 +114,7 @@ function AppTab() {
       />
       <Tab.Screen
         name="Historial"
-        component={Historial}
+        component={HistorialAxios}
         options={{ tabBarLabel: "Historial" }}
       />
     </Tab.Navigator>
