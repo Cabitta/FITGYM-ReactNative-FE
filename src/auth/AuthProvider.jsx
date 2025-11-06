@@ -93,6 +93,20 @@ export function AuthProvider({ children }) {
     return res;
   };
 
+  const editProfile = async (id,user_data) => {
+    const res = await authService.editProfile(id,user_data);
+    try {
+      if (res.success) {
+        console.log("Usuario actualizado:", res.user);
+        const update=JSON.stringify(res.data)
+        setUser(update);
+      }
+      return res;
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return { success: false, error: "Error updating profile" };
+    }
+  }
   return (
     <AuthContext.Provider
       value={{
@@ -101,6 +115,7 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
+        editProfile,
         register,
         verifyOtp,
         resendOtp,

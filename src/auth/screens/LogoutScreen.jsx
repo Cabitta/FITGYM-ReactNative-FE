@@ -20,8 +20,7 @@ export default function LogoutScreen({ navigation, onClose }) {
         Alert.alert("Error", "No se pudo cerrar sesión. Intenta de nuevo.");
         console.error("Logout error:", error);
         // En caso de error, permite volver
-        navigation.goBack();
-      }
+        onClose?.();      }
     };
 
     doLogout();

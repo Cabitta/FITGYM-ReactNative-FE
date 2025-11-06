@@ -1,15 +1,13 @@
-// src/profile/section/ProfileScreen.jsx
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View,Modal } from "react-native";
+import UserFormEdit from "../componentes/UserformEdit";
+import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
 import {
   Button,
   Card,
   Text,
   Switch,
   Surface,
-  
-  useTheme as usePaperTheme,
-  Portal,
+  Modal,
 } from "react-native-paper";
 
 import UserInfoCard from "../componentes/UserInfoCard";
@@ -24,6 +22,7 @@ export default function ProfileScreen({ navigation }) {
 
   const [user, setUser] = useState(null);
   const [showLogout, setShowLogout] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false); // 👈 nuevo estado
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -86,7 +85,13 @@ export default function ProfileScreen({ navigation }) {
           elevation: 2,
         }}
       >
-        <Card.Content style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Card.Content
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
             {isDarkMode ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
           </Text>
@@ -121,10 +126,38 @@ export default function ProfileScreen({ navigation }) {
         Perfil del Usuario
       </Text>
 
-      {/* Tarjeta de Información del Usuario */}
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <UserInfoCard user={user} theme={theme} />
-      </View>
+      {/* Contenido principal */}
+      <ScrollView
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: 40,
+          alignItems: "center",
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Tarjeta de información */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setShowEditForm(!showEditForm)} // 👈 alterna visibilidad del form
+        >
+          <UserInfoCard user={user} theme={theme} />
+        </TouchableOpacity>
+
+        {/* Formulario de edición (solo visible si se tocó la card) */}
+        {showEditForm && (
+          <View style={{ width: "100%", marginTop: 20 }}>
+            <UserFormEdit
+              user={user}
+              onUpdated={(u) => {
+                setUser({ ...user, ...u });
+                setShowEditForm(false); // 👈 ocultar el form luego de guardar
+              }}
+            />
+          </View>
+        )}
+      </ScrollView>
+
       {/* Botones */}
       <Card.Content style={{ marginTop: 24, gap: 12 }}>
         <Button
@@ -151,13 +184,15 @@ export default function ProfileScreen({ navigation }) {
       </Card.Content>
 
       {/* Modal de Logout */}
-      <Portal>
-        <Modal visible={showLogout} animationType="slide" transparent={false}>
-          <Surface style={{ flex: 1, backgroundColor: theme.colors.background }}>
-            <LogoutScreen navigation={navigation} onClose={() => setShowLogout(false)} />
-          </Surface>
-        </Modal>
-      </Portal>
+      <Modal
+        visible={showLogout}
+        onDismiss={() => setShowLogout(false)}
+        contentContainerStyle={{ flex: 1 }}
+      >
+        <Surface style={{ flex: 1, backgroundColor: theme.colors.background }}>
+          <LogoutScreen onClose={() => setShowLogout(false)} />
+        </Surface>
+      </Modal>
     </Surface>
   );
 }

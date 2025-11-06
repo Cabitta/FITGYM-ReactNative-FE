@@ -138,9 +138,9 @@ class AuthService {
 
   async logout() {
     try {
-      await storage.removeItem('access_token');
-      await storage.removeItem('refresh_token');
-      await storage.removeItem('user_data');
+//      await storage.removeItem('access_token');
+//      await storage.removeItem('refresh_token');
+//      await storage.removeItem('user_data');
       try {
         tokenManager.clear();
       } catch (e) {
@@ -172,6 +172,19 @@ class AuthService {
       return null;
     }
   }
+
+   async editProfile (userId, updatedData)  {
+    try {
+      const response = await axiosInstance.patch(`/users/${userId}`, updatedData);
+      return { success: true, user: response.data };
+    } catch (error) {
+      console.error('Error al editar perfil:', error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Error al editar perfil',
+      };
+    }
+  };
 }
 
 export default new AuthService();
