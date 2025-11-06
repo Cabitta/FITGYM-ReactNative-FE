@@ -2,33 +2,38 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/axios'
 import { useAuth } from '../auth/AuthProvider'
 import ItemHistorial from './ItemHistorial';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import {agruparPorMes} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
+import { Picker } from '@react-native-picker/picker';
 
 export default function HistorialAxios() {
 
-  const [historial,setHistorial] = useState(null)
+  const [historial,setHistorial] = useState([])
+  const [historialAgrupado,setHistorialAgrupado] = useState([])
   const [cargando,setCargando] = useState(true)
   const [error,setError] = useState(false)
-  
-  const {user} = useAuth(); 
+  const {user} = useAuth();
+  const [mesSeleccionado, setMesSeleccionado] = useState("todos");
+
+  const historialFiltrado = mesSeleccionado === "todos"
+    ? historialAgrupado
+    : historialAgrupado.filter((item) => item.mes === mesSeleccionado);
 
   useEffect(()=>{
-    console.log(user)
     axiosInstance.get(`/reservas/usuario/${user.id}`)
       .then(respuesta=>{
-        console.log(respuesta.status)
         console.log(respuesta.data)
-        console.log(respuesta.data[0])
         setHistorial(respuesta.data)
+        setHistorialAgrupado(agruparPorMes(respuesta.data))
       })
       .catch(error=>{
         console.log("Error al obtener reservas", error);
         setError(true)
       })
       .finally(()=> setCargando(false))
-
     
   },[])
+
   return (
     <>
     <View style={styles.container}>
@@ -37,7 +42,27 @@ export default function HistorialAxios() {
     {cargando ? <ActivityIndicator size={'large'}/> : (error ? <Text style={styles.alerta} >Error al hacer Fetch</Text> :
     //Caso del axios exitoso
     <>
-    <ItemHistorial item={historial[0]}/>
+    <Picker
+      selectedValue={mesSeleccionado}
+      onValueChange={(value)=>{ 
+        setMesSeleccionado(value)
+        console.log(value)}}
+        style={{ marginVertical: 10, backgroundColor: '#eee', borderRadius: 8,}}
+    >
+      <Picker.Item label='Todos' value="todos"/>
+      {historialAgrupado.map((grupo,index)=>(
+        <Picker.Item key={index} label={grupo.mes} value={grupo.mes}/>
+      ))}
+      </Picker>
+    <FlatList
+      data={historialFiltrado}
+      renderItem={({item})=>(
+        <>
+          {item.historial.map((reserva)=><ItemHistorial key={reserva.id} item={reserva}/>)}
+        </>
+      )}
+    />
+      
     </>
     )}
     </View>

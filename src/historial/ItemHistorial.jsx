@@ -5,11 +5,11 @@ export default function ItemHistorial({item = null}) {
 
   //cambia el fondo de acuerdo al estado
   function fondo(item) {
-    if (item.clase.estado == "CONFIRMADA") {
+    if (item.estado == "CONFIRMADA") {
       return {backgroundColor: "#4A90E2"}
-    }else if(item.clase.estado == "CANCELADA"){
+    }else if(item.estado == "CANCELADA"){
       return {backgroundColor: "#d6604bff"}
-    }else if(item.clase.estado == "EXPIRADA"){
+    }else if(item.estado == "EXPIRADA"){
       return {backgroundColor: "#ccc"}
     }else return {backgroundColor: "#ccc"}
   }
@@ -25,11 +25,11 @@ export default function ItemHistorial({item = null}) {
     return(
       <>
     <View style={[styles.card,fondo(item)]}>
-      <View style={styles.fila}><Text style={styles.textoTitulo}>{item.clase.disciplina}</Text><Text style={styles.textoCode}>Id:{item.idReserva}</Text></View>
+      <View style={styles.fila}><Text style={styles.textoTitulo}>{item.disiplina}</Text><Text style={styles.textoCode}>Id:{item.id}</Text></View>
       <View style={styles.separador}></View>
-      <Text>Dia: {item.clase.fecha}</Text>
-      <Text>Horario Inicio: {item.clase.horarioInicio.substring(0, 5)} - Horario Fin: {item.clase.horarioFin.substring(0, 5)}</Text>
-      <Text>Sede: {item.sede.nombre} - Barrio: {item.sede.barrio}</Text>
+      <Text>Dia: {item.fecha}</Text>
+      <Text>Horario Inicio: {item.horarioInicio.substring(0, 5)} - Horario Fin: {item.horarioFin.substring(0, 5)}</Text>
+      <Text>Sede: {item.sede} - Barrio: {item.barrio}</Text>
     </View>
       </>
     )

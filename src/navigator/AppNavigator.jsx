@@ -11,7 +11,6 @@ import ClassDetail from "../classes/screens/ClassDetail";
 import ClassesScreen from "../classes/screens/ClassesScreen";
 import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
-import Historial from "../historial/Historial";
 import OtpScreen from "../auth/screens/OtpScreen";
 import HistorialAxios from "../historial/HistorialAxios";
 
