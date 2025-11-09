@@ -48,6 +48,7 @@ async function refreshAccessToken() {
 axiosInstance.interceptors.request.use(
   async (config) => {
     if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
+      console.log('Solicitud sin auth, saltando interceptor.');
       return config;
     }
 
@@ -89,8 +90,22 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    const publicEndpoints = [
+      '/auth/login'
+    ];
+
     if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
+      publicEndpoints.some((endpoint) => originalRequest.url?.includes(endpoint)) ||
+      originalRequest.skipAuth ||
+      originalRequest.headers?.['X-Skip-Auth']
+    ) {
+      console.log('Error en endpoint público, no se intenta refresh.');
+      return Promise.reject(error); // no intentes refrescar
+    }
+
+    // ⬇️ solo si es un endpoint protegido
+    if (
+      (error.response?.status === 402 || error.response?.status === 403) &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
@@ -125,11 +140,8 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         isRefreshing = false;
-
         console.log('Falló el refresh:', refreshError);
-
         await clearSession();
-
         return Promise.reject(refreshError);
       }
     }
