@@ -9,8 +9,9 @@ class AuthService {
       const response = await axiosInstance.post('/auth/login', {
         email,
         password,
-      });
-      
+      }, { skipAuth: true });
+      console.log(response.data);
+      console.log(response);
       const { access_token, refresh_token, user_Id, username, email: userEmail } = response.data;
       
       // Guardar tokens en storage
@@ -35,17 +36,17 @@ class AuthService {
         refresh_token 
       };
     } catch (error) {
-      console.error('Error en login:', error);
+      console.log('Error en login:', error);
       return {
         success: false,
-        error: error.response?.data?.message || 'Error al iniciar sesión',
+        error: error.response?.data?.detail ,
       };
     }
   }
 
   async register(userData) {
     try {
-      const response = await axiosInstance.post('/auth/register', userData);
+      const response = await axiosInstance.post('/auth/register', userData , { skipAuth: true });;
       
       const { id, nombre, email, password, foto } = response.data;
 

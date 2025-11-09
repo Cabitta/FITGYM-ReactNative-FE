@@ -33,6 +33,7 @@ class StorageService {
           value = await AsyncStorage.getItem(key);
         }
         return value;
+        console.log(`Got ${key} from storage`);
       }
     } catch (error) {
       console.error(`Error getting ${key}:`, error);
