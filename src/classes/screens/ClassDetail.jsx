@@ -18,43 +18,40 @@ import { useTheme } from "../../config/theme";
 export default function ClassDetail({ route }) {
   const { user, token } = useAuth();
   const { clase: item } = route.params;
-  const [loading, setLoading] = useState(true);
-  const [calificaciones, setCalificaciones] = useState([]);
-  const [clase,setClase] = useState(null);
   const { theme } = useTheme();
+  const [clase, setClase] = useState(null);
+  const [calificaciones, setCalificaciones] = useState([]);
+  const [estaReservada, setEstaReservada] = useState(false);
+  const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-    const fetchClase = async () => {
+  const fetchClase = async () => {
     try {
       setLoading(true);
       const res = await api.get(`clases/${item.idClase}`);
       setClase(res.data);
+
+      // Verificar si el usuario ya reservó esta clase
+      const { data: reservas } = await api.get(`/reservas/usuario/${user.id}`);
+      const reservada = reservas.some((r) => r.idClase === res.data.idClase);
+      setEstaReservada(reservada);
+
+      // Cargar calificaciones
       if (Array.isArray(res.data.calificaciones) && res.data.calificaciones.length > 0) {
-        // Filtra solo los IDs válidos (ni null, ni undefined, ni vacío)
         const idsValidos = res.data.calificaciones.filter(
           (id) => id !== null && id !== undefined && id !== "" && id !== 0
         );
 
         if (idsValidos.length > 0) {
-          console.log("IDs de calificaciones válidos:", idsValidos);
-
-          const detalles = await Promise.all(
-            idsValidos.map((id) => api.get(`calificaciones/${id}`))
-          );
-
-          const comentarios = detalles.map(
-            (d) => d.data?.comentario ?? "Sin comentario"
-          );
+          const detalles = await Promise.all(idsValidos.map((id) => api.get(`calificaciones/${id}`)));
+          const comentarios = detalles.map((d) => d.data?.comentario ?? "Sin comentario");
           setCalificaciones(comentarios);
         } else {
-          console.log("No hay IDs válidos de calificaciones");
           setCalificaciones([]);
         }
       } else {
-        console.log("No hay calificaciones registradas en la clase");
         setCalificaciones([]);
       }
-
     } catch (error) {
       console.error("Error al obtener los detalles de la clase:", error);
       Alert.alert("Error", "No se pudieron cargar los detalles de la clase. Intenta más tarde.");
@@ -62,31 +59,14 @@ useEffect(() => {
       setLoading(false);
     }
   };
+
   fetchClase();
+}, []);
 
-  }, []);
-
-
-  
-  const estaReservada = async ()=>{
-    try
-    {
-      const {data:reservas} = await api.get(`/reservas/usuario/${user.id}`);
-      return reservas.some((r) => r.idClase === clase.id);
-    }
-    catch(error)
-    {
-
-      console.error("Error al verificar la reserva:", error);
-      return false;
-    }
-
-  }
-  const cupoDisponible = true;
+  const cupoDisponible = clase?.cupo > 0;
   const puedeReservar = cupoDisponible && !estaReservada;
-
   const handleReservar = async () => {
-    if (!puedeReservar) return;
+    if (!clase || estaReservada) return;
 
     try {
       const res = await api.post("/reservas", {
@@ -98,7 +78,10 @@ useEffect(() => {
 
       if (res.data?.idReserva) {
         Alert.alert("Éxito", "Reserva creada con éxito.");
-        setReservas([...reservas, res.data]); // Actualiza las reservas locales
+
+        // Actualizar estado local de la clase (reducir cupo)
+        setClase((prev) => ({ ...prev, cupo: prev.cupo - 1 }));
+        setEstaReservada(true);
       } else {
         Alert.alert("Error", "No se pudo crear la reserva.");
       }
@@ -106,7 +89,7 @@ useEffect(() => {
       console.error("Error al reservar:", error);
       Alert.alert("Error", "Ocurrió un error al reservar la clase.");
     }
-  };
+};
   const isLoading = !clase;
   
   if (isLoading) {
@@ -250,7 +233,6 @@ useEffect(() => {
             mode="contained"
             onPress={handleReservar}
             disabled={!puedeReservar}
-            loading={isLoading}
             contentStyle={{ height: 50 }}
             style={{ borderRadius: 12, flex: 1 }}
             buttonColor={
@@ -260,10 +242,7 @@ useEffect(() => {
                 ? theme.colors.primary
                 : theme.colors.errorContainer
             }
-            labelStyle={{
-              fontWeight: "bold",
-              fontSize: 16,
-            }}
+            labelStyle={{ fontWeight: "bold", fontSize: 16 }}
           >
             {estaReservada
               ? "Ya reservada"

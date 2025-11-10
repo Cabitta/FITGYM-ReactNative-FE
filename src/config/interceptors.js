@@ -8,7 +8,7 @@ import { clearSession } from '../utils/sesionManager';
 // ---------------------------------------------------------------------------
 async function refreshAccessToken() {
   try {
-    const refreshToken = await storage.getItem('refresh_token');
+    const refreshToken = await storage.getItem('access_token');
     if (!refreshToken) {
       console.warn('No refresh token found.');
       return { success: false, error: 'No hay token de refresco' };
@@ -16,6 +16,7 @@ async function refreshAccessToken() {
     const response = await axiosInstance.post('/auth/refresh', {
       refreshToken: refreshToken,
     });
+    console.log('Token refresh response:', response.data);
     const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
 
     await storage.setItem('access_token', access_token);
