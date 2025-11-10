@@ -8,7 +8,7 @@ import { clearSession } from '../utils/sesionManager';
 // ---------------------------------------------------------------------------
 async function refreshAccessToken() {
   try {
-    const refreshToken = await storage.getItem('refresh_token');
+    const refreshToken = await storage.getItem('access_token');
     if (!refreshToken) {
       console.warn('No refresh token found.');
       return { success: false, error: 'No hay token de refresco' };
@@ -16,6 +16,7 @@ async function refreshAccessToken() {
     const response = await axiosInstance.post('/auth/refresh', {
       refreshToken: refreshToken,
     });
+    console.log('Token refresh response:', response.data);
     const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
 
     await storage.setItem('access_token', access_token);
@@ -48,7 +49,6 @@ async function refreshAccessToken() {
 axiosInstance.interceptors.request.use(
   async (config) => {
     if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
-      console.log('Solicitud sin auth, saltando interceptor.');
       return config;
     }
 
@@ -90,22 +90,8 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    const publicEndpoints = [
-      '/auth/login'
-    ];
-
     if (
-      publicEndpoints.some((endpoint) => originalRequest.url?.includes(endpoint)) ||
-      originalRequest.skipAuth ||
-      originalRequest.headers?.['X-Skip-Auth']
-    ) {
-      console.log('Error en endpoint público, no se intenta refresh.');
-      return Promise.reject(error); // no intentes refrescar
-    }
-
-    // ⬇️ solo si es un endpoint protegido
-    if (
-      (error.response?.status === 402 || error.response?.status === 403) &&
+      (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
@@ -140,8 +126,11 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         isRefreshing = false;
+
         console.log('Falló el refresh:', refreshError);
+
         await clearSession();
+
         return Promise.reject(refreshError);
       }
     }

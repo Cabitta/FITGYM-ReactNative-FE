@@ -10,11 +10,10 @@ import ClassDetail from "../classes/screens/ClassDetail";
 import ClassesScreen from "../classes/screens/ClassesScreen";
 import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
+import Historial from "../historial/Historial";
 import OtpScreen from "../auth/screens/OtpScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 import { useTheme } from "../config/theme";
-import HistorialAxios from "../historial/HistorialAxios";
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -116,7 +115,7 @@ function AppTab() {
       />
       <Tab.Screen
         name="Historial"
-        component={HistorialAxios}
+        component={Historial}
         options={{ tabBarLabel: "Historial" }}
       />
       <Tab.Screen

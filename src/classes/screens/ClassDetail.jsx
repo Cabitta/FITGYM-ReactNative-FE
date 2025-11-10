@@ -1,5 +1,5 @@
 // src/classes/ClassDetail.jsx
-import React, { useMemo } from "react";
+import React, { useMemo,useState,useEffect } from "react";
 import { Alert } from "react-native";
 import {
   Surface,
@@ -10,50 +10,78 @@ import {
   ActivityIndicator,
   useTheme as usePaperTheme,
 } from "react-native-paper";
-import { nanoid } from "nanoid";
-import useSWR from "swr";
+import api from "../../config/axios";
 import { useAuth } from "../../auth/AuthProvider";
 import { fetcher } from "../../config/fetcher";
 import { useTheme } from "../../config/theme";
 
 export default function ClassDetail({ route }) {
-  const { clase } = route.params;
   const { user, token } = useAuth();
+  const { clase: item } = route.params;
   const { theme } = useTheme();
+  const [clase, setClase] = useState(null);
+  const [calificaciones, setCalificaciones] = useState([]);
+  const [estaReservada, setEstaReservada] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const { data: reservas, mutate, isLoading } = useSWR(
-    token ? `/reservas/clase/${clase.idClase}` : null,
-    (url) => fetcher(url, { headers: { Authorization: `Bearer ${token}` } }),
-    { revalidateOnFocus: false }
-  );
+useEffect(() => {
+  const fetchClase = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(`clases/${item.idClase}`);
+      setClase(res.data);
 
-  const estaReservada = useMemo(() => {
-    if (!reservas || !user) return false;
-    return reservas.some((r) => r.idUsuario === user.id);
-  }, [reservas, user]);
+      // Verificar si el usuario ya reservó esta clase
+      const { data: reservas } = await api.get(`/reservas/usuario/${user.id}`);
+      const reservada = reservas.some((r) => r.idClase === res.data.idClase);
+      setEstaReservada(reservada);
 
-  const cupoDisponible = clase.cupo > 0;
+      // Cargar calificaciones
+      if (Array.isArray(res.data.calificaciones) && res.data.calificaciones.length > 0) {
+        const idsValidos = res.data.calificaciones.filter(
+          (id) => id !== null && id !== undefined && id !== "" && id !== 0
+        );
+
+        if (idsValidos.length > 0) {
+          const detalles = await Promise.all(idsValidos.map((id) => api.get(`calificaciones/${id}`)));
+          const comentarios = detalles.map((d) => d.data?.comentario ?? "Sin comentario");
+          setCalificaciones(comentarios);
+        } else {
+          setCalificaciones([]);
+        }
+      } else {
+        setCalificaciones([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener los detalles de la clase:", error);
+      Alert.alert("Error", "No se pudieron cargar los detalles de la clase. Intenta más tarde.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchClase();
+}, []);
+
+  const cupoDisponible = clase?.cupo > 0;
   const puedeReservar = cupoDisponible && !estaReservada;
-
   const handleReservar = async () => {
-    if (!puedeReservar) return;
+    if (!clase || estaReservada) return;
 
     try {
-      const res = await fetcher("/reservas", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: {
-          idReserva: nanoid(),
-          idClase: clase.idClase,
-          idUsuario: user.id,
-          estado: "CONFIRMADA",
-          timestampCreacion: new Date().toISOString(),
-        },
+      const res = await api.post("/reservas", {
+        idClase: clase.idClase,
+        idUsuario: user.id,
+        estado: "CONFIRMADA",
+        timestampCreacion: new Date().toISOString(),
       });
 
-      if (res?.idReserva) {
+      if (res.data?.idReserva) {
         Alert.alert("Éxito", "Reserva creada con éxito.");
-        mutate(); // Refresca reservas
+
+        // Actualizar estado local de la clase (reducir cupo)
+        setClase((prev) => ({ ...prev, cupo: prev.cupo - 1 }));
+        setEstaReservada(true);
       } else {
         Alert.alert("Error", "No se pudo crear la reserva.");
       }
@@ -61,8 +89,9 @@ export default function ClassDetail({ route }) {
       console.error("Error al reservar:", error);
       Alert.alert("Error", "Ocurrió un error al reservar la clase.");
     }
-  };
-
+};
+  const isLoading = !clase;
+  
   if (isLoading) {
     return (
       <Surface
@@ -113,14 +142,14 @@ export default function ClassDetail({ route }) {
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
             Profesor:{' '}
             <Text variant="titleMedium" style={{ color: theme.colors.tertiary, fontWeight: "600" }}>
-              {clase.profesorNombre}
+              {item.profesorNombre}
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
             Sede:{' '}
             <Text variant="titleMedium" style={{ color: theme.colors.tertiary, fontWeight: "600" }}>
-              {clase.sedeNombre}
+              {item.sedeNombre}
             </Text>
           </Text>
 
@@ -158,12 +187,44 @@ export default function ClassDetail({ route }) {
             </Text>
           </Text>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Calificaciones:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.tertiary }}>
-              {Array.isArray(clase.calificaciones) ? clase.calificaciones.length : 0}
+                      {/* Calificaciones */}
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Calificaciones:{' '}
+              <Text variant="titleMedium" style={{ color: theme.colors.tertiary }}>
+                {Array.isArray(calificaciones) && calificaciones.length > 0
+                  ? calificaciones.length
+                  : 0}
+              </Text>
             </Text>
-          </Text>
+
+            {/* Lista de comentarios */}
+            {Array.isArray(calificaciones) && calificaciones.length > 0 ? (
+              calificaciones.map((comentario, index) => (
+                <Text
+                  key={index}
+                  variant="bodyMedium"
+                  style={{
+                    color: theme.colors.secondary,
+                    marginLeft: 16,
+                    marginTop: 4,
+                  }}
+                >
+                  • {comentario}
+                </Text>
+              ))
+            ) : (
+              <Text
+                variant="bodyMedium"
+                style={{
+                  color: theme.colors.onSurfaceVariant,
+                  marginLeft: 16,
+                  marginTop: 4,
+                  fontStyle: "italic",
+                }}
+              >
+                No hay calificaciones disponibles
+              </Text>
+            )}
         </Card.Content>
 
         {/* Botón Reservar */}
@@ -172,7 +233,6 @@ export default function ClassDetail({ route }) {
             mode="contained"
             onPress={handleReservar}
             disabled={!puedeReservar}
-            loading={isLoading}
             contentStyle={{ height: 50 }}
             style={{ borderRadius: 12, flex: 1 }}
             buttonColor={
@@ -182,10 +242,7 @@ export default function ClassDetail({ route }) {
                 ? theme.colors.primary
                 : theme.colors.errorContainer
             }
-            labelStyle={{
-              fontWeight: "bold",
-              fontSize: 16,
-            }}
+            labelStyle={{ fontWeight: "bold", fontSize: 16 }}
           >
             {estaReservada
               ? "Ya reservada"
