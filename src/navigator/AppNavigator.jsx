@@ -11,6 +11,7 @@ import ClassesScreen from "../classes/screens/ClassesScreen";
 import ProfileScreen from "../profile/section/ProfileScreen";
 import Reservas from "../reservas";
 import Historial from "../historial/Historial";
+import HistorialAxios from "../historial/HistorialAxios";
 import OtpScreen from "../auth/screens/OtpScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 import { useTheme } from "../config/theme";
@@ -115,7 +116,8 @@ function AppTab() {
       />
       <Tab.Screen
         name="Historial"
-        component={Historial}
+        component={HistorialAxios}
+        //component={Historial}
         options={{ tabBarLabel: "Historial" }}
       />
       <Tab.Screen

@@ -1,4 +1,5 @@
 // src/screens/Historial.jsx
+//IMPORTANTE: ESTA VERSION ESTA CADUCADA, USAR HistorialAxios.jsx
 import React, { useState } from "react";
 import {
   ActivityIndicator,

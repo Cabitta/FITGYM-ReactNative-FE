@@ -1,7 +1,9 @@
 import React from 'react'
 import { Text, View, StyleSheet } from 'react-native'
+import { useTheme } from '../config/theme';
 
 export default function ItemHistorial({item = null}) {
+  const { theme } = useTheme();
 
   //cambia el fondo de acuerdo al estado
   function fondo(item) {
@@ -11,7 +13,7 @@ export default function ItemHistorial({item = null}) {
       return {backgroundColor: "#d6604bff"}
     }else if(item.estado == "EXPIRADA"){
       return {backgroundColor: "#ccc"}
-    }else return {backgroundColor: "#ccc"}
+    }else return {backgroundColor: theme.colors.surface}
   }
 
   if (item == null) {

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/axios'
 import { useAuth } from '../auth/AuthProvider'
 import ItemHistorial from './ItemHistorial';
-import { ActivityIndicator, Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import {agruparPorMes} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
 import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '../config/theme';
 
 export default function HistorialAxios() {
 
@@ -14,6 +15,7 @@ export default function HistorialAxios() {
   const [error,setError] = useState(false)
   const {user} = useAuth();
   const [mesSeleccionado, setMesSeleccionado] = useState("todos");
+  const { theme } = useTheme();
 
   const historialFiltrado = mesSeleccionado === "todos"
     ? historialAgrupado
@@ -36,7 +38,7 @@ export default function HistorialAxios() {
 
   return (
     <>
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
     <Text style={styles.title}>HistorialAxios</Text>
     <View style={styles.separador}></View>
     {cargando ? <ActivityIndicator size={'large'}/> : (error ? <Text style={styles.alerta} >Error al hacer Fetch</Text> :
@@ -47,7 +49,7 @@ export default function HistorialAxios() {
       onValueChange={(value)=>{ 
         setMesSeleccionado(value)
         console.log(value)}}
-        style={{ marginVertical: 10, backgroundColor: '#eee', borderRadius: 8,}}
+        style={{backgroundColor: theme.colors.secondary, borderRadius: 8,padding:10}}
     >
       <Picker.Item label='Todos' value="todos"/>
       {historialAgrupado.map((grupo,index)=>(
