@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Alert,
+  View,
 } from "react-native";
-import AuthInput from "../components/AuthInput";
-import AuthButton from "../components/AuthButton";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Text,
+  TextInput,
+  Button,
+  Surface,
+  Card,
+  HelperText,
+  useTheme as usePaperTheme,
+} from "react-native-paper";
 import { useAuth } from "../AuthProvider";
+import { useTheme } from "../../config/theme";
 
 const RegisterScreen = ({ navigation }) => {
+  const { theme } = useTheme();
+  const paperTheme = usePaperTheme();
+
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -60,17 +69,9 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Limpiar error del campo cuando el usuario empiece a escribir
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -109,167 +110,195 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidingView}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
-            <Text style={styles.title}>Registrarse</Text>
+          <Surface
+            style={{
+              paddingHorizontal: 24,
+              paddingVertical: 24,
+              backgroundColor: theme.colors.surface,
+            }}
+          >
+            {/* Título */}
+            <Text
+              variant="headlineMedium"
+              style={{
+                textAlign: "center",
+                marginBottom: 32,
+                fontWeight: "bold",
+              }}
+            >
+              Registrarse
+            </Text>
 
-            <View style={styles.form}>
-              <AuthInput
-                label="Nombre"
-                value={formData.nombre}
-                onChangeText={(value) => handleInputChange("nombre", value)}
-                placeholder="Ingresa tu nombre completo"
-                error={errors.nombre}
-              />
-
-              <AuthInput
-                label="Email"
-                value={formData.email}
-                onChangeText={(value) => handleInputChange("email", value)}
-                placeholder="Ingresa tu email"
-                keyboardType="email-address"
-                error={errors.email}
-              />
-
-              <AuthInput
-                label="Contraseña"
-                value={formData.password}
-                onChangeText={(value) => handleInputChange("password", value)}
-                placeholder="Crea una contraseña"
-                secureTextEntry
-                error={errors.password}
-              />
-
-              <AuthInput
-                label="Confirmar Contraseña"
-                value={formData.confirmPassword}
-                onChangeText={(value) =>
-                  handleInputChange("confirmPassword", value)
-                }
-                placeholder="Confirma tu contraseña"
-                secureTextEntry
-                error={errors.confirmPassword}
-              />
-
-              <AuthButton
-                title="Registrarse"
-                onPress={handleRegister}
-                loading={loading}
-                style={styles.registerButton}
-              />
-
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>¿Ya tienes una cuenta? </Text>
-                <AuthButton
-                  title="Iniciar Sesión"
-                  onPress={handleLoginPress}
-                  variant="secondary"
-                  style={[styles.loginButton, styles.linkButton]}
-                />
-              </View>
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>
-                  ¿Tu cuenta esta deshabilitada?{" "}
-                </Text>
-                <AuthButton
-                  title="Reenvia el código"
-                  onPress={() =>
-                    navigation.navigate("Otp", { email: formData.email.trim() })
+            <Card
+              elevation={2}
+              style={{
+                padding: 16,
+                borderRadius: 16,
+                backgroundColor: theme.colors.surface,
+              }}
+            >
+              <Card.Content style={{ gap: 12 }}>
+                {/* Nombre */}
+                <TextInput
+                  label="Nombre"
+                  value={formData.nombre}
+                  onChangeText={(v) => handleInputChange("nombre", v)}
+                  mode="outlined"
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.nombre ? theme.colors.error : theme.colors.outline
                   }
-                  variant="secondary"
-                  style={[styles.loginButton, styles.linkButton]}
+                  activeOutlineColor={theme.colors.primary}
+                  theme={{ roundness: 12 }}
                 />
-              </View>
-            </View>
-          </View>
+                <HelperText type="error" visible={!!errors.nombre}>
+                  {errors.nombre}
+                </HelperText>
+
+                {/* Email */}
+                <TextInput
+                  label="Email"
+                  value={formData.email}
+                  onChangeText={(v) => handleInputChange("email", v)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  mode="outlined"
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.email ? theme.colors.error : theme.colors.outline
+                  }
+                  activeOutlineColor={theme.colors.primary}
+                  theme={{ roundness: 10 }}
+                />
+                <HelperText type="error" visible={!!errors.email}>
+                  {errors.email}
+                </HelperText>
+
+                {/* Contraseña */}
+                <TextInput
+                  label="Contraseña"
+                  value={formData.password}
+                  onChangeText={(v) => handleInputChange("password", v)}
+                  secureTextEntry
+                  mode="outlined"
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.password ? theme.colors.error : theme.colors.outline
+                  }
+                  activeOutlineColor={theme.colors.primary}
+                  theme={{ roundness: 10 }}
+                />
+                <HelperText type="error" visible={!!errors.password}>
+                  {errors.password}
+                </HelperText>
+
+                {/* Confirmar Contraseña */}
+                <TextInput
+                  label="Confirmar Contraseña"
+                  value={formData.confirmPassword}
+                  onChangeText={(v) => handleInputChange("confirmPassword", v)}
+                  secureTextEntry
+                  mode="outlined"
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.confirmPassword
+                      ? theme.colors.error
+                      : theme.colors.outline
+                  }
+                  activeOutlineColor={theme.colors.primary}
+                  theme={{ roundness: 10 }}
+                />
+                <HelperText type="error" visible={!!errors.confirmPassword}>
+                  {errors.confirmPassword}
+                </HelperText>
+
+                {/* Botón Registrarse */}
+                <Button
+                  mode="contained"
+                  onPress={handleRegister}
+                  loading={loading}
+                  disabled={loading}
+                  contentStyle={{ height: 50 }}
+                  labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                  buttonColor={theme.colors.primary}
+                  style={{ borderRadius: 12, marginTop: 8 }}
+                >
+                  {loading ? "Registrando..." : "Registrarse"}
+                </Button>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 8,
+                  }}
+                >
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
+                    ¿Ya tienes una cuenta?{" "}
+                  </Text>
+                  <Button
+                    mode="text"
+                    onPress={handleLoginPress}
+                    compact
+                    labelStyle={{
+                      color: theme.colors.primary,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 8,
+                  }}
+                >
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
+                    ¿Tu cuenta está deshabilitada?{" "}
+                  </Text>
+                  <Button
+                    mode="text"
+                    onPress={() =>
+                      navigation.navigate("Otp", {
+                        email: formData.email.trim(),
+                      })
+                    }
+                    compact
+                    labelStyle={{
+                      color: theme.colors.primary,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Ingresar código
+                  </Button>
+                </View>
+              </Card.Content>
+            </Card>
+          </Surface>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 32,
-  },
-  form: {
-    width: "100%",
-  },
-  registerButton: {
-    marginTop: 24,
-    marginBottom: 16,
-    borderWidth: 0,
-    minHeight: 48,
-    paddingVertical: 12,
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  loginText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  loginButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minHeight: "auto",
-  },
-  linkButton: {
-    borderWidth: 0,
-    backgroundColor: "transparent",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    minHeight: 44,
-    marginLeft: 8,
-  },
-  resendContainer: {
-    marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  resendText: {
-    fontSize: 16,
-    color: "#666",
-  },
-});
 
 export default RegisterScreen;
