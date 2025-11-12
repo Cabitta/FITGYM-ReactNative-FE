@@ -46,7 +46,7 @@ class AuthService {
 
   async register(userData) {
     try {
-      const response = await axiosInstance.post('/auth/register', userData , { skipAuth: true });;
+      const response = await axiosInstance.post('/auth/register', userData , { skipAuth: true });
       
       const { id, nombre, email, password, foto } = response.data;
 

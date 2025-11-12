@@ -1,14 +1,14 @@
 // src/screens/Reservas.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { FlatList, View } from "react-native";
 import {
   ActivityIndicator,
   Button,
   Card,
-  Divider,
-  Text,
   Dialog,
+  Divider,
   Portal,
+  Text,
 } from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
@@ -33,6 +33,8 @@ export default function Reservas({ navigation }) {
     }
   );
 
+  console.log("Reservas data:", data);
+
   // Confirmar cancelación
   const handleOpenConfirm = (idReserva) => {
     setReservaToCancel(idReserva);
@@ -54,11 +56,20 @@ export default function Reservas({ navigation }) {
       setSelectedReservaId(null);
       mutate();
     } catch (err) {
-      console.error("Error cancelando reserva:", err?.response?.data || err.message);
+      console.error(
+        "Error cancelando reserva:",
+        err?.response?.data || err.message
+      );
     } finally {
       setIsCancelling(false);
     }
   };
+
+  function estaVencida(fechaClase, horarioInicio) {
+    const ahora = new Date();
+    const fechaClaseCompleta = new Date(`${fechaClase}T${horarioInicio}`);
+    return fechaClaseCompleta <= ahora;
+  }
 
   // Estados: error / carga / vacío
   if (error) {
@@ -119,6 +130,14 @@ export default function Reservas({ navigation }) {
       </View>
     );
   }
+
+  data.map((reserva) => {
+    console.log("Reserva:", reserva?.estado);
+    console.log(
+      "Reserva:",
+      new Date(reserva?.clase?.fecha + "T" + reserva?.clase?.horarioInicio)
+    );
+  });
 
   // Render principal
   return (
@@ -191,12 +210,12 @@ export default function Reservas({ navigation }) {
               </Card.Content>
 
               {/* Fecha */}
-              
+
               <Text
                 variant="bodyMedium"
                 style={{ color: theme.colors.onSurfaceVariant }}
               >
-                Fecha:{' '}
+                Fecha:{" "}
                 <Text
                   style={{
                     color: theme.colors.tertiary,
@@ -211,7 +230,7 @@ export default function Reservas({ navigation }) {
                 variant="bodyMedium"
                 style={{ color: theme.colors.onSurfaceVariant }}
               >
-                Sede:{' '}
+                Sede:{" "}
                 <Text
                   style={{
                     color: theme.colors.tertiary,
@@ -230,9 +249,13 @@ export default function Reservas({ navigation }) {
                   style={{ marginTop: 8, borderRadius: 8 }}
                   onPress={() => handleOpenConfirm(item.idReserva)}
                   loading={isCancelling}
-                  disabled={isCancelling}
+                  disabled={
+                    isCancelling ||
+                    item.estado === "cancelada" ||
+                    estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                  }
                 >
-                  {isCancelling ? "Cancelando..." : "Cancelar reserva"}
+                  {isCancelling ? "Cancelando..." : estaVencida(item.clase?.fecha, item.clase?.horarioInicio) ? "Reserva vencida" : "Cancelar reserva"}
                 </Button>
               )}
             </Card.Content>
