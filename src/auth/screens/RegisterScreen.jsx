@@ -279,7 +279,7 @@ const RegisterScreen = ({ navigation }) => {
                   <Button
                     mode="text"
                     onPress={() =>
-                      navigation.navigate("Otp", {
+                      navigation.navigate("EmailInput", {
                         email: formData.email.trim(),
                       })
                     }
@@ -289,7 +289,7 @@ const RegisterScreen = ({ navigation }) => {
                       fontWeight: "600",
                     }}
                   >
-                    Ingresar código
+                    Enviar código
                   </Button>
                 </View>
               </Card.Content>

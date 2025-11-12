@@ -1,4 +1,3 @@
-// src/auth/screens/LoginScreen.jsx
 import React, { useState, useEffect } from "react";
 import {
   KeyboardAvoidingView,
