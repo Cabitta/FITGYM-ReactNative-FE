@@ -1,7 +1,6 @@
 // src/auth/screens/LoginScreen.jsx
 import React, { useState, useEffect } from "react";
 import {
-  
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -95,7 +94,7 @@ const LoginScreen = ({ navigation }) => {
         Alert.alert("Error", result.error);
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado "+ error.message());
+      Alert.alert("Error", "Ocurrió un error inesperado " + error.message());
     } finally {
       setLoading(false);
     }
@@ -124,21 +123,33 @@ const LoginScreen = ({ navigation }) => {
           contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
           keyboardShouldPersistTaps="handled"
         >
-          <Surface style={{ paddingHorizontal: 24, paddingVertical: 32 }}>
+          <Surface
+            style={{
+              paddingHorizontal: 24,
+              paddingVertical: 32,
+              backgroundColor: theme.colors.surface,
+            }}
+          >
             {/* Título */}
             <Text
               variant="headlineMedium"
               style={{
                 textAlign: "center",
                 marginBottom: 32,
-                color: theme.colors.primary,
                 fontWeight: "bold",
               }}
             >
               Iniciar Sesión
             </Text>
 
-            <Card elevation={2} style={{ padding: 16, borderRadius: 16, backgroundColor: theme.colors.surface }}>
+            <Card
+              elevation={2}
+              style={{
+                padding: 16,
+                borderRadius: 16,
+                backgroundColor: theme.colors.surface,
+              }}
+            >
               <Card.Content style={{ gap: 16 }}>
                 {/* Email */}
                 <View>
@@ -152,7 +163,9 @@ const LoginScreen = ({ navigation }) => {
                     error={!!errors.email}
                     theme={{ roundness: 12 }}
                     style={{ backgroundColor: theme.colors.surface }}
-                    outlineColor={errors.email ? theme.colors.error : theme.colors.outline}
+                    outlineColor={
+                      errors.email ? theme.colors.error : theme.colors.outline
+                    }
                     activeOutlineColor={theme.colors.primary}
                   />
                   <HelperText type="error" visible={!!errors.email}>
@@ -171,7 +184,11 @@ const LoginScreen = ({ navigation }) => {
                     error={!!errors.password}
                     theme={{ roundness: 12 }}
                     style={{ backgroundColor: theme.colors.surface }}
-                    outlineColor={errors.password ? theme.colors.error : theme.colors.outline}
+                    outlineColor={
+                      errors.password
+                        ? theme.colors.error
+                        : theme.colors.outline
+                    }
                     activeOutlineColor={theme.colors.primary}
                   />
                   <HelperText type="error" visible={!!errors.password}>
@@ -200,7 +217,10 @@ const LoginScreen = ({ navigation }) => {
                     onPress={handleBiometricLogin}
                     icon={isDarkMode ? "fingerprint" : "face-recognition"}
                     contentStyle={{ height: 48 }}
-                    style={{ borderRadius: 12, borderColor: theme.colors.secondary }}
+                    style={{
+                      borderRadius: 12,
+                      borderColor: theme.colors.secondary,
+                    }}
                     labelStyle={{ color: theme.colors.secondary }}
                   >
                     Usar Huella / Rostro
@@ -208,15 +228,28 @@ const LoginScreen = ({ navigation }) => {
                 )}
 
                 {/* Registro */}
-                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 8 }}>
-                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 8,
+                  }}
+                >
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
                     ¿No tienes cuenta?{" "}
                   </Text>
                   <Button
                     mode="text"
                     onPress={handleRegisterPress}
                     compact
-                    labelStyle={{ color: theme.colors.tertiary, fontWeight: "600" }}
+                    labelStyle={{
+                      color: theme.colors.primary,
+                      fontWeight: "600",
+                    }}
                   >
                     Regístrate
                   </Button>
