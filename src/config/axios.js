@@ -8,7 +8,8 @@ export const getBaseURL = () => {
   return Platform.OS === 'ios'
     ? 'http://localhost:9090/api/'
     // : 'http://10.0.2.2:9090/api/';
-    : 'http://192.168.100.7:9090/api/';
+    : 'http://192.168.0.140:9090/api/';
+    // : 'http://192.168.100.7:9090/api/';
 };
 
 const axiosInstance = axios.create({

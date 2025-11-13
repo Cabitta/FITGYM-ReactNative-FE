@@ -110,6 +110,12 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("Register");
   };
 
+  const handleEmailInputPress = () => {
+    navigation.navigate("EmailInput", {
+      email: formData.email.trim(),
+    });
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -233,6 +239,20 @@ const LoginScreen = ({ navigation }) => {
                 }}
               >
                 ¿No tienes cuenta?
+              </Button>
+
+              {/* Ir a Enviar Código */}
+              <Button
+                mode="text"
+                onPress={handleEmailInputPress}
+                compact
+                style={{ marginTop: 16 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Tu cuenta está deshabilitada?
               </Button>
             </Card.Content>
           </Card>
