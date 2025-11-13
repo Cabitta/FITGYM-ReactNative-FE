@@ -1,7 +1,5 @@
-// src/auth/screens/LoginScreen.jsx
 import React, { useState, useEffect } from "react";
 import {
-  
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,11 +11,9 @@ import {
   Text,
   TextInput,
   Button,
-  ActivityIndicator,
   Surface,
   useTheme as usePaperTheme,
   HelperText,
-  Portal,
   Card,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -92,10 +88,10 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert("Error", result.error);
+        Alert.alert("Error al iniciar sesión", result.error);
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado "+ error.message());
+      Alert.alert("Error", "Ocurrió un error inesperado " + error.message());
     } finally {
       setLoading(false);
     }
@@ -114,116 +110,152 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("Register");
   };
 
+  const handleEmailInputPress = () => {
+    navigation.navigate("EmailInput", {
+      email: formData.email.trim(),
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.surface,
+      }}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           keyboardShouldPersistTaps="handled"
         >
-          <Surface style={{ paddingHorizontal: 24, paddingVertical: 32 }}>
-            {/* Título */}
-            <Text
-              variant="headlineMedium"
-              style={{
-                textAlign: "center",
-                marginBottom: 32,
-                color: theme.colors.primary,
-                fontWeight: "bold",
-              }}
-            >
-              Iniciar Sesión
-            </Text>
+          <Card
+            elevation={2}
+            style={{
+              padding: 16,
+              marginHorizontal: 16,
+              borderRadius: 16,
+              backgroundColor: theme.colors.surface,
+            }}
+          >
+            <Card.Content>
+              {/* Título */}
+              <Text
+                variant="headlineMedium"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32,
+                  fontWeight: "bold",
+                }}
+              >
+                Iniciar Sesión
+              </Text>
+              {/* Email */}
+              <View>
+                <TextInput
+                  label="Email"
+                  value={formData.email}
+                  onChangeText={(v) => handleInputChange("email", v)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  mode="outlined"
+                  error={!!errors.email}
+                  theme={{ roundness: 12 }}
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.email ? theme.colors.error : theme.colors.outline
+                  }
+                  activeOutlineColor={theme.colors.primary}
+                />
+                <HelperText type="error" visible={!!errors.email}>
+                  {errors.email}
+                </HelperText>
+              </View>
 
-            <Card elevation={2} style={{ padding: 16, borderRadius: 16, backgroundColor: theme.colors.surface }}>
-              <Card.Content style={{ gap: 16 }}>
-                {/* Email */}
-                <View>
-                  <TextInput
-                    label="Email"
-                    value={formData.email}
-                    onChangeText={(v) => handleInputChange("email", v)}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    mode="outlined"
-                    error={!!errors.email}
-                    theme={{ roundness: 12 }}
-                    style={{ backgroundColor: theme.colors.surface }}
-                    outlineColor={errors.email ? theme.colors.error : theme.colors.outline}
-                    activeOutlineColor={theme.colors.primary}
-                  />
-                  <HelperText type="error" visible={!!errors.email}>
-                    {errors.email}
-                  </HelperText>
-                </View>
+              {/* Contraseña */}
+              <View>
+                <TextInput
+                  label="Contraseña"
+                  value={formData.password}
+                  onChangeText={(v) => handleInputChange("password", v)}
+                  secureTextEntry
+                  mode="outlined"
+                  error={!!errors.password}
+                  theme={{ roundness: 12 }}
+                  style={{ backgroundColor: theme.colors.surface }}
+                  outlineColor={
+                    errors.password ? theme.colors.error : theme.colors.outline
+                  }
+                  activeOutlineColor={theme.colors.primary}
+                />
+                <HelperText type="error" visible={!!errors.password}>
+                  {errors.password}
+                </HelperText>
+              </View>
 
-                {/* Contraseña */}
-                <View>
-                  <TextInput
-                    label="Contraseña"
-                    value={formData.password}
-                    onChangeText={(v) => handleInputChange("password", v)}
-                    secureTextEntry
-                    mode="outlined"
-                    error={!!errors.password}
-                    theme={{ roundness: 12 }}
-                    style={{ backgroundColor: theme.colors.surface }}
-                    outlineColor={errors.password ? theme.colors.error : theme.colors.outline}
-                    activeOutlineColor={theme.colors.primary}
-                  />
-                  <HelperText type="error" visible={!!errors.password}>
-                    {errors.password}
-                  </HelperText>
-                </View>
+              {/* Botón Iniciar Sesión */}
+              <Button
+                mode="contained"
+                onPress={handleLogin}
+                loading={loading}
+                disabled={loading}
+                contentStyle={{ height: 50 }}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                style={{ borderRadius: 12 }}
+                buttonColor={theme.colors.primary}
+              >
+                {loading ? "Iniciando..." : "Iniciar Sesión"}
+              </Button>
 
-                {/* Botón Iniciar Sesión */}
+              {/* Biometría */}
+              {biometricAvailable && (
                 <Button
-                  mode="contained"
-                  onPress={handleLogin}
-                  loading={loading}
-                  disabled={loading}
-                  contentStyle={{ height: 50 }}
-                  labelStyle={{ fontSize: 16, fontWeight: "600" }}
-                  style={{ borderRadius: 12 }}
-                  buttonColor={theme.colors.primary}
+                  mode="outlined"
+                  onPress={handleBiometricLogin}
+                  icon={isDarkMode ? "fingerprint" : "face-recognition"}
+                  contentStyle={{ height: 48 }}
+                  style={{
+                    borderRadius: 12,
+                    marginTop: 24,
+                    borderColor: theme.colors.secondary,
+                  }}
+                  labelStyle={{ color: theme.colors.secondary }}
                 >
-                  {loading ? "Iniciando..." : "Iniciar Sesión"}
+                  Usar Huella / Rostro
                 </Button>
+              )}
 
-                {/* Biometría */}
-                {biometricAvailable && (
-                  <Button
-                    mode="outlined"
-                    onPress={handleBiometricLogin}
-                    icon={isDarkMode ? "fingerprint" : "face-recognition"}
-                    contentStyle={{ height: 48 }}
-                    style={{ borderRadius: 12, borderColor: theme.colors.secondary }}
-                    labelStyle={{ color: theme.colors.secondary }}
-                  >
-                    Usar Huella / Rostro
-                  </Button>
-                )}
+              {/* Ir a Registro */}
+              <Button
+                mode="text"
+                onPress={handleRegisterPress}
+                compact
+                style={{ marginTop: 32 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿No tienes cuenta?
+              </Button>
 
-                {/* Registro */}
-                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 8 }}>
-                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                    ¿No tienes cuenta?{" "}
-                  </Text>
-                  <Button
-                    mode="text"
-                    onPress={handleRegisterPress}
-                    compact
-                    labelStyle={{ color: theme.colors.tertiary, fontWeight: "600" }}
-                  >
-                    Regístrate
-                  </Button>
-                </View>
-              </Card.Content>
-            </Card>
-          </Surface>
+              {/* Ir a Enviar Código */}
+              <Button
+                mode="text"
+                onPress={handleEmailInputPress}
+                compact
+                style={{ marginTop: 16 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Tu cuenta está deshabilitada?
+              </Button>
+            </Card.Content>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

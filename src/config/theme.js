@@ -5,11 +5,11 @@ const lightTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#11111091", // Rojo Pokémon
-    secondary: "#ffcd058d", // Amarillo Pokémon
-    tertiary: "#1f1e20a4", // Azul Pokémon
-    background: "#8f909220", // Color base (fallback)
-    surface: "#eff2eeff",
+    primary: "#007AFF",
+    secondary: "#06A77D",
+    tertiary: "#1f1e20a4",
+    background: "#8f909220", // Color base
+    surface: "#F8F9FA", // Color de superficie
   },
 
 };
@@ -18,9 +18,9 @@ const darkTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: '#E63F34', // Rojo Pokémon
-    secondary: '#FFCB05', // Amarillo Pokémon
-    tertiary: '#3B4CCA', // Azul Pokémon
+    primary: '#E63F34', // Rojo
+    secondary: '#FFCB05', // Amarillo
+    tertiary: '#3B4CCA', // Azul
     background: '#12121283',
     surface: '#8e8d8dd1',
   },

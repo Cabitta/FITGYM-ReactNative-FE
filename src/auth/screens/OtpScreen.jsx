@@ -1,18 +1,33 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  View as RNView,
 } from "react-native";
+import {
+  Text,
+  Button,
+  useTheme as usePaperTheme,
+  HelperText,
+  Card,
+} from "react-native-paper";
+import {
+  CodeField,
+  Cursor,
+  useBlurOnFulfill,
+  useClearByFocusCell,
+} from "react-native-confirmation-code-field";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../AuthProvider";
+import { useTheme } from "../../config/theme";
 
 const OtpScreen = ({ navigation, route }) => {
+  const { theme, isDarkMode } = useTheme();
+  const paperTheme = usePaperTheme();
+
   const { email: routeEmail } = route.params || {};
   const [email, setEmail] = useState(routeEmail || "");
   const [otp, setOtp] = useState("");
@@ -41,10 +56,6 @@ const OtpScreen = ({ navigation, route }) => {
     }
   };
 
-  const handleBackToLogin = () => {
-    navigation.navigate("Login");
-  };
-
   const handleResend = async () => {
     if (!email.trim()) {
       Alert.alert("Error", "Por favor ingresa el email para reenviar");
@@ -65,64 +76,138 @@ const OtpScreen = ({ navigation, route }) => {
     }
   };
 
+  const handleLoginPress = () => {
+    navigation.navigate("Login");
+  };
+
+  const handleSendCodePress = () => {
+    navigation.navigate("EmailInput");
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
+        style={{ flex: 1 }}
       >
-        <View style={styles.content}>
-          <Text style={styles.title}>Habilitar Cuenta</Text>
-
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            placeholder="tu@email.com"
-          />
-
-          <Text style={styles.label}>Código OTP</Text>
-          <TextInput
-            style={styles.input}
-            value={otp}
-            onChangeText={setOtp}
-            keyboardType="number-pad"
-            placeholder="Ingresa el código"
-          />
-
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleVerify}
-            disabled={loading}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Card
+            elevation={2}
+            style={{
+              padding: 16,
+              marginHorizontal: 16,
+              borderRadius: 16,
+              backgroundColor: theme.colors.surface,
+            }}
           >
-            <Text style={styles.buttonText}>
-              {loading ? "Verificando..." : "Verificar"}
-            </Text>
-          </TouchableOpacity>
+            <Card.Content>
+              {/* Título */}
+              <Text
+                variant="headlineMedium"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32,
+                  fontWeight: "bold",
+                }}
+              >
+                Ingresa tu código
+              </Text>
 
-          <TouchableOpacity
-            style={[
-              styles.buttonSecondary,
-              resendLoading && styles.buttonDisabled,
-            ]}
-            onPress={handleResend}
-            disabled={resendLoading}
-          >
-            <Text style={styles.buttonText}>
-              {resendLoading ? "Enviando..." : "Reenviar código"}
-            </Text>
-          </TouchableOpacity>
+              {/* Descripción */}
+              <Text
+                variant="bodyLarge"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32,
+                }}
+              >
+                Te enviamos un código a {email || "tu email"}. Ingresa el código
+                para habilitar tu cuenta.
+              </Text>
 
-          <TouchableOpacity
-            onPress={handleBackToLogin}
-            style={styles.secondary}
-          >
-            <Text style={styles.secondaryText}>Volver al inicio de sesión</Text>
-          </TouchableOpacity>
-        </View>
+              <RNView
+                style={{ alignItems: "center", marginTop: 8, marginBottom: 12 }}
+              >
+                <CodeField
+                  value={otp}
+                  onChangeText={(val) => setOtp(val)}
+                  cellCount={6}
+                  rootStyle={styles.codeFieldRoot}
+                  keyboardType="number-pad"
+                  textContentType="oneTimeCode"
+                  renderCell={({ index, symbol, isFocused }) => (
+                    <RNView
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={index}
+                      style={[
+                        styles.cell,
+                        isFocused && styles.cellFocused,
+                        {
+                          backgroundColor: theme.colors.surface,
+                          borderColor: theme.colors.outline,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.cellText,
+                          { color: theme.colors.onSurface },
+                        ]}
+                      >
+                        {symbol || (isFocused ? <Cursor /> : null)}
+                      </Text>
+                    </RNView>
+                  )}
+                />
+              </RNView>
+
+              {/* Botón enviar código */}
+              <Button
+                mode="contained"
+                onPress={handleVerify}
+                loading={loading}
+                disabled={loading}
+                contentStyle={{ height: 50 }}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                style={{ borderRadius: 12, marginTop: 32 }}
+                buttonColor={theme.colors.primary}
+              >
+                {loading ? "Verificando.." : "Verificar"}
+              </Button>
+
+              {/* Ir a Iniciar Sesión */}
+              <Button
+                mode="text"
+                onPress={handleLoginPress}
+                compact
+                style={{ marginTop: 32 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Ya tienes una cuenta?
+              </Button>
+
+              {/* Ir a Verificar Código */}
+              <Button
+                mode="text"
+                onPress={handleSendCodePress}
+                compact
+                style={{ marginTop: 16 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿No recibiste un código?
+              </Button>
+            </Card.Content>
+          </Card>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -146,6 +231,42 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e6e6e6",
   },
+  otpContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  boxInput: {
+    width: 48,
+    height: 56,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e6e6e6",
+    fontSize: 20,
+    marginHorizontal: 4,
+  },
+  codeFieldRoot: { marginTop: 8 },
+  cell: {
+    width: 48,
+    height: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e6e6e6",
+    marginHorizontal: 6,
+  },
+  cellFocused: {
+    borderColor: "#6200ee",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cellText: { fontSize: 20, textAlign: "center" },
   button: {
     backgroundColor: "#007bff",
     padding: 14,
