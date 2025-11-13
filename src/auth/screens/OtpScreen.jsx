@@ -37,42 +37,20 @@ const OtpScreen = ({ navigation, route }) => {
   const [resendLoading, setResendLoading] = useState(false);
 
   const handleVerify = async () => {
-    if (!email.trim() || !otp.trim()) {
-      Alert.alert("Error", "Por favor ingresa email y código OTP");
+    if (!otp.trim()) {
+      Alert.alert("Error", "Por favor ingresa un código");
       return;
     }
     setLoading(true);
     try {
       const res = await verifyOtp(email.trim(), otp.trim());
-      if (res.success) {
-        Alert.alert("Éxito", "Código verificado. Ingresando...");
-      } else {
-        Alert.alert("Error", res.error || "Código inválido");
+      if (!res.success) {
+        Alert.alert("Error", "Código inválido");
       }
     } catch (e) {
       Alert.alert("Error", "Ocurrió un error inesperado");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (!email.trim()) {
-      Alert.alert("Error", "Por favor ingresa el email para reenviar");
-      return;
-    }
-    setResendLoading(true);
-    try {
-      const r = await resendOtp(email.trim());
-      if (r.success) {
-        Alert.alert("OK", "Código reenviado al email si existe");
-      } else {
-        Alert.alert("Error", r.error || "No se pudo reenviar el código");
-      }
-    } catch (e) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
-    } finally {
-      setResendLoading(false);
     }
   };
 

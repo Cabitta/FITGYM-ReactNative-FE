@@ -56,7 +56,7 @@ const EmailInputScreen = ({ navigation }) => {
       if (r.success) {
         navigation.navigate("Otp", { email: formData.email });
       } else {
-        Alert.alert("Error", r.error || "No se pudo reenviar el código");
+        Alert.alert("Error", "No se pudo enviar el código");
       }
     } catch (e) {
       Alert.alert("Error", "Ocurrió un error inesperado");

@@ -51,11 +51,9 @@ const RegisterScreen = ({ navigation }) => {
     // Validar password
     if (!formData.password.trim()) {
       newErrors.password = "La contraseña es requerida";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres";
     }
-    // Comentado temporalmente para desarrollo
-    // else if (formData.password.length < 6) {
-    //   newErrors.password = "La contraseña debe tener al menos 6 caracteres";
-    // }
 
     // Validar confirmación de password
     if (!formData.confirmPassword.trim()) {
@@ -92,7 +90,7 @@ const RegisterScreen = ({ navigation }) => {
       const result = await register(userData);
 
       if (!result.success) {
-        Alert.alert("Error", result.error);
+        Alert.alert("Error", "No se pudo registrar el usuario");
       } else {
         // Si el registro fue exitoso, navegar a la pantalla de OTP para
         // completar la verificación y obtener los tokens.
