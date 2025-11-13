@@ -88,10 +88,10 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert("Error al iniciar sesión", result.error);
+        Alert.alert("Error al iniciar sesión", "Credenciales inválidas");
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado " + error.message());
+      Alert.alert("Error", "Ocurrió un error inesperado ");
     } finally {
       setLoading(false);
     }
