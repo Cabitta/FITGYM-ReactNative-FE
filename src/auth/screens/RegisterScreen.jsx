@@ -109,192 +109,162 @@ const RegisterScreen = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
+  const handleEmailInputPress = () => {
+    navigation.navigate("EmailInput", {
+      email: formData.email.trim(),
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <Surface
+          <Card
+            elevation={2}
             style={{
-              paddingHorizontal: 24,
-              paddingVertical: 24,
+              padding: 16,
+              marginHorizontal: 16,
+              borderRadius: 16,
               backgroundColor: theme.colors.surface,
             }}
           >
-            {/* Título */}
-            <Text
-              variant="headlineMedium"
-              style={{
-                textAlign: "center",
-                marginBottom: 32,
-                fontWeight: "bold",
-              }}
-            >
-              Registrarse
-            </Text>
+            <Card.Content>
+              {/* Título */}
+              <Text
+                variant="headlineMedium"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32,
+                  fontWeight: "bold",
+                }}
+              >
+                Registrarse
+              </Text>
+              {/* Nombre */}
+              <TextInput
+                label="Nombre"
+                value={formData.nombre}
+                onChangeText={(v) => handleInputChange("nombre", v)}
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.nombre ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 12 }}
+              />
+              <HelperText type="error" visible={!!errors.nombre}>
+                {errors.nombre}
+              </HelperText>
 
-            <Card
-              elevation={2}
-              style={{
-                padding: 16,
-                borderRadius: 16,
-                backgroundColor: theme.colors.surface,
-              }}
-            >
-              <Card.Content style={{ gap: 12 }}>
-                {/* Nombre */}
-                <TextInput
-                  label="Nombre"
-                  value={formData.nombre}
-                  onChangeText={(v) => handleInputChange("nombre", v)}
-                  mode="outlined"
-                  style={{ backgroundColor: theme.colors.surface }}
-                  outlineColor={
-                    errors.nombre ? theme.colors.error : theme.colors.outline
-                  }
-                  activeOutlineColor={theme.colors.primary}
-                  theme={{ roundness: 12 }}
-                />
-                <HelperText type="error" visible={!!errors.nombre}>
-                  {errors.nombre}
-                </HelperText>
+              {/* Email */}
+              <TextInput
+                label="Email"
+                value={formData.email}
+                onChangeText={(v) => handleInputChange("email", v)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.email ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
+              />
+              <HelperText type="error" visible={!!errors.email}>
+                {errors.email}
+              </HelperText>
 
-                {/* Email */}
-                <TextInput
-                  label="Email"
-                  value={formData.email}
-                  onChangeText={(v) => handleInputChange("email", v)}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  mode="outlined"
-                  style={{ backgroundColor: theme.colors.surface }}
-                  outlineColor={
-                    errors.email ? theme.colors.error : theme.colors.outline
-                  }
-                  activeOutlineColor={theme.colors.primary}
-                  theme={{ roundness: 10 }}
-                />
-                <HelperText type="error" visible={!!errors.email}>
-                  {errors.email}
-                </HelperText>
+              {/* Contraseña */}
+              <TextInput
+                label="Contraseña"
+                value={formData.password}
+                onChangeText={(v) => handleInputChange("password", v)}
+                secureTextEntry
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.password ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
+              />
+              <HelperText type="error" visible={!!errors.password}>
+                {errors.password}
+              </HelperText>
 
-                {/* Contraseña */}
-                <TextInput
-                  label="Contraseña"
-                  value={formData.password}
-                  onChangeText={(v) => handleInputChange("password", v)}
-                  secureTextEntry
-                  mode="outlined"
-                  style={{ backgroundColor: theme.colors.surface }}
-                  outlineColor={
-                    errors.password ? theme.colors.error : theme.colors.outline
-                  }
-                  activeOutlineColor={theme.colors.primary}
-                  theme={{ roundness: 10 }}
-                />
-                <HelperText type="error" visible={!!errors.password}>
-                  {errors.password}
-                </HelperText>
+              {/* Confirmar Contraseña */}
+              <TextInput
+                label="Confirmar Contraseña"
+                value={formData.confirmPassword}
+                onChangeText={(v) => handleInputChange("confirmPassword", v)}
+                secureTextEntry
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.confirmPassword
+                    ? theme.colors.error
+                    : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
+              />
+              <HelperText type="error" visible={!!errors.confirmPassword}>
+                {errors.confirmPassword}
+              </HelperText>
 
-                {/* Confirmar Contraseña */}
-                <TextInput
-                  label="Confirmar Contraseña"
-                  value={formData.confirmPassword}
-                  onChangeText={(v) => handleInputChange("confirmPassword", v)}
-                  secureTextEntry
-                  mode="outlined"
-                  style={{ backgroundColor: theme.colors.surface }}
-                  outlineColor={
-                    errors.confirmPassword
-                      ? theme.colors.error
-                      : theme.colors.outline
-                  }
-                  activeOutlineColor={theme.colors.primary}
-                  theme={{ roundness: 10 }}
-                />
-                <HelperText type="error" visible={!!errors.confirmPassword}>
-                  {errors.confirmPassword}
-                </HelperText>
+              {/* Botón Registrarse */}
+              <Button
+                mode="contained"
+                onPress={handleRegister}
+                loading={loading}
+                disabled={loading}
+                contentStyle={{ height: 50 }}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                buttonColor={theme.colors.primary}
+                style={{ borderRadius: 12, marginTop: 8 }}
+              >
+                {loading ? "Registrando..." : "Registrarse"}
+              </Button>
+              {/* Ir a Iniciar Sesión */}
+              <Button
+                mode="text"
+                onPress={handleLoginPress}
+                compact
+                style={{ marginTop: 32 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Ya tienes una cuenta?
+              </Button>
 
-                {/* Botón Registrarse */}
-                <Button
-                  mode="contained"
-                  onPress={handleRegister}
-                  loading={loading}
-                  disabled={loading}
-                  contentStyle={{ height: 50 }}
-                  labelStyle={{ fontSize: 16, fontWeight: "600" }}
-                  buttonColor={theme.colors.primary}
-                  style={{ borderRadius: 12, marginTop: 8 }}
-                >
-                  {loading ? "Registrando..." : "Registrarse"}
-                </Button>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 8,
-                  }}
-                >
-                  <Text
-                    variant="bodyMedium"
-                    style={{ color: theme.colors.onSurfaceVariant }}
-                  >
-                    ¿Ya tienes una cuenta?{" "}
-                  </Text>
-                  <Button
-                    mode="text"
-                    onPress={handleLoginPress}
-                    compact
-                    labelStyle={{
-                      color: theme.colors.primary,
-                      fontWeight: "600",
-                    }}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 8,
-                  }}
-                >
-                  <Text
-                    variant="bodyMedium"
-                    style={{ color: theme.colors.onSurfaceVariant }}
-                  >
-                    ¿Tu cuenta está deshabilitada?{" "}
-                  </Text>
-                  <Button
-                    mode="text"
-                    onPress={() =>
-                      navigation.navigate("EmailInput", {
-                        email: formData.email.trim(),
-                      })
-                    }
-                    compact
-                    labelStyle={{
-                      color: theme.colors.primary,
-                      fontWeight: "600",
-                    }}
-                  >
-                    Enviar código
-                  </Button>
-                </View>
-              </Card.Content>
-            </Card>
-          </Surface>
+              {/* Ir a Enviar Código */}
+              <Button
+                mode="text"
+                onPress={handleEmailInputPress}
+                compact
+                style={{ marginTop: 16 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Tu cuenta está deshabilitada?
+              </Button>
+            </Card.Content>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
