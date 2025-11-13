@@ -1,5 +1,6 @@
 // src/screens/Reservas.jsx
-import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { FlatList, View } from "react-native";
 import {
   ActivityIndicator,
@@ -31,6 +32,12 @@ export default function Reservas({ navigation }) {
       const response = await axiosInstance.get(url);
       return response.data;
     }
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      mutate();
+    }, [])
   );
 
   console.log("Reservas data:", data);
@@ -240,6 +247,22 @@ export default function Reservas({ navigation }) {
                   {item.sede?.nombre || "No disponible"}
                 </Text>
               </Text>
+              <Text
+                variant="bodyMedium"
+                style={{ color: theme.colors.onSurfaceVariant }}
+              >
+                Estado:{" "}
+                <Text
+                  style={{
+                    color: theme.colors.tertiary,
+                    fontWeight: "600",
+                  }}
+                >
+                  {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                    ? "VENCIDA"
+                    : item.estado || "CONFIRMADA"}
+                </Text>
+              </Text>
 
               {selectedReservaId === item.idReserva && (
                 <Button
@@ -255,7 +278,11 @@ export default function Reservas({ navigation }) {
                     estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                   }
                 >
-                  {isCancelling ? "Cancelando..." : estaVencida(item.clase?.fecha, item.clase?.horarioInicio) ? "Reserva vencida" : "Cancelar reserva"}
+                  {isCancelling
+                    ? "Cancelando..."
+                    : estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                    ? "Reserva vencida"
+                    : "Cancelar reserva"}
                 </Button>
               )}
             </Card.Content>
