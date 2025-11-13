@@ -274,7 +274,7 @@ export default function Reservas({ navigation }) {
                   loading={isCancelling}
                   disabled={
                     isCancelling ||
-                    item.estado === "cancelada" ||
+                    item.estado === "CANCELADA" ||
                     estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                   }
                 >
@@ -282,6 +282,8 @@ export default function Reservas({ navigation }) {
                     ? "Cancelando..."
                     : estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                     ? "Reserva vencida"
+                    : item.estado === "CANCELADA"
+                    ? "Reserva cancelada"
                     : "Cancelar reserva"}
                 </Button>
               )}
