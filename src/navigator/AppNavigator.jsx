@@ -13,6 +13,7 @@ import Reservas from "../reservas";
 import Historial from "../historial/Historial";
 import HistorialAxios from "../historial/HistorialAxios";
 import OtpScreen from "../auth/screens/OtpScreen";
+import EmailInputScreen from "../auth/screens/EmailInputScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 import { useTheme } from "../config/theme";
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ const AuthStack = () => (
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Register" component={RegisterScreen} />
     <Stack.Screen name="Otp" component={OtpScreen} />
+    <Stack.Screen name="EmailInput" component={EmailInputScreen} />
   </Stack.Navigator>
 );
 
@@ -44,8 +46,8 @@ function AppStack() {
 }
 
 function AppTab() {
-    const { theme } = useTheme();
-  
+  const { theme } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -108,7 +110,7 @@ function AppTab() {
         component={Reservas}
         options={{ tabBarLabel: "Reservas" }}
       />
-      
+
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}

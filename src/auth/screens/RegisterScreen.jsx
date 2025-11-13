@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Alert,
+  View,
 } from "react-native";
-import AuthInput from "../components/AuthInput";
-import AuthButton from "../components/AuthButton";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Text,
+  TextInput,
+  Button,
+  Surface,
+  Card,
+  HelperText,
+  useTheme as usePaperTheme,
+} from "react-native-paper";
 import { useAuth } from "../AuthProvider";
+import { useTheme } from "../../config/theme";
 
 const RegisterScreen = ({ navigation }) => {
+  const { theme } = useTheme();
+  const paperTheme = usePaperTheme();
+
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -42,11 +51,9 @@ const RegisterScreen = ({ navigation }) => {
     // Validar password
     if (!formData.password.trim()) {
       newErrors.password = "La contraseña es requerida";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres";
     }
-    // Comentado temporalmente para desarrollo
-    // else if (formData.password.length < 6) {
-    //   newErrors.password = "La contraseña debe tener al menos 6 caracteres";
-    // }
 
     // Validar confirmación de password
     if (!formData.confirmPassword.trim()) {
@@ -60,17 +67,9 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Limpiar error del campo cuando el usuario empiece a escribir
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -91,7 +90,7 @@ const RegisterScreen = ({ navigation }) => {
       const result = await register(userData);
 
       if (!result.success) {
-        Alert.alert("Error", result.error);
+        Alert.alert("Error", "No se pudo registrar el usuario");
       } else {
         // Si el registro fue exitoso, navegar a la pantalla de OTP para
         // completar la verificación y obtener los tokens.
@@ -108,168 +107,166 @@ const RegisterScreen = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
+  const handleEmailInputPress = () => {
+    navigation.navigate("EmailInput", {
+      email: formData.email.trim(),
+    });
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidingView}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+          }}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
-            <Text style={styles.title}>Registrarse</Text>
-
-            <View style={styles.form}>
-              <AuthInput
+          <Card
+            elevation={2}
+            style={{
+              padding: 16,
+              marginHorizontal: 16,
+              borderRadius: 16,
+              backgroundColor: theme.colors.surface,
+            }}
+          >
+            <Card.Content>
+              {/* Título */}
+              <Text
+                variant="headlineMedium"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32,
+                  fontWeight: "bold",
+                }}
+              >
+                Registrarse
+              </Text>
+              {/* Nombre */}
+              <TextInput
                 label="Nombre"
                 value={formData.nombre}
-                onChangeText={(value) => handleInputChange("nombre", value)}
-                placeholder="Ingresa tu nombre completo"
-                error={errors.nombre}
+                onChangeText={(v) => handleInputChange("nombre", v)}
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.nombre ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 12 }}
               />
+              <HelperText type="error" visible={!!errors.nombre}>
+                {errors.nombre}
+              </HelperText>
 
-              <AuthInput
+              {/* Email */}
+              <TextInput
                 label="Email"
                 value={formData.email}
-                onChangeText={(value) => handleInputChange("email", value)}
-                placeholder="Ingresa tu email"
+                onChangeText={(v) => handleInputChange("email", v)}
                 keyboardType="email-address"
-                error={errors.email}
+                autoCapitalize="none"
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.email ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
               />
+              <HelperText type="error" visible={!!errors.email}>
+                {errors.email}
+              </HelperText>
 
-              <AuthInput
+              {/* Contraseña */}
+              <TextInput
                 label="Contraseña"
                 value={formData.password}
-                onChangeText={(value) => handleInputChange("password", value)}
-                placeholder="Crea una contraseña"
+                onChangeText={(v) => handleInputChange("password", v)}
                 secureTextEntry
-                error={errors.password}
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.password ? theme.colors.error : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
               />
+              <HelperText type="error" visible={!!errors.password}>
+                {errors.password}
+              </HelperText>
 
-              <AuthInput
+              {/* Confirmar Contraseña */}
+              <TextInput
                 label="Confirmar Contraseña"
                 value={formData.confirmPassword}
-                onChangeText={(value) =>
-                  handleInputChange("confirmPassword", value)
-                }
-                placeholder="Confirma tu contraseña"
+                onChangeText={(v) => handleInputChange("confirmPassword", v)}
                 secureTextEntry
-                error={errors.confirmPassword}
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                outlineColor={
+                  errors.confirmPassword
+                    ? theme.colors.error
+                    : theme.colors.outline
+                }
+                activeOutlineColor={theme.colors.primary}
+                theme={{ roundness: 10 }}
               />
+              <HelperText type="error" visible={!!errors.confirmPassword}>
+                {errors.confirmPassword}
+              </HelperText>
 
-              <AuthButton
-                title="Registrarse"
+              {/* Botón Registrarse */}
+              <Button
+                mode="contained"
                 onPress={handleRegister}
                 loading={loading}
-                style={styles.registerButton}
-              />
+                disabled={loading}
+                contentStyle={{ height: 50 }}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                buttonColor={theme.colors.primary}
+                style={{ borderRadius: 12, marginTop: 8 }}
+              >
+                {loading ? "Registrando..." : "Registrarse"}
+              </Button>
+              {/* Ir a Iniciar Sesión */}
+              <Button
+                mode="text"
+                onPress={handleLoginPress}
+                compact
+                style={{ marginTop: 32 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Ya tienes una cuenta?
+              </Button>
 
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>¿Ya tienes una cuenta? </Text>
-                <AuthButton
-                  title="Iniciar Sesión"
-                  onPress={handleLoginPress}
-                  variant="secondary"
-                  style={[styles.loginButton, styles.linkButton]}
-                />
-              </View>
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>
-                  ¿Tu cuenta esta deshabilitada?{" "}
-                </Text>
-                <AuthButton
-                  title="Reenvia el código"
-                  onPress={() =>
-                    navigation.navigate("Otp", { email: formData.email.trim() })
-                  }
-                  variant="secondary"
-                  style={[styles.loginButton, styles.linkButton]}
-                />
-              </View>
-            </View>
-          </View>
+              {/* Ir a Enviar Código */}
+              <Button
+                mode="text"
+                onPress={handleEmailInputPress}
+                compact
+                style={{ marginTop: 16 }}
+                labelStyle={{
+                  color: theme.colors.primary,
+                  fontWeight: "600",
+                }}
+              >
+                ¿Tu cuenta está deshabilitada?
+              </Button>
+            </Card.Content>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 32,
-  },
-  form: {
-    width: "100%",
-  },
-  registerButton: {
-    marginTop: 24,
-    marginBottom: 16,
-    borderWidth: 0,
-    minHeight: 48,
-    paddingVertical: 12,
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  loginText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  loginButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minHeight: "auto",
-  },
-  linkButton: {
-    borderWidth: 0,
-    backgroundColor: "transparent",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    minHeight: 44,
-    marginLeft: 8,
-  },
-  resendContainer: {
-    marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  resendText: {
-    fontSize: 16,
-    color: "#666",
-  },
-});
 
 export default RegisterScreen;
