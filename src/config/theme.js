@@ -5,11 +5,11 @@ const lightTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#007AFF", // Rojo 
-    secondary: "#ffcd058d", // Amarillo 
-    tertiary: "#1f1e20a4", // Azul 
-    background: "#8f909220", // Color base (fallback)
-    surface: "#F8F9FA", // Color de superficie claro
+    primary: "#007AFF",
+    secondary: "#06A77D",
+    tertiary: "#1f1e20a4",
+    background: "#8f909220", // Color base
+    surface: "#F8F9FA", // Color de superficie
   },
 
 };
