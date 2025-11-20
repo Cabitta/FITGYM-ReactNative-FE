@@ -16,6 +16,7 @@ import OtpScreen from "../auth/screens/OtpScreen";
 import EmailInputScreen from "../auth/screens/EmailInputScreen";
 import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 import { useTheme } from "../config/theme";
+import QRScanner from "../Qr";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -96,6 +97,15 @@ function AppTab() {
               />
             );
           }
+          if (route.name === "QRScanner") {
+            return (
+              <MaterialCommunityIcons
+                name="qrcode-scan"
+                size={size}
+                color={color}
+              />
+            );
+          }
           return null;
         },
       })}
@@ -110,7 +120,11 @@ function AppTab() {
         component={Reservas}
         options={{ tabBarLabel: "Reservas" }}
       />
-
+      <Tab.Screen
+        name="QRScanner"
+        component={QRScanner}
+        options={{ tabBarLabel: "QR Scanner" }}
+      />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
