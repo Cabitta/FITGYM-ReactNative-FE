@@ -4,7 +4,7 @@
     "slug": "FITGYM-ReactNative-FE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icono-app.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icono-app.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

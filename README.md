@@ -138,5 +138,29 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 Para preguntas o sugerencias, por favor contacta al equipo de desarrollo.
 
 ---
+## notas joni :
+arrancar la aplicación con 
+npx expo run:android
+
+
+página para generar qr tipo txt .
+(generar solo el id de clase como string, no como json)
+https://qr.io/
+
+
+ver REac native dev tools:
+agitar el dispositivo
+
+
+verificar dispositivos conectados
+comando
+adb devices
+
+borrar el caché de toda al app
+1-npx expo prebuild --clean
+2- desinstalar la app desde el dispositivo
+para volver a instalar:
+3-npx expo run:android
+
 
 **Desarrollado con ❤️ usando React Native y Expo**

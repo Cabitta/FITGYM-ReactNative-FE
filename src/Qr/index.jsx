@@ -55,26 +55,8 @@ const QRScanner = ({ navigation }) => {
    */
   const extractQRId = (qrData) => {
     if (!qrData) return null;
-
-    try {
-      // Si es un string, intentar parsearlo como JSON
-      if (typeof qrData === "string") {
-        const parsed = JSON.parse(qrData);
-        return parsed || parsed?.idClase || null;
-      }
-      
-      // Si ya es un objeto, extraer el id directamente
-      if (typeof qrData === "object") {
-        return qrData?.id || qrData?.idClase || null;
-      }
-
-      // Si es un string simple (solo el ID), devolverlo directamente
       return qrData;
-    } catch (error) {
-      // Si no es JSON válido, asumir que es el ID directamente
-      console.warn("No se pudo parsear el QR como JSON, usando como ID directo:", error);
-      return qrData;
-    }
+  
   };
 
   /**
@@ -99,7 +81,6 @@ const QRScanner = ({ navigation }) => {
     const reservaEncontrada = reservasConfirmadas.find((reserva) => {
       const reservaIdClase = reserva.idClase?.toString();
       const qrIdString = qrId.toString();
-      
       return reservaIdClase === qrIdString || reserva.idClase === qrId;
     });
 
@@ -146,8 +127,26 @@ const QRScanner = ({ navigation }) => {
 
       if (reservaValida) {
         console.log("Reserva válida encontrada:", reservaValida);
-        
+        if(reservaValida.confirmedCheckin) {
+          Alert.alert(
+            "❌ La reserva ya ha sido verificada anteriormente.",
+            "No se puede verificar nuevamente.",
+            [{ text: "Aceptar", onPress: () => { setScanned(false); setIsProcessing(false); } }]
+          );
+          return;
+        }
         try {
+          let disciplina = null;
+          console.log("reservaValiva.idClase:", reservaValiva.idClase);
+          const clase = await api.get(`/clases/${reservaValida.idClase}`);
+          if(clase.status === 200 || clase.status === 201) {
+            disciplina = clase.data.disciplina;
+            console.log("disciplina:", disciplina);
+          } else {
+            console.error("Error al obtener la clase:", clase.data);
+          }
+
+
           const modificada = await api.put(`/reservas/${reservaValida.idReserva}`, {
             idReserva: reservaValida.idReserva,
             idClase: reservaValida.idClase,
@@ -163,7 +162,7 @@ const QRScanner = ({ navigation }) => {
           if (modificada.status === 200 || modificada.status === 201) {
             Alert.alert(
               "✅ Reserva Confirmada",
-              `Tu reserva para la clase ${reservaValida.idClase} ha sido verificada correctamente.`,
+              `Tu reserva para la clase ${disciplina} ha sido verificada correctamente.`,
               [
                 {
                   text: "Aceptar",
