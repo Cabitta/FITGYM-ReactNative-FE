@@ -81,7 +81,7 @@ const QRScanner = ({ navigation }) => {
     const reservaEncontrada = reservasConfirmadas.find((reserva) => {
       const reservaIdClase = reserva.idClase?.toString();
       const qrIdString = qrId.toString();
-      return reservaIdClase === qrIdString || reserva.idClase === qrId;
+      return reservaIdClase == qrIdString || reserva.idClase == qrId;
     });
 
     return reservaEncontrada || null;
@@ -128,6 +128,7 @@ const QRScanner = ({ navigation }) => {
       if (reservaValida) {
         console.log("Reserva válida encontrada:", reservaValida);
         if(reservaValida.confirmedCheckin) {
+          console.log("Reserva ya confirmada anteriormente.");
           Alert.alert(
             "❌ La reserva ya ha sido verificada anteriormente.",
             "No se puede verificar nuevamente.",
@@ -137,7 +138,7 @@ const QRScanner = ({ navigation }) => {
         }
         try {
           let disciplina = null;
-          console.log("reservaValiva.idClase:", reservaValiva.idClase);
+          console.log("reservaValiva.idClase:", reservaValida.idClase);
           const clase = await api.get(`/clases/${reservaValida.idClase}`);
           if(clase.status === 200 || clase.status === 201) {
             disciplina = clase.data.disciplina;
