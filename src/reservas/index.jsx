@@ -13,7 +13,7 @@ import {
 } from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
-import axiosInstance from "../config/interceptors";
+import api from "../config/axios";
 import { useTheme } from "../config/theme";
 
 export default function Reservas({ navigation }) {
@@ -25,22 +25,18 @@ export default function Reservas({ navigation }) {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [reservaToCancel, setReservaToCancel] = useState(null);
 
-  // Obtener reservas
-  const { data, error, isLoading, mutate } = useSWR(
-    user?.id ? `/reservas/usuario/${user.id}` : null,
-    async (url) => {
-      const response = await axiosInstance.get(url);
-      return response.data;
-    }
-  );
+  const {
+    data: reservas,
+    isLoading,
+    error,
+    mutate,
+  } = useSWR(user?.id ? `/reservas/usuario/${user.id}` : null, api.get);
 
   useFocusEffect(
     useCallback(() => {
       mutate();
     }, [])
   );
-
-  console.log("Reservas data:", data);
 
   // Confirmar cancelación
   const handleOpenConfirm = (idReserva) => {
@@ -58,7 +54,7 @@ export default function Reservas({ navigation }) {
     if (!reservaToCancel) return;
     setIsCancelling(true);
     try {
-      await axiosInstance.delete(`/reservas/${reservaToCancel}`);
+      await api.delete(`/reservas/${reservaToCancel}`);
       setConfirmVisible(false);
       setSelectedReservaId(null);
       mutate();
@@ -116,7 +112,7 @@ export default function Reservas({ navigation }) {
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!reservas?.data?.length) {
     return (
       <View
         style={{
@@ -138,15 +134,6 @@ export default function Reservas({ navigation }) {
     );
   }
 
-  data.map((reserva) => {
-    console.log("Reserva:", reserva?.estado);
-    console.log(
-      "Reserva:",
-      new Date(reserva?.clase?.fecha + "T" + reserva?.clase?.horarioInicio)
-    );
-  });
-
-  // Render principal
   return (
     <View
       style={{
@@ -169,7 +156,7 @@ export default function Reservas({ navigation }) {
       <Divider style={{ marginBottom: 16 }} />
 
       <FlatList
-        data={data}
+        data={reservas.data}
         keyExtractor={(item) => item.idReserva.toString()}
         contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => (

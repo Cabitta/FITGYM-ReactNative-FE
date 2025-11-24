@@ -1,5 +1,5 @@
 // src/classes/ClassesScreen.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FlatList, Alert } from "react-native";
 import {
   Surface,
@@ -13,6 +13,7 @@ import Filters from "../components/Filters";
 import ClassCard from "../components/ClassCard";
 import { getClasesEnriched } from "../services/classService";
 import { useTheme } from "../../config/theme";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ClassesScreen({ navigation }) {
   const { theme } = useTheme();
@@ -37,32 +38,41 @@ export default function ClassesScreen({ navigation }) {
     return local.toISOString().slice(0, 10);
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await getClasesEnriched();
-        setClases(data);
-        setFiltered(data);
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        try {
+          const data = await getClasesEnriched();
+          setClases(data);
+          setFiltered(data);
 
-        const sedesUnicas = Array.from(new Set(data.map((c) => c.sedeNombre))).filter(Boolean);
-        const disciplinasUnicas = Array.from(new Set(data.map((c) => c.disciplina))).filter(Boolean);
+          const sedesUnicas = Array.from(
+            new Set(data.map((c) => c.sedeNombre))
+          ).filter(Boolean);
+          const disciplinasUnicas = Array.from(
+            new Set(data.map((c) => c.disciplina))
+          ).filter(Boolean);
 
-        setSedes([
-          { label: "Todas las sedes", value: null },
-          ...sedesUnicas.map((s) => ({ label: s, value: s })),
-        ]);
-        setDisciplinas([
-          { label: "Todas las disciplinas", value: null },
-          ...disciplinasUnicas.map((d) => ({ label: d, value: d })),
-        ]);
-      } catch (error) {
-        console.error("Error al obtener clases:", error);
-        Alert.alert("Error", "No se pudieron cargar las clases. Intenta más tarde.");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+          setSedes([
+            { label: "Todas las sedes", value: null },
+            ...sedesUnicas.map((s) => ({ label: s, value: s })),
+          ]);
+          setDisciplinas([
+            { label: "Todas las disciplinas", value: null },
+            ...disciplinasUnicas.map((d) => ({ label: d, value: d })),
+          ]);
+        } catch (error) {
+          console.error("Error al obtener clases:", error);
+          Alert.alert(
+            "Error",
+            "No se pudieron cargar las clases. Intenta más tarde."
+          );
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }, [])
+  );
 
   useEffect(() => {
     let result = [...clases];
@@ -190,7 +200,9 @@ export default function ClassesScreen({ navigation }) {
           renderItem={({ item }) => (
             <ClassCard
               clase={item}
-              onPress={() => navigation.navigate("ClassDetail", { clase: item })}
+              onPress={() =>
+                navigation.navigate("ClassDetail", { clase: item })
+              }
             />
           )}
           showsVerticalScrollIndicator={false}

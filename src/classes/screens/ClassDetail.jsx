@@ -1,6 +1,6 @@
 // src/classes/ClassDetail.jsx
-import React, { useMemo,useState,useEffect } from "react";
-import { Alert } from "react-native";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
+import { Alert, Linking } from "react-native";
 import {
   Surface,
   Text,
@@ -12,65 +12,59 @@ import {
 } from "react-native-paper";
 import api from "../../config/axios";
 import { useAuth } from "../../auth/AuthProvider";
-import { fetcher } from "../../config/fetcher";
 import { useTheme } from "../../config/theme";
+import useSWR from "swr";
 
 export default function ClassDetail({ route }) {
-  const { user, token } = useAuth();
-  const { clase: item } = route.params;
+  const { user } = useAuth();
+  const { idClase } = route.params.clase;
   const { theme } = useTheme();
-  const [clase, setClase] = useState(null);
-  const [calificaciones, setCalificaciones] = useState([]);
-  const [estaReservada, setEstaReservada] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchClase = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get(`clases/${item.idClase}`);
-      setClase(res.data);
+  const {
+    data: clase,
+    isLoading: cargandoClase,
+    mutate: actualizarClase,
+  } = useSWR(`clases/${idClase}`, api.get);
 
-      // Verificar si el usuario ya reservó esta clase
-      const { data: reservas } = await api.get(`/reservas/usuario/${user.id}`);
-      const reservada = reservas.some((r) => r.idClase === res.data.idClase);
-      setEstaReservada(reservada);
+  const {
+    data: reservas,
+    isLoading: cargandoReservas,
+    mutate: actualizarReservas,
+  } = useSWR(user?.id ? `/reservas/usuario/${user.id}` : null, api.get);
 
-      // Cargar calificaciones
-      if (Array.isArray(res.data.calificaciones) && res.data.calificaciones.length > 0) {
-        const idsValidos = res.data.calificaciones.filter(
-          (id) => id !== null && id !== undefined && id !== "" && id !== 0
-        );
+  console.info({ clase, reservas });
 
-        if (idsValidos.length > 0) {
-          const detalles = await Promise.all(idsValidos.map((id) => api.get(`calificaciones/${id}`)));
-          const comentarios = detalles.map((d) => d.data?.comentario ?? "Sin comentario");
-          setCalificaciones(comentarios);
-        } else {
-          setCalificaciones([]);
-        }
-      } else {
-        setCalificaciones([]);
-      }
-    } catch (error) {
-      console.error("Error al obtener los detalles de la clase:", error);
-      Alert.alert("Error", "No se pudieron cargar los detalles de la clase. Intenta más tarde.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const claseVencida = useMemo(() => {
+    if (!clase?.data) return false;
+    return (
+      new Date() >=
+      new Date(`${clase?.data.fecha}T${clase?.data.horarioInicio}`)
+    );
+  }, [clase]);
 
-  fetchClase();
-}, []);
+  const cupoDisponible = clase?.data.cupo > 0;
+  const estaReservada = reservas?.data.some((r) => r.idClase === idClase);
+  const puedeReservar = cupoDisponible && !estaReservada && !claseVencida;
 
-  const cupoDisponible = clase?.cupo > 0;
-  const puedeReservar = cupoDisponible && !estaReservada;
+  console.info({ idClase, cupoDisponible, estaReservada, puedeReservar });
+
+  var promedio = useMemo(() => {
+    if (!clase?.data?.calificaciones?.length) return 0;
+
+    return (
+      clase.data.calificaciones.reduce(
+        (prev, curr) => prev + curr.estrellas,
+        0 // valor inicial
+      ) / clase.data.calificaciones.length
+    );
+  }, [clase]);
+
   const handleReservar = async () => {
     if (!clase || estaReservada) return;
 
     try {
       const res = await api.post("/reservas", {
-        idClase: clase.idClase,
+        idClase: clase.data.idClase,
         idUsuario: user.id,
         estado: "CONFIRMADA",
         timestampCreacion: new Date().toISOString(),
@@ -78,21 +72,37 @@ useEffect(() => {
 
       if (res.data?.idReserva) {
         Alert.alert("Éxito", "Reserva creada con éxito.");
-
-        // Actualizar estado local de la clase (reducir cupo)
-        setClase((prev) => ({ ...prev, cupo: prev.cupo - 1 }));
-        setEstaReservada(true);
       } else {
         Alert.alert("Error", "No se pudo crear la reserva.");
       }
     } catch (error) {
       console.error("Error al reservar:", error);
       Alert.alert("Error", "Ocurrió un error al reservar la clase.");
+    } finally {
+      actualizarClase((clase) => ({ ...clase, cupo: clase.cupo - 1 }));
+      actualizarReservas();
     }
-};
-  const isLoading = !clase;
-  
-  if (isLoading) {
+  };
+
+  // const isLoading = !clase;
+
+  const handleAbrirEnMaps = useCallback(() => {
+    if (!clase?.data?.ubicacionSede) {
+      Alert.alert("Error", "No hay dirección disponible para la sede.");
+      return;
+    }
+
+    const direccion = encodeURIComponent(clase.data.ubicacionSede);
+    const url = `https://www.google.com/maps/search/?api=1&query=${direccion}`;
+
+    Linking.openURL(url).catch(() => {
+      Alert.alert("Error", "No se pudo abrir Google Maps.");
+    });
+
+    console.log({ direccion });
+  }, [clase]);
+
+  if (cargandoClase) {
     return (
       <Surface
         style={{
@@ -128,113 +138,137 @@ useEffect(() => {
           <Text
             variant="headlineMedium"
             style={{
-              color: theme.colors.primary, 
+              color: theme.colors.primary,
               fontWeight: "bold",
               textAlign: "center",
             }}
           >
-            {clase.disciplina}
+            {clase.data.disciplina}
           </Text>
 
           <Divider />
 
           {/* Detalles */}
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Profesor:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.tertiary, fontWeight: "600" }}>
-              {item.profesorNombre}
+            Profesor:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+            >
+              {clase.data.nombreProfesor}
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Sede:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.tertiary, fontWeight: "600" }}>
-              {item.sedeNombre}
+            Sede:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+            >
+              {clase.data.nombreSede}
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Fecha:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.secondary }}>
-              {clase.fecha}
+            Fecha:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.secondary }}
+            >
+              {clase.data.fecha}
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Horario:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.secondary }}>
-              {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
+            Horario:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.secondary }}
+            >
+              {clase.data.horarioInicio?.substring(0, 5)} -{" "}
+              {clase.data.horarioFin?.substring(0, 5)}
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Duración:{' '}
-            <Text variant="titleMedium" style={{ color: theme.colors.secondary }}>
-              {clase.duracion} minutos
+            Duración:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.secondary }}
+            >
+              {clase.data.duracion} minutos
             </Text>
           </Text>
 
           <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Cupos disponibles:{' '}
+            Cupos disponibles:{" "}
             <Text
               variant="titleMedium"
               style={{
-                color: cupoDisponible ? theme.colors.secondary : theme.colors.error,
+                color: cupoDisponible
+                  ? theme.colors.secondary
+                  : theme.colors.error,
                 fontWeight: "bold",
               }}
             >
-              {clase.cupo}
+              {clase.data.cupo}
             </Text>
           </Text>
 
-                      {/* Calificaciones */}
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Calificaciones:{' '}
-              <Text variant="titleMedium" style={{ color: theme.colors.tertiary }}>
-                {Array.isArray(calificaciones) && calificaciones.length > 0
-                  ? calificaciones.length
-                  : 0}
-              </Text>
+          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+            Estrellas promedio:{" "}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.tertiary }}
+            >
+              {promedio}
             </Text>
+          </Text>
 
-            {/* Lista de comentarios */}
-            {Array.isArray(calificaciones) && calificaciones.length > 0 ? (
-              calificaciones.map((comentario, index) => (
-                <Text
-                  key={index}
-                  variant="bodyMedium"
-                  style={{
-                    color: theme.colors.secondary,
-                    marginLeft: 16,
-                    marginTop: 4,
-                  }}
-                >
-                  • {comentario}
-                </Text>
-              ))
-            ) : (
+          {/* Lista de comentarios */}
+          {clase.data.calificaciones?.length > 0 ? (
+            clase.data.calificaciones.map((calificacion, index) => (
               <Text
+                key={index}
                 variant="bodyMedium"
                 style={{
-                  color: theme.colors.onSurfaceVariant,
+                  color: theme.colors.secondary,
                   marginLeft: 16,
                   marginTop: 4,
-                  fontStyle: "italic",
                 }}
               >
-                No hay calificaciones disponibles
+                • {calificacion.comentario}
               </Text>
-            )}
+            ))
+          ) : (
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                marginLeft: 16,
+                marginTop: 4,
+                fontStyle: "italic",
+              }}
+            >
+              No hay calificaciones disponibles
+            </Text>
+          )}
         </Card.Content>
 
-        {/* Botón Reservar */}
-        <Card.Actions style={{ padding: 16, paddingTop: 8 }}>
+        <Card.Actions>
+          <Button
+            mode="contained"
+            icon="map-marker"
+            onPress={handleAbrirEnMaps}
+          >
+            Ver en Google Maps
+          </Button>
+
           <Button
             mode="contained"
             onPress={handleReservar}
             disabled={!puedeReservar}
-            contentStyle={{ height: 50 }}
-            style={{ borderRadius: 12, flex: 1 }}
+            loading={cargandoReservas}
             buttonColor={
               estaReservada
                 ? theme.colors.surfaceDisabled
@@ -244,11 +278,13 @@ useEffect(() => {
             }
             labelStyle={{ fontWeight: "bold", fontSize: 16 }}
           >
-            {estaReservada
+            {claseVencida
+              ? "Ya terminó"
+              : estaReservada
               ? "Ya reservada"
-              : clase.cupo === 0
+              : !cupoDisponible
               ? "Cupo lleno"
-              : "Reservar ahora"}
+              : "Reservar"}
           </Button>
         </Card.Actions>
       </Card>
