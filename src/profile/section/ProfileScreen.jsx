@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import UserFormEdit from "../componentes/UserformEdit";
 import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
 import {
@@ -43,7 +44,7 @@ export default function ProfileScreen({ navigation }) {
 
   if (!user) {
     return (
-      <Surface
+      <SafeAreaView 
         style={{
           flex: 1,
           justifyContent: "center",
@@ -51,12 +52,12 @@ export default function ProfileScreen({ navigation }) {
         }}
       >
         <ActivityIndicator size="large" color={theme.colors.primary} />
-      </Surface>
+      </SafeAreaView >
     );
   }
 
   return (
-    <Surface
+    <SafeAreaView 
       style={{
         flex: 1,
         padding: 16,
@@ -193,6 +194,6 @@ export default function ProfileScreen({ navigation }) {
           <LogoutScreen onClose={() => setShowLogout(false)} />
         </Surface>
       </Modal>
-    </Surface>
+    </SafeAreaView >
   );
 }

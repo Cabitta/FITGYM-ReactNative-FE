@@ -1,5 +1,6 @@
 // src/classes/ClassesScreen.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import {SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Alert } from "react-native";
 import {
   Surface,
@@ -151,7 +152,7 @@ export default function ClassesScreen({ navigation }) {
   }
 
   return (
-    <Surface
+    <SafeAreaView 
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
@@ -211,6 +212,6 @@ export default function ClassesScreen({ navigation }) {
       ) : (
         renderEmpty()
       )}
-    </Surface>
+    </SafeAreaView >
   );
 }

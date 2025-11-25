@@ -2,6 +2,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { FlatList, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
   Button,
@@ -135,7 +136,7 @@ export default function Reservas({ navigation }) {
   }
 
   return (
-    <View
+    <SafeAreaView 
       style={{
         flex: 1,
         padding: 16,
@@ -305,6 +306,6 @@ export default function Reservas({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </View>
+    </SafeAreaView >
   );
 }
