@@ -34,17 +34,25 @@ export default function ClassDetail({ route }) {
 
   console.info({ clase, reservas });
 
+  const claseEnCurso = useMemo(() => {
+    if (!clase?.data) return false;
+    const ahora = new Date();
+    const desde = new Date(`${clase?.data.fecha}T${clase?.data.horarioInicio}`);
+    const hasta = new Date(`${clase?.data.fecha}T${clase?.data.horarioFin}`);
+    return desde >= ahora >= hasta;
+  }, [clase]);
+
   const claseVencida = useMemo(() => {
     if (!clase?.data) return false;
     return (
-      new Date() >=
-      new Date(`${clase?.data.fecha}T${clase?.data.horarioInicio}`)
+      new Date() >= new Date(`${clase?.data.fecha}T${clase?.data.horarioFin}`)
     );
   }, [clase]);
 
   const cupoDisponible = clase?.data.cupo > 0;
   const estaReservada = reservas?.data.some((r) => r.idClase === idClase);
-  const puedeReservar = cupoDisponible && !estaReservada && !claseVencida;
+  const puedeReservar =
+    cupoDisponible && !estaReservada && !claseVencida && !claseEnCurso;
 
   console.info({ idClase, cupoDisponible, estaReservada, puedeReservar });
 
@@ -83,8 +91,6 @@ export default function ClassDetail({ route }) {
       actualizarReservas();
     }
   };
-
-  // const isLoading = !clase;
 
   const handleAbrirEnMaps = useCallback(() => {
     if (!clase?.data?.ubicacionSede) {
@@ -270,15 +276,15 @@ export default function ClassDetail({ route }) {
             disabled={!puedeReservar}
             loading={cargandoReservas}
             buttonColor={
-              estaReservada
-                ? theme.colors.surfaceDisabled
-                : cupoDisponible
+              puedeReservar
                 ? theme.colors.primary
-                : theme.colors.errorContainer
+                : theme.colors.surfaceDisabled
             }
             labelStyle={{ fontWeight: "bold", fontSize: 16 }}
           >
-            {claseVencida
+            {claseEnCurso
+              ? "En curso"
+              : claseVencida
               ? "Ya terminó"
               : estaReservada
               ? "Ya reservada"
