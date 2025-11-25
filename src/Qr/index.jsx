@@ -28,21 +28,16 @@ const QRScanner = ({ navigation }) => {
   const fetchReservasConfirmadas = async (userId) => {
     try {
       const response = await api.get(
-        `/reservas/usuario/${userId}/estado`,
-        {
-          params: {
-            estado: "CONFIRMADA",
-          },
-        }
+        `/reservas/usuario/${userId}`
       );
 
       if (!response.data || !Array.isArray(response.data)) {
         console.warn("La respuesta de la API no contiene un array válido");
         return [];
       }
-
       // La API ya devuelve solo las reservas confirmadas
-      return response.data;
+       const confirmadas= response.data.filter(reserva => reserva.estado === "CONFIRMADA");
+      return confirmadas;
     } catch (error) {
       console.error("Error al obtener reservas confirmadas:", error);
       throw error;
@@ -126,6 +121,7 @@ const QRScanner = ({ navigation }) => {
       const reservaValida = validateQRCode(data, reservasConfirmadas);
 
       if (reservaValida) {
+
         console.log("Reserva válida encontrada:", reservaValida);
         if(reservaValida.confirmedCheckin) {
           console.log("Reserva ya confirmada anteriormente.");
@@ -136,18 +132,58 @@ const QRScanner = ({ navigation }) => {
           );
           return;
         }
-        try {
-          let disciplina = null;
-          console.log("reservaValiva.idClase:", reservaValida.idClase);
-          const clase = await api.get(`/clases/${reservaValida.idClase}`);
-          if(clase.status === 200 || clase.status === 201) {
-            disciplina = clase.data.disciplina;
-            console.log("disciplina:", disciplina);
-          } else {
-            console.error("Error al obtener la clase:", clase.data);
+
+          // ------------------ VALIDACIÓN DE FECHA Y HORARIO ------------------
+          function parseFechaLocal(fechaStr) {
+            const [year, month, day] = fechaStr.split("-").map(Number);
+            return new Date(year, month - 1, day);
+          }
+          const fechaClase = new parseFechaLocal(reservaValida.clase.fecha);        
+          console.log("Fecha de la clase:", fechaClase.toDateString());
+          const [hInicio, mInicio, sInicio] = reservaValida.clase.horarioInicio.split(":");
+          const [hFin, mFin, sFin] = reservaValida.clase.horarioFin.split(":");
+
+          // Fecha con hora de inicio
+          const inicioClase = fechaClase;
+          inicioClase.setHours(hInicio, mInicio, sInicio, 0);
+
+          // Fecha con hora de fin
+          const finClase = fechaClase;
+          finClase.setHours(hFin, mFin, sFin, 0);
+
+          // Fecha actual
+          const ahora = new Date();
+
+        console.log("Fecha/Hora actual:", ahora.toString());
+        console.log("Inicio de la clase:", inicioClase.toString());
+        console.log("Fin de la clase:", finClase.toString());
+
+
+          // ------------------ 1) Clase futura ------------------
+          if (ahora < inicioClase) {
+            console.log("La reserva tiene una fecha/hora futura.");
+            Alert.alert(
+              "❌ La reserva no es válida aún.",
+              `La clase empieza el ${reservaValida.clase.fecha} a las ${reservaValida.clase.horarioInicio}`,
+              [{ text: "Aceptar", onPress: () => { setScanned(false); setIsProcessing(false); } }]
+            );
+            return;
           }
 
+          // ------------------ 2) Clase pasada ------------------
+          if (ahora > finClase) {
+            console.log("La reserva ya ha expirado.");
+            Alert.alert(
+              "❌ La reserva ha expirado.",
+              `La clase fue el ${reservaValida.clase.fecha} a las ${reservaValida.clase.horarioInicio}`,
+              [{ text: "Aceptar", onPress: () => { setScanned(false); setIsProcessing(false); } }]
+            );
+            return;
+          }
 
+        try {
+          // Actualizar la reserva para marcar el check-in como confirmado
+          const disciplina= reservaValida.clase?.disciplina || "desconocida";
           const modificada = await api.put(`/reservas/${reservaValida.idReserva}`, {
             idReserva: reservaValida.idReserva,
             idClase: reservaValida.idClase,
@@ -158,7 +194,6 @@ const QRScanner = ({ navigation }) => {
             confirmedCheckin: true,
           });
           
-          console.log("Reserva modificada:", modificada);
           
           if (modificada.status === 200 || modificada.status === 201) {
             Alert.alert(
