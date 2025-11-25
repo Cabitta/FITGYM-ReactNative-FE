@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/icono-app.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.FITGYMReactNativeFE"
     },
     "web": {
       "favicon": "./assets/favicon.png"
