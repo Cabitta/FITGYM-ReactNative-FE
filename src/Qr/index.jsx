@@ -5,6 +5,12 @@ import { CameraView, Camera } from "expo-camera";
 import api from "../config/axios";
 import { useTheme } from "../config/theme";
 import { useAuth } from "../auth/AuthProvider";
+import {
+  parseLocalDate,
+  attachTimeToDate,
+  formatHumanDate,
+  formatHumanTime
+} from "../utils/date";
 
 const QRScanner = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -138,18 +144,9 @@ const QRScanner = ({ navigation }) => {
             const [year, month, day] = fechaStr.split("-").map(Number);
             return new Date(year, month - 1, day);
           }
-          const fechaClase = new parseFechaLocal(reservaValida.clase.fecha);        
-          console.log("Fecha de la clase:", fechaClase.toDateString());
-          const [hInicio, mInicio, sInicio] = reservaValida.clase.horarioInicio.split(":");
-          const [hFin, mFin, sFin] = reservaValida.clase.horarioFin.split(":");
-
-          // Fecha con hora de inicio
-          const inicioClase = fechaClase;
-          inicioClase.setHours(hInicio, mInicio, sInicio, 0);
-
-          // Fecha con hora de fin
-          const finClase = fechaClase;
-          finClase.setHours(hFin, mFin, sFin, 0);
+        const fechaClase = parseLocalDate(reservaValida.clase.fecha);
+        const inicioClase = attachTimeToDate(fechaClase, reservaValida.clase.horarioInicio);
+        const finClase = attachTimeToDate(fechaClase, reservaValida.clase.horarioFin);
 
           // Fecha actual
           const ahora = new Date();
@@ -164,7 +161,7 @@ const QRScanner = ({ navigation }) => {
             console.log("La reserva tiene una fecha/hora futura.");
             Alert.alert(
               "❌ La reserva no es válida aún.",
-              `La clase empieza el ${reservaValida.clase.fecha} a las ${reservaValida.clase.horarioInicio}`,
+              `La clase empieza el${formatHumanDate(reservaValida.clase.fecha)} a las ${formatHumanTime(reservaValida.clase.horarioInicio)}`,
               [{ text: "Aceptar", onPress: () => { setScanned(false); setIsProcessing(false); } }]
             );
             return;
@@ -175,7 +172,7 @@ const QRScanner = ({ navigation }) => {
             console.log("La reserva ya ha expirado.");
             Alert.alert(
               "❌ La reserva ha expirado.",
-              `La clase fue el ${reservaValida.clase.fecha} a las ${reservaValida.clase.horarioInicio}`,
+              `La clase fue el ${formatHumanDate(reservaValida.clase.fecha)} a las ${formatHumanTime(reservaValida.clase.horarioInicio)}`,
               [{ text: "Aceptar", onPress: () => { setScanned(false); setIsProcessing(false); } }]
             );
             return;

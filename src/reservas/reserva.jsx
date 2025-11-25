@@ -1,5 +1,6 @@
-// src/reservas/Reserva.jsx
 import React from "react";
+import { formatHumanDate, formatHumanTime } from "../utils/date";
+
 import {
   Surface,
   Text,
@@ -15,20 +16,9 @@ export default function Reserva({ route }) {
   const { theme } = useTheme();
 
   // Formatear fecha y hora si es necesario
-  const formatDate = (date) => {
-    if (!date) return "—";
-    return new Date(date).toLocaleDateString("es-AR", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+   const formatDate = formatHumanDate;
+  const formatTime = formatHumanTime;
 
-  const formatTime = (time) => {
-    if (!time) return "—";
-    return time;
-  };
 
   const getEstadoColor = (estado) => {
     switch (estado?.toUpperCase()) {
