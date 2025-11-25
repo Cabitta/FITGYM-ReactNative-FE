@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/axios'
-import SafeAreaView from 'react-native-safe-area-context/lib/typescript/SafeAreaView';
 import { useAuth } from '../auth/AuthProvider'
 import ItemHistorial from './ItemHistorial';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
