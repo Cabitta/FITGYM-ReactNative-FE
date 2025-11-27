@@ -141,9 +141,10 @@ export default function Filters({
             backgroundColor: theme.colors.surface,
           }}
           labelStyle={{
-            color: theme.colors.tertiary,
-            fontWeight: "600",
-            marginLeft: 8,
+            color: theme.colors.onSurface,
+            fontSize: 16,
+            fontWeight: "00",
+            marginLeft: 25,
           }}
         >
           {formatDate(fecha)}

@@ -11,6 +11,7 @@ import {
   Divider,
   Portal,
   Text,
+  Icon,
 } from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
@@ -206,51 +207,60 @@ export default function Reservas({ navigation }) {
 
               {/* Fecha */}
 
-              <Text
-                variant="bodyMedium"
-                style={{ color: theme.colors.onSurfaceVariant }}
-              >
-                Fecha:{" "}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Icon source="calendar-outline" size={20} color={theme.colors.tertiary} />
                 <Text
-                  style={{
-                    color: theme.colors.tertiary,
-                    fontWeight: "600",
-                  }}
+                  variant="bodyMedium"
+                  style={{ color: theme.colors.onSurfaceVariant }}
                 >
-                  {item.clase?.fecha || "Fecha no disponible"}
+                  Fecha:{" "}
+                  <Text
+                    style={{
+                      color: theme.colors.tertiary,
+                      fontWeight: "600",
+                    }}
+                  >
+                    {item.clase?.fecha || "Fecha no disponible"}
+                  </Text>
                 </Text>
-              </Text>
+              </View>
               {/* Sede */}
-              <Text
-                variant="bodyMedium"
-                style={{ color: theme.colors.onSurfaceVariant }}
-              >
-                Sede:{" "}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Icon source="map-marker-outline" size={20} color={theme.colors.tertiary} />
                 <Text
-                  style={{
-                    color: theme.colors.tertiary,
-                    fontWeight: "600",
-                  }}
+                  variant="bodyMedium"
+                  style={{ color: theme.colors.onSurfaceVariant }}
                 >
-                  {item.sede?.nombre || "No disponible"}
+                  Sede:{" "}
+                  <Text
+                    style={{
+                      color: theme.colors.tertiary,
+                      fontWeight: "600",
+                    }}
+                  >
+                    {item.sede?.nombre || "No disponible"}
+                  </Text>
                 </Text>
-              </Text>
-              <Text
-                variant="bodyMedium"
-                style={{ color: theme.colors.onSurfaceVariant }}
-              >
-                Estado:{" "}
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Icon source="information-outline" size={20} color={theme.colors.tertiary} />
                 <Text
-                  style={{
-                    color: theme.colors.tertiary,
-                    fontWeight: "600",
-                  }}
+                  variant="bodyMedium"
+                  style={{ color: theme.colors.onSurfaceVariant }}
                 >
-                  {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
-                    ? "VENCIDA"
-                    : item.estado || "CONFIRMADA"}
+                  Estado:{" "}
+                  <Text
+                    style={{
+                      color: theme.colors.tertiary,
+                      fontWeight: "600",
+                    }}
+                  >
+                    {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                      ? "VENCIDA"
+                      : item.estado || "CONFIRMADA"}
+                  </Text>
                 </Text>
-              </Text>
+              </View>
 
               {selectedReservaId === item.idReserva && (
                 <Button
