@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/axios'
 import { useAuth } from '../auth/AuthProvider'
 import ItemHistorial from './ItemHistorial';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import {agruparPorMes} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import {agruparPorMes, diaActual, diferenciaTiempo, estaAHorario, hayClasesHoy, horaActual, mesActual, TraerClaseHoy} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../config/theme';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, Text } from 'react-native-paper';
+import * as Notifications from 'expo-notifications';
 
 export default function HistorialAxios() {
 
@@ -24,7 +27,7 @@ export default function HistorialAxios() {
   useEffect(()=>{
     axiosInstance.get(`/reservas/usuario/${user.id}`)
       .then(respuesta=>{
-        console.log(respuesta.data)
+        //console.log(respuesta.data)
         setHistorial(respuesta.data)
         setHistorialAgrupado(agruparPorMes(respuesta.data))
       })
@@ -38,8 +41,12 @@ export default function HistorialAxios() {
 
   return (
     <>
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-    <Text style={styles.title}>HistorialAxios</Text>
+    <SafeAreaView style={{flex: 1, padding: 0, backgroundColor: theme.colors.background,}}>
+    <View style={[styles.container]}>
+    <Text variant='titleLarge' style={{color: theme.colors.primary,
+          fontWeight: "bold",
+          textAlign: "center",}}
+          >Historial de Turnos</Text>
     <View style={styles.separador}></View>
     {cargando ? <ActivityIndicator size={'large'}/> : (error ? <Text style={styles.alerta} >Error al hacer Fetch</Text> :
     //Caso del axios exitoso
@@ -49,7 +56,7 @@ export default function HistorialAxios() {
       onValueChange={(value)=>{ 
         setMesSeleccionado(value)
         console.log(value)}}
-        style={{backgroundColor: theme.colors.secondary, borderRadius: 8,padding:10}}
+        style={{backgroundColor: theme.colors.secondary, borderRadius:32 ,padding:0}}
     >
       <Picker.Item label='Todos' value="todos"/>
       {historialAgrupado.map((grupo,index)=>(
@@ -68,22 +75,57 @@ export default function HistorialAxios() {
     </>
     )}
     </View>
+    {/*Ya esta por Fecha*/}
+    <Button mode="outlined" onPress={() => notificacionLocal()}>Enviar Notificación</Button>
+    </SafeAreaView>
     </>
   )
+
+  //Notificacion Manual
+  async function notificacionLocal() {
+    const hayClases = hayClasesHoy(historialAgrupado);
+    console.log(`Hay Clases Hoy: ${hayClases} `);
+    if (hayClases) {
+      const claseHoy = TraerClaseHoy(historialAgrupado);
+      const diferenciaEnHoras = diferenciaTiempo(claseHoy.horarioInicio);
+      const estaATiempo = estaAHorario(claseHoy.horarioInicio);
+      console.log(`Esta a Tiempo: ${estaATiempo}`)
+      if (estaATiempo) {
+        await Notifications.scheduleNotificationAsync({
+        content:{
+          title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+          body: `Tenes una clase de ${claseHoy.disiplina} en la sede ${claseHoy.sede} a las ${claseHoy.horarioInicio}, en ${diferenciaEnHoras.horas} horas y ${diferenciaEnHoras.minutos} minutos.`,
+        },
+        trigger: null,
+        })
+      }else{
+        await Notifications.scheduleNotificationAsync({
+        content:{
+          title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+          body: `Tu clase de ${claseHoy.disiplina} en la sede ${claseHoy.sede} a las ${claseHoy.horarioInicio} ya ha comenzado hace ${-diferenciaEnHoras.horas} horas y ${-diferenciaEnHoras.minutos} minutos.`,
+        },
+        trigger: null,
+        })
+      }
+    }else{
+      await Notifications.scheduleNotificationAsync({
+      content:{
+        title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+        body: `hoy ${diaActual()} no tienes clases programadas.`,
+      },
+      trigger: null,
+      })
+    }
+  }
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f7f8fc",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#1c1c1e",
-    textAlign: "center",
+    paddingBottom: 16,
   },
   alerta:{
     fontSize: 16,

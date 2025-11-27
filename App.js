@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -6,6 +6,18 @@ import { PaperProvider } from "react-native-paper";
 import { ThemeProvider, useTheme } from './src/config/theme';
 import AppNavigator from './src/navigator/AppNavigator';
 import { AuthProvider } from './src/auth/AuthProvider';
+import * as Notifications from 'expo-notifications';
+import { pedirPermisos } from "./src/utils/permisosNotificaciones";
+
+//comportamiento para cuando la app esta principal
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  })
+})
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +37,9 @@ const { theme } = useTheme();
 
 }
 export default function App() {
+  useEffect(()=>{
+    pedirPermisos();
+  },[])
   return (
     <ThemeProvider>
       <AppContent />
