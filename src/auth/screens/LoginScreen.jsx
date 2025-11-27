@@ -29,6 +29,7 @@ const LoginScreen = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login, loginWithBiometric } = useAuth();
 
   // Detectar biometría
@@ -168,6 +169,7 @@ const LoginScreen = ({ navigation }) => {
                     errors.email ? theme.colors.error : theme.colors.outline
                   }
                   activeOutlineColor={theme.colors.primary}
+                  left={<TextInput.Icon icon="email-outline" />}
                 />
                 <HelperText type="error" visible={!!errors.email}>
                   {errors.email}
@@ -180,7 +182,7 @@ const LoginScreen = ({ navigation }) => {
                   label="Contraseña"
                   value={formData.password}
                   onChangeText={(v) => handleInputChange("password", v)}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   mode="outlined"
                   error={!!errors.password}
                   theme={{ roundness: 12 }}
@@ -189,6 +191,13 @@ const LoginScreen = ({ navigation }) => {
                     errors.password ? theme.colors.error : theme.colors.outline
                   }
                   activeOutlineColor={theme.colors.primary}
+                  right={
+                    <TextInput.Icon
+                      icon={showPassword ? "eye-off" : "eye"}
+                      onPress={() => setShowPassword(!showPassword)}
+                      forceTextInputFocus={false}
+                    />
+                  }
                 />
                 <HelperText type="error" visible={!!errors.password}>
                   {errors.password}

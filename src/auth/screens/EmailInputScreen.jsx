@@ -132,6 +132,7 @@ const EmailInputScreen = ({ navigation }) => {
                   errors.email ? theme.colors.error : theme.colors.outline
                 }
                 activeOutlineColor={theme.colors.primary}
+                left={<TextInput.Icon icon="email-outline" />}
               />
               <HelperText type="error" visible={!!errors.email}>
                 {errors.email}
