@@ -1,7 +1,6 @@
-// src/classes/ClassesScreen.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import {SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Alert } from "react-native";
+import { FlatList, Alert, ScrollView } from "react-native";
 import {
   Surface,
   Text,
@@ -14,6 +13,7 @@ import Filters from "../components/Filters";
 import ClassCard from "../components/ClassCard";
 import { getClasesEnriched } from "../services/classService";
 import { useTheme } from "../../config/theme";
+import NewsSection from "../../news/components/NewsSection";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function ClassesScreen({ navigation }) {
@@ -159,7 +159,7 @@ export default function ClassesScreen({ navigation }) {
         padding: 14,
       }}
     >
-      {/* Título */}
+      <ScrollView>
       <Text
         variant="headlineMedium"
         style={{
@@ -169,10 +169,14 @@ export default function ClassesScreen({ navigation }) {
           fontWeight: "bold",
         }}
       >
-        Clases Disponibles
+        FITGYM
       </Text>
 
-      {/* Filtros */}
+  
+      <NewsSection />
+
+      <Divider style={{ marginVertical: 8 }} />
+
       <Filters
         sede={sede}
         setSede={setSede}
@@ -193,7 +197,6 @@ export default function ClassesScreen({ navigation }) {
 
       <Divider style={{ marginVertical: 8 }} />
 
-      {/* Lista de Clases */}
       {filtered.length > 0 ? (
         <FlatList
           data={filtered}
@@ -212,6 +215,7 @@ export default function ClassesScreen({ navigation }) {
       ) : (
         renderEmpty()
       )}
+       </ScrollView>
     </SafeAreaView >
   );
 }
