@@ -9,6 +9,8 @@ import { useTheme } from '../config/theme';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
+import * as BackgroundTask from 'expo-background-task'
+import * as TaskManager from 'expo-task-manager';
 
 export default function HistorialAxios() {
 
@@ -77,9 +79,23 @@ export default function HistorialAxios() {
     </View>
     {/*Ya esta por Fecha*/}
     <Button mode="outlined" onPress={() => notificacionLocal()}>Enviar Notificación</Button>
+    <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 8,}}>
+      <Button style={{flex: 1}} mode="outlined" onPress={() => probarTareaSecundaria()}>Probar Notificacion</Button>
+      <Button style={{flex: 1}} mode="outlined" onPress={() => verTareas()}>Ver Permisos</Button>
+    </View>
     </SafeAreaView>
     </>
   )
+
+  async function probarTareaSecundaria(){
+    await BackgroundTask.triggerTaskWorkerForTestingAsync();
+  }
+
+  async function verTareas() {
+    TaskManager.getRegisteredTasksAsync().then((tasks) => {
+      console.log(tasks);
+    });   
+  }
 
   //Notificacion Manual
   async function notificacionLocal() {

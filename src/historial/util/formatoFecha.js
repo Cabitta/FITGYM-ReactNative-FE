@@ -66,8 +66,8 @@ export function hayClasesHoy(historialAgrupado){
   const exitensClases = historialAgrupado.some((grupo)=> grupo.mes === mesHoy);
   if (exitensClases){
     const clasesDelMes = historialAgrupado.find((grupo) => grupo.mes === mesHoy).historial;
-    const diaHoy = diaActual()
-    //const diaHoy = "2025-11-25"
+    //const diaHoy = diaActual()
+    const diaHoy = "2025-11-25"
     //cambiar diaActual() con una clase pasada para comprobar el caso positivo
     const hayClaseHoy = clasesDelMes.some((clase)=> clase.fecha === diaHoy);
     if (hayClaseHoy){
@@ -82,8 +82,9 @@ export function hayClasesHoy(historialAgrupado){
 export function TraerClaseHoy(historialAgrupado){
   const mesHoy = mesActual()
   const clasesDelMes = historialAgrupado.find((grupo) => grupo.mes === mesHoy).historial;
-  const diaHoy = diaActual()
-  //const diaHoy = "2025-11-25"
+  //const diaHoy = diaActual()
+  const diaHoy = "2025-11-25"
+  //cambiar diaActual() con una clase pasada para comprobar el caso positivo
   const hayClaseHoy = clasesDelMes.find((clase)=> clase.fecha === diaHoy);
   return hayClaseHoy;
 }
