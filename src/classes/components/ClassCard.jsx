@@ -4,7 +4,9 @@ import {
   Card,
   Text,
   useTheme as usePaperTheme,
+  Icon,
 } from 'react-native-paper';
+import { View } from 'react-native';
 import { useTheme } from '../../config/theme';
 
 export default function ClassCard({ clase, onPress }) {
@@ -58,50 +60,57 @@ export default function ClassCard({ clase, onPress }) {
         </Card.Content>
 
         {/* Fecha y Horario */}
-        <Text
-          variant="bodyMedium"
-          style={{
-            color: theme.colors.tertiary, 
-          }}
-        >
-          {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon source="clock-outline" size={20} color={theme.colors.tertiary} />
+          <Text
+            variant="bodyMedium"
+            style={{
+              color: theme.colors.tertiary, 
+            }}
+          >
+            {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
+          </Text>
+        </View>
 
         {/* Sede */}
-        <Text
-          variant="bodyMedium"
-          style={{color: theme.colors.onSurfaceVariant}}
-        >
-          Sede:{' '}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon source="map-marker-outline" size={20} color={theme.colors.tertiary} />
           <Text
             variant="bodyMedium"
-            style={{
-              color: theme.colors.tertiary,
-              fontWeight: '600',
-            }}
+            style={{color: theme.colors.onSurfaceVariant}}
           >
-            {clase.sedeNombre || 'No disponible'}
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: theme.colors.tertiary,
+                fontWeight: '600',
+              }}
+            >
+              {clase.sedeNombre || 'No disponible'}
+            </Text>
           </Text>
-        </Text>
+        </View>
 
         {/* Profesor */}
-        <Text
-          variant="bodyMedium"
-          style={{
-            color: theme.colors.onSurfaceVariant,
-          }}
-        >
-          Profesor:{' '}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon source="account-outline" size={20} color={theme.colors.tertiary} />
           <Text
             variant="bodyMedium"
             style={{
-              color: theme.colors.tertiary,
-              fontWeight: '600',
+              color: theme.colors.onSurfaceVariant,
             }}
           >
-            {clase.profesorNombre || 'No asignado'}
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: theme.colors.tertiary,
+                fontWeight: '600',
+              }}
+            >
+              {clase.profesorNombre || 'No asignado'}
+            </Text>
           </Text>
-        </Text>
+        </View>
       </Card.Content>
     </Card>
   );

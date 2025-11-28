@@ -1,6 +1,5 @@
-// src/classes/ClassDetail.jsx
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Alert, Linking } from "react-native";
+import { Alert, Linking, View } from "react-native";
 import {
   Surface,
   Text,
@@ -9,6 +8,7 @@ import {
   Divider,
   ActivityIndicator,
   useTheme as usePaperTheme,
+  Icon,
 } from "react-native-paper";
 import api from "../../config/axios";
 import { useAuth } from "../../auth/AuthProvider";
@@ -155,81 +155,102 @@ export default function ClassDetail({ route }) {
           <Divider />
 
           {/* Detalles */}
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Profesor:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.tertiary, fontWeight: "600" }}
-            >
-              {clase.data.nombreProfesor}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="account-outline" size={24} color={theme.colors.tertiary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Profesor:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+              >
+                {clase.data.nombreProfesor}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Sede:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.tertiary, fontWeight: "600" }}
-            >
-              {clase.data.nombreSede}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="map-marker-outline" size={24} color={theme.colors.tertiary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Sede:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+              >
+                {clase.data.nombreSede}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Fecha:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.secondary }}
-            >
-              {clase.data.fecha}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="calendar-outline" size={24} color={theme.colors.secondary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Fecha:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.secondary }}
+              >
+                {clase.data.fecha}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Horario:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.secondary }}
-            >
-              {clase.data.horarioInicio?.substring(0, 5)} -{" "}
-              {clase.data.horarioFin?.substring(0, 5)}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="clock-outline" size={24} color={theme.colors.secondary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Horario:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.secondary }}
+              >
+                {clase.data.horarioInicio?.substring(0, 5)} -{" "}
+                {clase.data.horarioFin?.substring(0, 5)}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Duración:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.secondary }}
-            >
-              {clase.data.duracion} minutos
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="timer-outline" size={24} color={theme.colors.secondary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Duración:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.secondary }}
+              >
+                {clase.data.duracion} minutos
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Cupos disponibles:{" "}
-            <Text
-              variant="titleMedium"
-              style={{
-                color: cupoDisponible
-                  ? theme.colors.secondary
-                  : theme.colors.error,
-                fontWeight: "bold",
-              }}
-            >
-              {clase.data.cupo}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="account-group-outline" size={24} color={cupoDisponible ? theme.colors.secondary : theme.colors.error} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Cupos disponibles:{" "}
+              <Text
+                variant="titleMedium"
+                style={{
+                  color: cupoDisponible
+                    ? theme.colors.secondary
+                    : theme.colors.error,
+                  fontWeight: "bold",
+                }}
+              >
+                {clase.data.cupo}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            Estrellas promedio:{" "}
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.tertiary }}
-            >
-              {promedio}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Icon source="star-outline" size={24} color={theme.colors.tertiary} />
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              Estrellas promedio:{" "}
+              <Text
+                variant="titleMedium"
+                style={{ color: theme.colors.tertiary }}
+              >
+                {promedio.toFixed(1)}
+              </Text>
             </Text>
-          </Text>
+          </View>
 
           {/* Lista de comentarios */}
           {clase.data.calificaciones?.length > 0 ? (

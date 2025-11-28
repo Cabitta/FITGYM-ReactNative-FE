@@ -14,7 +14,6 @@ import Historial from "../historial/Historial";
 import HistorialAxios from "../historial/HistorialAxios";
 import OtpScreen from "../auth/screens/OtpScreen";
 import EmailInputScreen from "../auth/screens/EmailInputScreen";
-import LogoutScreen from "../auth/screens/LogoutScreen"; // Importar LogoutScreen
 import { useTheme } from "../config/theme";
 import QRScanner from "../Qr";
 const Stack = createNativeStackNavigator();
@@ -53,8 +52,6 @@ function AppTab() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.ActivityIndicator,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarIcon: ({ color, size }) => {
           if (route.name === "Classes") {
             return (
@@ -72,11 +69,6 @@ function AppTab() {
                 size={size}
                 color={color}
               />
-            );
-          }
-          if (route.name === "Logout") {
-            return (
-              <MaterialCommunityIcons name="logout" size={size} color={color} />
             );
           }
           if (route.name === "Profile") {
@@ -133,13 +125,7 @@ function AppTab() {
       <Tab.Screen
         name="Historial"
         component={HistorialAxios}
-        //component={Historial}
         options={{ tabBarLabel: "Historial" }}
-      />
-      <Tab.Screen
-        name="Logout"
-        component={LogoutScreen}
-        options={{ tabBarLabel: "Cerrar Sesión" }}
       />
     </Tab.Navigator>
   );

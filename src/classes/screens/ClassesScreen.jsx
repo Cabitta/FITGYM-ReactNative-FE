@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Alert, ScrollView } from "react-native";
+import { FlatList, Alert, ScrollView, View } from "react-native";
 import {
   Surface,
   Text,
   ActivityIndicator,
   List,
-  Divider,
   IconButton,
+  Appbar,
 } from "react-native-paper";
 import Filters from "../components/Filters";
 import ClassCard from "../components/ClassCard";
@@ -152,70 +151,58 @@ export default function ClassesScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView 
+    <View 
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        padding: 14,
       }}
     >
-      <ScrollView>
-      <Text
-        variant="headlineMedium"
-        style={{
-          textAlign: "center",
-          marginBottom: 16,
-          color: theme.colors.primary,
-          fontWeight: "bold",
-        }}
-      >
-        FITGYM
-      </Text>
+      <Appbar.Header mode="center-aligned">
+        <Appbar.Content title="Clases" titleStyle={{ fontWeight: 'bold' }} />
+      </Appbar.Header>
+      
+      <ScrollView style={{ padding: 14 }}>
 
-  
-      <NewsSection />
+        <NewsSection />
 
-      <Divider style={{ marginVertical: 8 }} />
-
-      <Filters
-        sede={sede}
-        setSede={setSede}
-        sedes={sedes}
-        sedeOpen={sedeOpen}
-        setSedeOpen={setSedeOpen}
-        disciplina={disciplina}
-        setDisciplina={setDisciplina}
-        disciplinas={disciplinas}
-        disciplinaOpen={disciplinaOpen}
-        setDisciplinaOpen={setDisciplinaOpen}
-        fecha={fecha}
-        setFecha={setFecha}
-        limpiarFiltros={limpiarFiltros}
-        datePickerVisible={datePickerVisible}
-        setDatePickerVisible={setDatePickerVisible}
-      />
-
-      <Divider style={{ marginVertical: 8 }} />
-
-      {filtered.length > 0 ? (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.idClase}
-          renderItem={({ item }) => (
-            <ClassCard
-              clase={item}
-              onPress={() =>
-                navigation.navigate("ClassDetail", { clase: item })
-              }
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 16 }}
+        <Filters
+          sede={sede}
+          setSede={setSede}
+          sedes={sedes}
+          sedeOpen={sedeOpen}
+          setSedeOpen={setSedeOpen}
+          disciplina={disciplina}
+          setDisciplina={setDisciplina}
+          disciplinas={disciplinas}
+          disciplinaOpen={disciplinaOpen}
+          setDisciplinaOpen={setDisciplinaOpen}
+          fecha={fecha}
+          setFecha={setFecha}
+          limpiarFiltros={limpiarFiltros}
+          datePickerVisible={datePickerVisible}
+          setDatePickerVisible={setDatePickerVisible}
         />
-      ) : (
-        renderEmpty()
-      )}
-       </ScrollView>
-    </SafeAreaView >
+
+        {filtered.length > 0 ? (
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.idClase}
+            renderItem={({ item }) => (
+              <ClassCard
+                clase={item}
+                onPress={() =>
+                  navigation.navigate("ClassDetail", { clase: item })
+                }
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 16 }}
+          />
+        ) : (
+          renderEmpty()
+        )}
+      </ScrollView>
+    </View >
   );
 }
+

@@ -31,6 +31,8 @@ const RegisterScreen = ({ navigation }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register } = useAuth();
 
   const validateForm = () => {
@@ -159,6 +161,7 @@ const RegisterScreen = ({ navigation }) => {
                 }
                 activeOutlineColor={theme.colors.primary}
                 theme={{ roundness: 12 }}
+                left={<TextInput.Icon icon="account-outline" />}
               />
               <HelperText type="error" visible={!!errors.nombre}>
                 {errors.nombre}
@@ -178,6 +181,7 @@ const RegisterScreen = ({ navigation }) => {
                 }
                 activeOutlineColor={theme.colors.primary}
                 theme={{ roundness: 10 }}
+                left={<TextInput.Icon icon="email-outline" />}
               />
               <HelperText type="error" visible={!!errors.email}>
                 {errors.email}
@@ -188,7 +192,7 @@ const RegisterScreen = ({ navigation }) => {
                 label="Contraseña"
                 value={formData.password}
                 onChangeText={(v) => handleInputChange("password", v)}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
                 outlineColor={
@@ -196,6 +200,13 @@ const RegisterScreen = ({ navigation }) => {
                 }
                 activeOutlineColor={theme.colors.primary}
                 theme={{ roundness: 10 }}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye-off" : "eye"}
+                    onPress={() => setShowPassword(!showPassword)}
+                    forceTextInputFocus={false}
+                  />
+                }
               />
               <HelperText type="error" visible={!!errors.password}>
                 {errors.password}
@@ -206,7 +217,7 @@ const RegisterScreen = ({ navigation }) => {
                 label="Confirmar Contraseña"
                 value={formData.confirmPassword}
                 onChangeText={(v) => handleInputChange("confirmPassword", v)}
-                secureTextEntry
+                secureTextEntry={!showConfirmPassword}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
                 outlineColor={
@@ -216,6 +227,13 @@ const RegisterScreen = ({ navigation }) => {
                 }
                 activeOutlineColor={theme.colors.primary}
                 theme={{ roundness: 10 }}
+                right={
+                  <TextInput.Icon
+                    icon={showConfirmPassword ? "eye-off" : "eye"}
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    forceTextInputFocus={false}
+                  />
+                }
               />
               <HelperText type="error" visible={!!errors.confirmPassword}>
                 {errors.confirmPassword}

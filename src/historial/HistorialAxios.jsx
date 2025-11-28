@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-nativ
 import {agruparPorMes} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../config/theme';
+import { Appbar } from 'react-native-paper';
 
 export default function HistorialAxios() {
 
@@ -39,8 +40,11 @@ export default function HistorialAxios() {
   return (
     <>
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-    <Text style={styles.title}>HistorialAxios</Text>
-    <View style={styles.separador}></View>
+    <Appbar.Header mode="center-aligned">
+      <Appbar.Content title="Historial" titleStyle={{ fontWeight: 'bold' }} />
+    </Appbar.Header>
+    
+    <View style={{ flex: 1, padding: 16 }}>
     {cargando ? <ActivityIndicator size={'large'}/> : (error ? <Text style={styles.alerta} >Error al hacer Fetch</Text> :
     //Caso del axios exitoso
     <>
@@ -68,6 +72,7 @@ export default function HistorialAxios() {
     </>
     )}
     </View>
+    </View>
     </>
   )
 }
@@ -75,7 +80,6 @@ export default function HistorialAxios() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#f7f8fc",
   },
   title: {
