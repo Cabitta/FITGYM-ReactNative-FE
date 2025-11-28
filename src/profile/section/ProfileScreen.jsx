@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserFormEdit from "../componentes/UserformEdit";
-import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
+import { ActivityIndicator, View, ScrollView, TouchableOpacity, Linking, AppState } from "react-native";
 import {
   Button,
   Card,
@@ -17,6 +17,7 @@ import api from "../../config/axios";
 import storage from "../../utils/storage";
 import LogoutScreen from "../../auth/screens/LogoutScreen";
 import { useTheme } from "../../config/theme";
+import * as Notifications from 'expo-notifications';
 
 export default function ProfileScreen({ navigation }) {
   const { isDarkMode, toggleTheme, theme } = useTheme();
@@ -24,6 +25,9 @@ export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [showLogout, setShowLogout] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+
+  //permiso para notificaciones
+  const [notificaciones, setNotificaciones] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,7 +44,25 @@ export default function ProfileScreen({ navigation }) {
       }
     };
     fetchUser();
+
+      const verificarPermisos = async () => {
+        const { status } = await Notifications.getPermissionsAsync();
+        setNotificaciones(status);
+      }
+      verificarPermisos();
+
+      const estadoApp = AppState.addEventListener("change", async(estado)=>{
+        if(estado === "active"){
+          verificarPermisos();
+        }
+      })
+
+      return ()=> estadoApp.remove();
   }, []);
+
+  function irAjustes() {
+    Linking.openSettings()
+  }
 
   if (!user) {
     return (
@@ -112,6 +134,39 @@ export default function ProfileScreen({ navigation }) {
             Cambia entre tema claro y oscuro
           </Text>
         </Surface>
+
+        <Surface
+        style={{
+          padding: 8,
+          borderRadius: 12,
+          marginBottom: 12,
+          backgroundColor: theme.colors.surface,
+          elevation: 2,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        {notificaciones === 'granted' ?(
+          <>
+          <Text variant="bodyMedium" style={{
+            marginTop: 0,
+            marginLeft: 16,
+            }}>
+              Notificaciones Permitidas: ✔
+          </Text>
+          </>
+        ):(<>
+        <Text variant="bodyMedium"
+          style={{
+            marginTop: 0,
+            marginLeft: 16,
+          }}>
+            Notificaciones No Permitidas : ❌
+        </Text>
+        <Button type="text" compact={true} onPress={() => irAjustes()}>Ir Ajustes</Button>
+        </>)}        
+      </Surface>
 
         {/* Tarjeta de información */}
         <TouchableOpacity

@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/axios'
 import { useAuth } from '../auth/AuthProvider'
 import ItemHistorial from './ItemHistorial';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import {agruparPorMes} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import {agruparPorMes, diaActual, diferenciaTiempo, estaAHorario, hayClasesHoy, horaActual, mesActual, TraerClaseHoy} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../config/theme';
 import { Appbar } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
+import * as Notifications from 'expo-notifications';
+import * as BackgroundTask from 'expo-background-task'
+import * as TaskManager from 'expo-task-manager';
 
 export default function HistorialAxios() {
 
@@ -25,7 +29,7 @@ export default function HistorialAxios() {
   useEffect(()=>{
     axiosInstance.get(`/reservas/usuario/${user.id}`)
       .then(respuesta=>{
-        console.log(respuesta.data)
+        //console.log(respuesta.data)
         setHistorial(respuesta.data)
         setHistorialAgrupado(agruparPorMes(respuesta.data))
       })
@@ -53,7 +57,7 @@ export default function HistorialAxios() {
       onValueChange={(value)=>{ 
         setMesSeleccionado(value)
         console.log(value)}}
-        style={{backgroundColor: theme.colors.secondary, borderRadius: 8,padding:10}}
+        style={{backgroundColor: theme.colors.secondary, borderRadius:32 ,padding:0}}
     >
       <Picker.Item label='Todos' value="todos"/>
       {historialAgrupado.map((grupo,index)=>(
@@ -72,10 +76,64 @@ export default function HistorialAxios() {
     </>
     )}
     </View>
+    <Button mode="outlined" onPress={() => notificacionLocal()}>Enviar Notificación</Button>
+    <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 8,}}>
+      <Button style={{flex: 1}} mode="outlined" onPress={() => probarTareaSecundaria()}>Probar Notificacion</Button>
+      <Button style={{flex: 1}} mode="outlined" onPress={() => verTareas()}>Ver Permisos</Button>
+    </View>
     </View>
     </>
   )
+
+  async function probarTareaSecundaria(){
+    await BackgroundTask.triggerTaskWorkerForTestingAsync();
+  }
+
+  async function verTareas() {
+    TaskManager.getRegisteredTasksAsync().then((tasks) => {
+      console.log(tasks);
+    });   
+  }
+
+  //Notificacion Manual
+  async function notificacionLocal() {
+    const hayClases = hayClasesHoy(historialAgrupado);
+    console.log(`Hay Clases Hoy: ${hayClases} `);
+    if (hayClases) {
+      const claseHoy = TraerClaseHoy(historialAgrupado);
+      const diferenciaEnHoras = diferenciaTiempo(claseHoy.horarioInicio);
+      const estaATiempo = estaAHorario(claseHoy.horarioInicio);
+      console.log(`Esta a Tiempo: ${estaATiempo}`)
+      if (estaATiempo) {
+        await Notifications.scheduleNotificationAsync({
+        content:{
+          title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+          body: `Tenes una clase de ${claseHoy.disiplina} en la sede ${claseHoy.sede} a las ${claseHoy.horarioInicio}, en ${diferenciaEnHoras.horas} horas y ${diferenciaEnHoras.minutos} minutos.`,
+        },
+        trigger: null,
+        })
+      }else{
+        await Notifications.scheduleNotificationAsync({
+        content:{
+          title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+          body: `Tu clase de ${claseHoy.disiplina} en la sede ${claseHoy.sede} a las ${claseHoy.horarioInicio} ya ha comenzado hace ${-diferenciaEnHoras.horas} horas y ${-diferenciaEnHoras.minutos} minutos.`,
+        },
+        trigger: null,
+        })
+      }
+    }else{
+      await Notifications.scheduleNotificationAsync({
+      content:{
+        title: `Notificación manual - ${new Date().toLocaleTimeString()}`,
+        body: `hoy ${diaActual()} no tienes clases programadas.`,
+      },
+      trigger: null,
+      })
+    }
+  }
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
