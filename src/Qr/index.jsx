@@ -319,7 +319,7 @@ const QRScanner = ({ navigation }) => {
       {/* Header */}
       <Appbar.Header mode="center-aligned">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Escáner QR" />
+        <Appbar.Content title="QR Scanner" titleStyle={{ fontWeight: 'bold' }} />
       </Appbar.Header>
 
       {/* Cámara */}

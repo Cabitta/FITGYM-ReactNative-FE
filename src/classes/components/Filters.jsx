@@ -7,7 +7,6 @@ import {
   Button,
   IconButton,
   useTheme as usePaperTheme,
-  Divider,
 } from "react-native-paper";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -159,8 +158,6 @@ export default function Filters({
           onCancel={() => setDatePickerVisible(false)}
         />
 
-        <Divider style={{ marginVertical: 8 }} />
-
         {/* Botón Limpiar */}
         <Button
           mode="contained"
@@ -170,6 +167,7 @@ export default function Filters({
           style={{ borderRadius: 12 }}
           buttonColor={theme.colors.primary} 
           labelStyle={{ fontWeight: "bold" }}
+          marginVertical={8}
         >
           Limpiar Filtros
         </Button>

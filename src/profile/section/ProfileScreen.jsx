@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import UserFormEdit from "../componentes/UserformEdit";
 import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
 import {
@@ -9,6 +8,7 @@ import {
   Switch,
   Surface,
   Modal,
+  Appbar,
 } from "react-native-paper";
 
 import UserInfoCard from "../componentes/UserInfoCard";
@@ -23,7 +23,7 @@ export default function ProfileScreen({ navigation }) {
 
   const [user, setUser] = useState(null);
   const [showLogout, setShowLogout] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false); // 👈 nuevo estado
+  const [showEditForm, setShowEditForm] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -44,7 +44,7 @@ export default function ProfileScreen({ navigation }) {
 
   if (!user) {
     return (
-      <SafeAreaView 
+      <View 
         style={{
           flex: 1,
           justifyContent: "center",
@@ -52,91 +52,67 @@ export default function ProfileScreen({ navigation }) {
         }}
       >
         <ActivityIndicator size="large" color={theme.colors.primary} />
-      </SafeAreaView >
+      </View >
     );
   }
 
   return (
-    <SafeAreaView 
+    <View 
       style={{
         flex: 1,
-        padding: 16,
       }}
     >
-      {/* Título del Tema */}
-      <Text
-        variant="headlineMedium"
-        style={{
-          color: theme.colors.primary,
-          textAlign: "center",
-          marginBottom: 16,
-          fontWeight: "bold",
-        }}
-      >
-        {isDarkMode ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
-      </Text>
+      <Appbar.Header mode="center-aligned">
+        <Appbar.Content title="Perfil" titleStyle={{ fontWeight: 'bold' }} />
+        <Appbar.Action icon="logout" onPress={() => setShowLogout(true)} />
+      </Appbar.Header>
 
-      {/* Control de Tema */}
-      <Surface
-        style={{
-          padding: 16,
-          borderRadius: 12,
-          marginBottom: 24,
-          backgroundColor: theme.colors.surface,
-          elevation: 2,
-        }}
-      >
-        <Card.Content
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-            {isDarkMode ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
-          </Text>
-          <Switch
-            value={isDarkMode}
-            onValueChange={toggleTheme}
-            color={theme.colors.secondary}
-          />
-        </Card.Content>
-        <Text
-          variant="bodyMedium"
-          style={{
-            color: theme.colors.onSurfaceVariant,
-            marginTop: 8,
-            marginLeft: 16,
-          }}
-        >
-          Cambia entre tema claro y oscuro
-        </Text>
-      </Surface>
-
-      {/* Título de Perfil */}
-      <Text
-        variant="titleLarge"
-        style={{
-          color: theme.colors.tertiary,
-          textAlign: "center",
-          marginBottom: 16,
-          fontWeight: "600",
-        }}
-      >
-        Perfil del Usuario
-      </Text>
-
-      {/* Contenido principal */}
       <ScrollView
         style={{ flex: 1, backgroundColor: theme.colors.background }}
         contentContainerStyle={{
           padding: 16,
           paddingBottom: 40,
-          alignItems: "center",
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Control de Tema */}
+        <Surface
+          style={{
+            padding: 16,
+            borderRadius: 12,
+            marginBottom: 24,
+            backgroundColor: theme.colors.surface,
+            elevation: 2,
+          }}
+        >
+          <Card.Content
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+              {isDarkMode ? "Modo Oscuro" : "Modo Claro"}
+            </Text>
+            <Switch
+              value={isDarkMode}
+              onValueChange={toggleTheme}
+              color={theme.colors.secondary}
+            />
+          </Card.Content>
+          <Text
+            variant="bodyMedium"
+            style={{
+              color: theme.colors.onSurfaceVariant,
+              marginTop: 8,
+              marginLeft: 16,
+            }}
+          >
+            Cambia entre tema claro y oscuro
+          </Text>
+        </Surface>
+
         {/* Tarjeta de información */}
         <TouchableOpacity
           activeOpacity={0.8}
@@ -159,31 +135,6 @@ export default function ProfileScreen({ navigation }) {
         )}
       </ScrollView>
 
-      {/* Botones */}
-      <Card.Content style={{ marginTop: 24, gap: 12 }}>
-        <Button
-          mode="contained"
-          onPress={() => navigation.goBack()}
-          contentStyle={{ height: 48 }}
-          labelStyle={{ fontSize: 16 }}
-          style={{ borderRadius: 8 }}
-          buttonColor={theme.colors.tertiary}
-        >
-          Volver
-        </Button>
-
-        <Button
-          mode="contained"
-          onPress={() => setShowLogout(true)}
-          contentStyle={{ height: 48 }}
-          labelStyle={{ fontSize: 16 }}
-          style={{ borderRadius: 8 }}
-          buttonColor="#dc3545"
-        >
-          Cerrar Sesión
-        </Button>
-      </Card.Content>
-
       {/* Modal de Logout */}
       <Modal
         visible={showLogout}
@@ -194,6 +145,8 @@ export default function ProfileScreen({ navigation }) {
           <LogoutScreen onClose={() => setShowLogout(false)} />
         </Surface>
       </Modal>
-    </SafeAreaView >
+      
+    </View >
   );
 }
+
