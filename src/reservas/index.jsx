@@ -2,7 +2,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { FlatList, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
   Button,
@@ -12,6 +11,7 @@ import {
   Portal,
   Text,
   Icon,
+  Appbar,
 } from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
@@ -137,31 +137,22 @@ export default function Reservas({ navigation }) {
   }
 
   return (
-    <SafeAreaView 
+    <View 
       style={{
         flex: 1,
-        padding: 16,
         backgroundColor: theme.colors.background,
       }}
     >
-      <Text
-        variant="titleLarge"
-        style={{
-          color: theme.colors.primary,
-          fontWeight: "bold",
-          textAlign: "center",
-          marginBottom: 8,
-        }}
-      >
-        Mis Reservas
-      </Text>
-      <Divider style={{ marginBottom: 16 }} />
+      <Appbar.Header mode="center-aligned">
+        <Appbar.Content title="Reservas" titleStyle={{ fontWeight: 'bold' }} />
+      </Appbar.Header>
 
-      <FlatList
-        data={reservas.data}
-        keyExtractor={(item) => item.idReserva.toString()}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        renderItem={({ item }) => (
+      <View style={{ flex: 1, padding: 16 }}>
+        <FlatList
+          data={reservas.data}
+          keyExtractor={(item) => item.idReserva.toString()}
+          contentContainerStyle={{ paddingBottom: 16 }}
+          renderItem={({ item }) => (
           <Card
             onPress={() =>
               setSelectedReservaId(
@@ -289,6 +280,7 @@ export default function Reservas({ navigation }) {
           </Card>
         )}
       />
+      </View>
 
       {/* Diálogo de confirmación */}
       <Portal>
@@ -316,6 +308,6 @@ export default function Reservas({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </SafeAreaView >
+    </View>
   );
 }
