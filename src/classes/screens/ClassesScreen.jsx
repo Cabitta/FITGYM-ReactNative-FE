@@ -157,10 +157,6 @@ export default function ClassesScreen({ navigation }) {
         backgroundColor: theme.colors.background,
       }}
     >
-      <Appbar.Header mode="center-aligned">
-        <Appbar.Content title="Clases" titleStyle={{ fontWeight: 'bold' }} />
-      </Appbar.Header>
-      
       <ScrollView style={{ padding: 14 }}>
 
         <NewsSection />

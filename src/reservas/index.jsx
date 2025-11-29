@@ -10,7 +10,6 @@ import {
   Portal,
   Text,
   Icon,
-  Appbar,
 } from "react-native-paper";
 import useSWR from "swr";
 import { useAuth } from "../auth/AuthProvider";
@@ -142,10 +141,6 @@ export default function Reservas({ navigation }) {
         backgroundColor: theme.colors.background,
       }}
     >
-      <Appbar.Header mode="center-aligned">
-        <Appbar.Content title="Reservas" titleStyle={{ fontWeight: 'bold' }} />
-      </Appbar.Header>
-
       <View style={{ flex: 1, padding: 16 }}>
         <FlatList
           data={reservas.data}
