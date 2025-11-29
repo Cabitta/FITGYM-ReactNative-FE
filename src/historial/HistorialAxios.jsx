@@ -6,7 +6,6 @@ import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import {agruparPorMes, diaActual, diferenciaTiempo, estaAHorario, hayClasesHoy, horaActual, mesActual, TraerClaseHoy} from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../config/theme';
-import { Appbar } from 'react-native-paper';
 import { Button, Text } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as BackgroundTask from 'expo-background-task'
@@ -43,11 +42,6 @@ export default function HistorialAxios() {
 
   return (
     <>
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-    <Appbar.Header mode="center-aligned">
-      <Appbar.Content title="Historial" titleStyle={{ fontWeight: 'bold' }} />
-    </Appbar.Header>
-    
     <View style={{ flex: 1, padding: 16 }}>
     {cargando ? <ActivityIndicator size={'large'}/> : (error ? <Text style={styles.alerta} >Error al hacer Fetch</Text> :
     //Caso del axios exitoso
@@ -75,7 +69,6 @@ export default function HistorialAxios() {
       
     </>
     )}
-    </View>
     <Button mode="outlined" onPress={() => notificacionLocal()}>Enviar Notificación</Button>
     <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 8,}}>
       <Button style={{flex: 1}} mode="outlined" onPress={() => probarTareaSecundaria()}>Probar Notificacion</Button>

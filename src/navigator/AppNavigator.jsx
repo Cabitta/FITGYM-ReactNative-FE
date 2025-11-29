@@ -1,8 +1,6 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../auth/AuthProvider";
 import LoginScreen from "../auth/screens/LoginScreen";
 import RegisterScreen from "../auth/screens/RegisterScreen";
@@ -16,8 +14,10 @@ import OtpScreen from "../auth/screens/OtpScreen";
 import EmailInputScreen from "../auth/screens/EmailInputScreen";
 import { useTheme } from "../config/theme";
 import QRScanner from "../Qr";
+import { Appbar, BottomNavigation } from "react-native-paper";
+import { useState } from "react";
+
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -47,87 +47,58 @@ function AppStack() {
 
 function AppTab() {
   const { theme } = useTheme();
+  const { logout } = useAuth();
+  const [index, setIndex] = useState(0);
+
+  const [routes] = useState([
+    { key: 'classes', title: 'Clases', focusedIcon: 'calendar-month', unfocusedIcon: 'calendar-month-outline' },
+    { key: 'reservas', title: 'Reservas', focusedIcon: 'calendar-check' },
+    { key: 'qrscanner', title: 'QR Scanner', focusedIcon: 'qrcode-scan' },
+    { key: 'profile', title: 'Perfil', focusedIcon: 'account' },
+    { key: 'historial', title: 'Historial', focusedIcon: 'history' },
+  ]);
+
+  const renderScene = BottomNavigation.SceneMap({
+    classes: ClassesScreen,
+    reservas: Reservas,
+    qrscanner: QRScanner,
+    profile: ProfileScreen,
+    historial: HistorialAxios,
+  });
+
+  // Determinar el título según el índice actual
+  const getTitle = () => {
+    switch (index) {
+      case 0: return "Clases";
+      case 1: return "Reservas";
+      case 2: return "QR Scanner";
+      case 3: return "Perfil";
+      case 4: return "Historial";
+      default: return "FITGYM";
+    }
+  };
+
+  const showLogoutAction = index === 3; // Mostrar logout solo en Profile
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => {
-          if (route.name === "Classes") {
-            return (
-              <MaterialCommunityIcons
-                name="calendar-month-outline"
-                size={size}
-                color={color}
-              />
-            );
-          }
-          if (route.name === "Reservas") {
-            return (
-              <MaterialCommunityIcons
-                name="calendar-check"
-                size={size}
-                color={color}
-              />
-            );
-          }
-          if (route.name === "Profile") {
-            return (
-              <MaterialCommunityIcons
-                name="account"
-                size={size}
-                color={color}
-              />
-            );
-          }
-          if (route.name === "Historial") {
-            return (
-              <MaterialCommunityIcons
-                name="history"
-                size={size}
-                color={color}
-              />
-            );
-          }
-          if (route.name === "QRScanner") {
-            return (
-              <MaterialCommunityIcons
-                name="qrcode-scan"
-                size={size}
-                color={color}
-              />
-            );
-          }
-          return null;
-        },
-      })}
-    >
-      <Tab.Screen
-        name="Classes"
-        component={ClassesScreen}
-        options={{ tabBarLabel: "Clases" }}
+    <View style={{ flex: 1 }}>
+      <Appbar.Header mode="center-aligned">
+        <Appbar.Content title={getTitle()} titleStyle={{ fontWeight: 'bold' }} />
+        {showLogoutAction && (
+          <Appbar.Action 
+            icon="logout" 
+            onPress={async () => {
+              await logout();
+            }} 
+          />
+        )}
+      </Appbar.Header>
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
       />
-      <Tab.Screen
-        name="Reservas"
-        component={Reservas}
-        options={{ tabBarLabel: "Reservas" }}
-      />
-      <Tab.Screen
-        name="QRScanner"
-        component={QRScanner}
-        options={{ tabBarLabel: "QR Scanner" }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ tabBarLabel: "Perfil" }}
-      />
-      <Tab.Screen
-        name="Historial"
-        component={HistorialAxios}
-        options={{ tabBarLabel: "Historial" }}
-      />
-    </Tab.Navigator>
+    </View>
   );
 }
 
@@ -145,7 +116,6 @@ function InnerNavigator() {
   return (
     <NavigationContainer>
       {token ? <AppStack /> : <AuthStack />}
-      {/* <AppTab /> */}
     </NavigationContainer>
   );
 }

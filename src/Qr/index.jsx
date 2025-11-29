@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Text, ActivityIndicator, Button, Appbar, Surface } from "react-native-paper";
+import { Text, ActivityIndicator, Button, Surface } from "react-native-paper";
 import { CameraView, Camera } from "expo-camera";
 import api from "../config/axios";
 import { useTheme } from "../config/theme";
@@ -316,12 +316,6 @@ const QRScanner = ({ navigation }) => {
   // -------------------- RENDER PRINCIPAL --------------------
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <Appbar.Header mode="center-aligned">
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="QR Scanner" titleStyle={{ fontWeight: 'bold' }} />
-      </Appbar.Header>
-
       {/* Cámara */}
       <CameraView
         style={styles.camera}

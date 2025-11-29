@@ -7,15 +7,12 @@ import {
   Text,
   Switch,
   Surface,
-  Modal,
-  Appbar,
 } from "react-native-paper";
 
 import UserInfoCard from "../componentes/UserInfoCard";
 import User from "../modelo/User";
 import api from "../../config/axios";
 import storage from "../../utils/storage";
-import LogoutScreen from "../../auth/screens/LogoutScreen";
 import { useTheme } from "../../config/theme";
 import * as Notifications from 'expo-notifications';
 
@@ -23,7 +20,6 @@ export default function ProfileScreen({ navigation }) {
   const { isDarkMode, toggleTheme, theme } = useTheme();
 
   const [user, setUser] = useState(null);
-  const [showLogout, setShowLogout] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
 
   //permiso para notificaciones
@@ -84,11 +80,6 @@ export default function ProfileScreen({ navigation }) {
         flex: 1,
       }}
     >
-      <Appbar.Header mode="center-aligned">
-        <Appbar.Content title="Perfil" titleStyle={{ fontWeight: 'bold' }} />
-        <Appbar.Action icon="logout" onPress={() => setShowLogout(true)} />
-      </Appbar.Header>
-
       <ScrollView
         style={{ flex: 1, backgroundColor: theme.colors.background }}
         contentContainerStyle={{
@@ -189,18 +180,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         )}
       </ScrollView>
-
-      {/* Modal de Logout */}
-      <Modal
-        visible={showLogout}
-        onDismiss={() => setShowLogout(false)}
-        contentContainerStyle={{ flex: 1 }}
-      >
-        <Surface style={{ flex: 1, backgroundColor: theme.colors.background }}>
-          <LogoutScreen onClose={() => setShowLogout(false)} />
-        </Surface>
-      </Modal>
-      
     </View >
   );
 }
