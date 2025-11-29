@@ -13,9 +13,10 @@ import {
   mesActual,
   TraerClaseHoy,
 } from './util/formatoFecha'; //auxiliar para formatear fechas de año-mes a formato legible
-import { Picker } from '@react-native-picker/picker';
+
+import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../config/theme';
-import { Button, Text } from 'react-native-paper';
+import { Button, IconButton, Text } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
@@ -27,7 +28,17 @@ export default function HistorialAxios() {
   const [error, setError] = useState(false);
   const { user } = useAuth();
   const [mesSeleccionado, setMesSeleccionado] = useState('todos');
+  const [openDropdown, setOpenDropdown] = useState(false);
   const { theme } = useTheme();
+
+  // Preparar items para DropDownPicker
+  const mesesItems = [
+    { label: 'Todos', value: 'todos' },
+    ...historialAgrupado.map(grupo => ({
+      label: grupo.mes,
+      value: grupo.mes,
+    })),
+  ];
 
   const historialFiltrado =
     mesSeleccionado === 'todos'
@@ -49,7 +60,6 @@ export default function HistorialAxios() {
       .finally(() => setCargando(false));
   }, []);
 
-  //Caso del axios exitoso
   return (
     <>
       <View style={{ flex: 1, padding: 16 }}>
@@ -58,24 +68,46 @@ export default function HistorialAxios() {
         ) : error ? (
           <Text style={styles.alerta}>Error al hacer Fetch</Text>
         ) : (
+          //Caso del axios exitoso
           <>
-            <Picker
-              selectedValue={mesSeleccionado}
-              onValueChange={value => {
-                setMesSeleccionado(value);
-                console.log(value);
-              }}
+            <DropDownPicker
+              open={openDropdown}
+              value={mesSeleccionado}
+              items={mesesItems}
+              setOpen={setOpenDropdown}
+              setValue={setMesSeleccionado}
+              placeholder="Seleccionar mes"
               style={{
-                backgroundColor: theme.colors.secondary,
-                borderRadius: 32,
-                padding: 0,
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+                borderRadius: 12,
+                minHeight: 48,
               }}
-            >
-              <Picker.Item label="Todos" value="todos" />
-              {historialAgrupado.map((grupo, index) => (
-                <Picker.Item key={index} label={grupo.mes} value={grupo.mes} />
-              ))}
-            </Picker>
+              dropDownContainerStyle={{
+                borderColor: theme.colors.outline,
+                backgroundColor: theme.colors.surface,
+                borderRadius: 12,
+                elevation: 4,
+              }}
+              textStyle={{
+                color: theme.colors.onSurface,
+                fontSize: 16,
+              }}
+              ArrowUpIconComponent={() => (
+                <IconButton
+                  icon="chevron-up"
+                  size={20}
+                  iconColor={theme.colors.primary}
+                />
+              )}
+              ArrowDownIconComponent={() => (
+                <IconButton
+                  icon="chevron-down"
+                  size={20}
+                  iconColor={theme.colors.primary}
+                />
+              )}
+            />
             <FlatList
               data={historialFiltrado}
               renderItem={({ item }) => (

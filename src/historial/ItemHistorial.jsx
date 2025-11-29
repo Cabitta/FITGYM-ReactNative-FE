@@ -1,85 +1,157 @@
 import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
+import { Card, Text, Icon, Divider } from 'react-native-paper';
 import { useTheme } from '../config/theme';
 
 export default function ItemHistorial({ item = null }) {
   const { theme } = useTheme();
 
-  //cambia el fondo de acuerdo al estado
-  function fondo(item) {
-    if (item.estado == 'CONFIRMADA') {
-      return { backgroundColor: '#4A90E2' };
-    } else if (item.estado == 'CANCELADA') {
-      return { backgroundColor: '#d6604bff' };
-    } else if (item.estado == 'EXPIRADA') {
-      return { backgroundColor: '#ccc' };
-    } else return { backgroundColor: theme.colors.surface };
-  }
-
   if (item == null) {
     return (
-      <>
-        <View style={styles.card}>
-          <Text>Tarjeta Vacia</Text>
-        </View>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <View style={[styles.card, fondo(item)]}>
-          <View style={styles.fila}>
-            <Text style={styles.textoTitulo}>{item.disiplina}</Text>
-            <Text style={styles.textoCode}>Id:{item.id}</Text>
-          </View>
-          <View style={styles.separador}></View>
-          <Text>Dia: {item.fecha}</Text>
-          <Text>
-            Horario Inicio: {item.horarioInicio.substring(0, 5)} - Horario Fin:{' '}
-            {item.horarioFin.substring(0, 5)}
-          </Text>
-          <Text>
-            Sede: {item.sede} - Barrio: {item.barrio}
-          </Text>
-        </View>
-      </>
+      <Card style={{ marginVertical: 8, padding: 16 }}>
+        <Text>Tarjeta Vacia</Text>
+      </Card>
     );
   }
-}
 
-const styles = StyleSheet.create({
-  card: {
-    width: '100%',
-    backgroundColor: '#fff',
-    padding: 16,
-    marginVertical: 8,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  fila: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textoTitulo: {
-    fontWeight: '600',
-    color: '#111',
-    fontSize: 18,
-  },
-  textoCode: {
-    fontWeight: '500',
-    color: '#333',
-    fontSize: 12,
-  },
-  separador: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#000000ff',
-    marginVertical: 12,
-    alignSelf: 'stretch',
-  },
-});
+  // Determinar color del estado
+  let estadoColor = theme.colors.onSurface;
+  if (item.estado === 'CONFIRMADA') estadoColor = theme.colors.secondary;
+  else if (item.estado === 'CANCELADA') estadoColor = theme.colors.error;
+  else if (item.estado === 'EXPIRADA') estadoColor = theme.colors.tertiary;
+
+  return (
+    <Card
+      style={{
+        marginBottom: 12,
+        padding: 10,
+        borderRadius: 16,
+        backgroundColor: theme.colors.surface,
+        elevation: 4,
+      }}
+      mode="elevated"
+    >
+      <Card.Content style={{ gap: 12 }}>
+        {/* Header: Disciplina + ID */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+          }}
+        >
+          <Text
+            variant="titleMedium"
+            style={{ color: theme.colors.primary, fontWeight: 'bold' }}
+          >
+            {item.disiplina}
+          </Text>
+          <Text
+            variant="titleSmall"
+            style={{
+              color: theme.colors.secondary,
+              fontSize: 12,
+            }}
+          >
+            Id:{item.id}
+          </Text>
+        </View>
+
+        <Divider />
+
+        {/* Fecha */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon
+            source="calendar-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
+          <Text
+            variant="bodyMedium"
+            style={{ color: theme.colors.onSurfaceVariant }}
+          >
+            Dia:{' '}
+            <Text
+              style={{
+                color: theme.colors.tertiary,
+                fontWeight: '600',
+              }}
+            >
+              {item.fecha}
+            </Text>
+          </Text>
+        </View>
+
+        {/* Horario */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon
+            source="clock-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
+          <Text
+            variant="bodyMedium"
+            style={{ color: theme.colors.onSurfaceVariant }}
+          >
+            Horario:{' '}
+            <Text
+              style={{
+                color: theme.colors.tertiary,
+                fontWeight: '600',
+              }}
+            >
+              {item.horarioInicio?.substring(0, 5)} -{' '}
+              {item.horarioFin?.substring(0, 5)}
+            </Text>
+          </Text>
+        </View>
+
+        {/* Sede */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon
+            source="map-marker-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
+          <Text
+            variant="bodyMedium"
+            style={{ color: theme.colors.onSurfaceVariant }}
+          >
+            Sede:{' '}
+            <Text
+              style={{
+                color: theme.colors.tertiary,
+                fontWeight: '600',
+              }}
+            >
+              {item.sede} - {item.barrio}
+            </Text>
+          </Text>
+        </View>
+
+        {/* Estado (Nuevo Campo) */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon
+            source="information-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
+          <Text
+            variant="bodyMedium"
+            style={{ color: theme.colors.onSurfaceVariant }}
+          >
+            Estado:{' '}
+            <Text
+              style={{
+                color: estadoColor,
+                fontWeight: 'bold',
+              }}
+            >
+              {item.estado}
+            </Text>
+          </Text>
+        </View>
+      </Card.Content>
+    </Card>
+  );
+}

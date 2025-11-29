@@ -86,14 +86,14 @@ export default function Filters({
               <IconButton
                 icon="chevron-up"
                 size={20}
-                color={theme.colors.primary}
+                iconColor={theme.colors.primary}
               />
             )}
             ArrowDownIconComponent={() => (
               <IconButton
                 icon="chevron-down"
                 size={20}
-                color={theme.colors.primary}
+                iconColor={theme.colors.primary}
               />
             )}
           />
@@ -128,14 +128,14 @@ export default function Filters({
               <IconButton
                 icon="chevron-up"
                 size={20}
-                color={theme.colors.primary}
+                iconColor={theme.colors.primary}
               />
             )}
             ArrowDownIconComponent={() => (
               <IconButton
                 icon="chevron-down"
                 size={20}
-                color={theme.colors.primary}
+                iconColor={theme.colors.primary}
               />
             )}
           />

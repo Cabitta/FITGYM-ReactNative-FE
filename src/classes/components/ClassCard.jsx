@@ -5,6 +5,7 @@ import {
   Text,
   useTheme as usePaperTheme,
   Icon,
+  Divider,
 } from 'react-native-paper';
 import { View } from 'react-native';
 import { useTheme } from '../../config/theme';
@@ -21,6 +22,7 @@ export default function ClassCard({ clase, onPress }) {
       onPress={onPress}
       style={{
         marginBottom: 12,
+        padding: 10,
         borderRadius: 16,
         backgroundColor: theme.colors.surface,
         elevation: 4,
@@ -29,18 +31,17 @@ export default function ClassCard({ clase, onPress }) {
     >
       <Card.Content
         style={{
-          padding: 16,
           gap: 12,
         }}
       >
-        {/* Header: Disciplina + Cupos */}
-        <Card.Content
+        <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'baseline',
           }}
         >
+          {/* Header: Disciplina + Cupos */}
           <Text
             variant="titleMedium"
             style={{ color: theme.colors.primary, fontWeight: 'bold' }}
@@ -56,7 +57,9 @@ export default function ClassCard({ clase, onPress }) {
           >
             {cupoText}
           </Text>
-        </Card.Content>
+        </View>
+
+        <Divider />
 
         {/* Fecha y Horario */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

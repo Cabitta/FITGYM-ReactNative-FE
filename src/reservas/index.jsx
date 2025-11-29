@@ -10,6 +10,7 @@ import {
   Portal,
   Text,
   Icon,
+  Divider,
 } from 'react-native-paper';
 import useSWR from 'swr';
 import { useAuth } from '../auth/AuthProvider';
@@ -155,19 +156,20 @@ export default function Reservas({ navigation }) {
               }
               style={{
                 marginBottom: 12,
+                padding: 10,
                 borderRadius: 16,
                 backgroundColor: theme.colors.surface,
                 elevation: 4,
               }}
               mode="elevated"
             >
-              <Card.Content style={{ padding: 16, gap: 12 }}>
+              <Card.Content style={{ gap: 12 }}>
                 {/* Header: clase */}
-                <Card.Content
+                <View
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'baseline',
                   }}
                 >
                   <Text
@@ -183,15 +185,16 @@ export default function Reservas({ navigation }) {
                     variant="titleSmall"
                     style={{
                       color: theme.colors.secondary,
-                      fontWeight: '600',
+                      fontSize: 12,
                     }}
                   >
                     #{item.idReserva}
                   </Text>
-                </Card.Content>
+                </View>
+
+                <Divider />
 
                 {/* Fecha */}
-
                 <View
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 >
@@ -215,6 +218,7 @@ export default function Reservas({ navigation }) {
                     </Text>
                   </Text>
                 </View>
+
                 {/* Sede */}
                 <View
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
@@ -239,6 +243,8 @@ export default function Reservas({ navigation }) {
                     </Text>
                   </Text>
                 </View>
+
+                {/* Estado */}
                 <View
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 >
