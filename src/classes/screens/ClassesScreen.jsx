@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import Filters from '../components/Filters';
 import ClassCard from '../components/ClassCard';
+import ClassDetailModal from '../components/ClassDetailModal';
 import { getClasesEnriched } from '../services/classService';
 import { useTheme } from '../../config/theme';
 import NewsSection from '../../news/components/NewsSection';
@@ -31,6 +32,10 @@ export default function ClassesScreen({ navigation }) {
   const [sedeOpen, setSedeOpen] = useState(false);
   const [disciplinaOpen, setDisciplinaOpen] = useState(false);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
+
+  // Modal state
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedClase, setSelectedClase] = useState(null);
 
   const ymd = d => {
     if (!d) return null;
@@ -185,9 +190,10 @@ export default function ClassesScreen({ navigation }) {
             renderItem={({ item }) => (
               <ClassCard
                 clase={item}
-                onPress={() =>
-                  navigation.navigate('ClassDetail', { clase: item })
-                }
+                onPress={() => {
+                  setSelectedClase(item);
+                  setModalVisible(true);
+                }}
               />
             )}
             showsVerticalScrollIndicator={false}
@@ -197,6 +203,15 @@ export default function ClassesScreen({ navigation }) {
           renderEmpty()
         )}
       </ScrollView>
+
+      <ClassDetailModal
+        visible={modalVisible}
+        onDismiss={() => {
+          setModalVisible(false);
+          setSelectedClase(null);
+        }}
+        clase={selectedClase}
+      />
     </View>
   );
 }
