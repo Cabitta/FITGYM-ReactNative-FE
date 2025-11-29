@@ -12,7 +12,7 @@ import {
   Portal,
   IconButton,
 } from 'react-native-paper';
-import api from '../../config/axios';
+import api from '../../config/interceptors';
 import { useAuth } from '../../auth/AuthProvider';
 import { useTheme } from '../../config/theme';
 import useSWR from 'swr';

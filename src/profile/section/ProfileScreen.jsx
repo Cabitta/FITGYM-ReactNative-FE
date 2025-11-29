@@ -12,7 +12,7 @@ import { Button, Card, Text, Switch, Surface } from 'react-native-paper';
 
 import UserInfoCard from '../componentes/UserInfoCard';
 import User from '../modelo/User';
-import api from '../../config/axios';
+import api from '../../config/interceptors';
 import storage from '../../utils/storage';
 import { useTheme } from '../../config/theme';
 import * as Notifications from 'expo-notifications';

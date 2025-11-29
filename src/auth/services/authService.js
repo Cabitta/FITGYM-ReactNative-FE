@@ -24,8 +24,11 @@ class AuthService {
       } = response.data;
 
       // Guardar tokens en storage
+      console.log('💾 [AUTH SERVICE] Saving access_token to storage...');
       await storage.setItem('access_token', access_token);
+      console.log('💾 [AUTH SERVICE] Saving refresh_token to storage...');
       await storage.setItem('refresh_token', refresh_token);
+      console.log('💾 [AUTH SERVICE] Saving user_data to storage...');
       await storage.setItem(
         'user_data',
         JSON.stringify({
@@ -34,9 +37,14 @@ class AuthService {
           email: userEmail,
         })
       );
+      console.log(
+        '✅ [AUTH SERVICE] All tokens and user data saved to storage'
+      );
+
       // Guardar token en cache en memoria para evitar race conditions
       try {
         tokenManager.setToken(access_token);
+        console.log('✅ [AUTH SERVICE] Token set in tokenManager');
       } catch (e) {
         console.log('Error setting token in tokenManager:', e);
       }

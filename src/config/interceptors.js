@@ -69,7 +69,7 @@ axiosInstance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${tokenM}`;
       }
     } catch (error) {
-      console.log('Usuario sin  token:', error);
+      console.log('Usuario sin token:', error);
     }
 
     return config;

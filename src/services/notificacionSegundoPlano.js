@@ -7,7 +7,7 @@ import {
   estaAHorario,
   TraerClaseHoy,
 } from '../historial/util/formatoFecha';
-import axiosInstance from '../config/axios';
+import axiosInstance from '../config/interceptors';
 import storage from '../utils/storage';
 import { agruparPorMes, hayClasesHoy } from '../historial/util/formatoFecha';
 
