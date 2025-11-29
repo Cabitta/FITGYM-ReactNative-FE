@@ -14,7 +14,11 @@ export default function ClassesStack() {
         headerTitleAlign: 'center',
       }}
     >
-      <Stack.Screen name="Classes" component={ClassesScreen} options={{ title: 'Clases disponibles' }} />
+      <Stack.Screen
+        name="Classes"
+        component={ClassesScreen}
+        options={{ title: 'Clases disponibles' }}
+      />
     </Stack.Navigator>
   );
 }

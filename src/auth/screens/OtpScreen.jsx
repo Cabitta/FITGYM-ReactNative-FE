@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,31 +6,31 @@ import {
   StyleSheet,
   Alert,
   View as RNView,
-} from "react-native";
+} from 'react-native';
 import {
   Text,
   Button,
   useTheme as usePaperTheme,
   HelperText,
   Card,
-} from "react-native-paper";
+} from 'react-native-paper';
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
-} from "react-native-confirmation-code-field";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../AuthProvider";
-import { useTheme } from "../../config/theme";
+} from 'react-native-confirmation-code-field';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../AuthProvider';
+import { useTheme } from '../../config/theme';
 
 const OtpScreen = ({ navigation, route }) => {
   const { theme, isDarkMode } = useTheme();
   const paperTheme = usePaperTheme();
 
   const { email: routeEmail } = route.params || {};
-  const [email, setEmail] = useState(routeEmail || "");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState(routeEmail || '');
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { verifyOtp, resendOtp } = useAuth();
@@ -38,38 +38,38 @@ const OtpScreen = ({ navigation, route }) => {
 
   const handleVerify = async () => {
     if (!otp.trim()) {
-      Alert.alert("Error", "Por favor ingresa un código");
+      Alert.alert('Error', 'Por favor ingresa un código');
       return;
     }
     setLoading(true);
     try {
       const res = await verifyOtp(email.trim(), otp.trim());
       if (!res.success) {
-        Alert.alert("Error", "Código inválido");
+        Alert.alert('Error', 'Código inválido');
       }
     } catch (e) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
   };
 
   const handleLoginPress = () => {
-    navigation.navigate("Login");
+    navigation.navigate('Login');
   };
 
   const handleSendCodePress = () => {
-    navigation.navigate("EmailInput");
+    navigation.navigate('EmailInput');
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
         >
           <Card
@@ -86,9 +86,9 @@ const OtpScreen = ({ navigation, route }) => {
               <Text
                 variant="headlineMedium"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 Ingresa tu código
@@ -98,20 +98,20 @@ const OtpScreen = ({ navigation, route }) => {
               <Text
                 variant="bodyLarge"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
                 }}
               >
-                Te enviamos un código a {email || "tu email"}. Ingresa el código
+                Te enviamos un código a {email || 'tu email'}. Ingresa el código
                 para habilitar tu cuenta.
               </Text>
 
               <RNView
-                style={{ alignItems: "center", marginTop: 8, marginBottom: 12 }}
+                style={{ alignItems: 'center', marginTop: 8, marginBottom: 12 }}
               >
                 <CodeField
                   value={otp}
-                  onChangeText={(val) => setOtp(val)}
+                  onChangeText={val => setOtp(val)}
                   cellCount={6}
                   rootStyle={styles.codeFieldRoot}
                   keyboardType="number-pad"
@@ -149,11 +149,11 @@ const OtpScreen = ({ navigation, route }) => {
                 loading={loading}
                 disabled={loading}
                 contentStyle={{ height: 50 }}
-                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                labelStyle={{ fontSize: 16, fontWeight: '600' }}
                 style={{ borderRadius: 12, marginTop: 32 }}
                 buttonColor={theme.colors.primary}
               >
-                {loading ? "Verificando.." : "Verificar"}
+                {loading ? 'Verificando..' : 'Verificar'}
               </Button>
 
               {/* Ir a Iniciar Sesión */}
@@ -164,7 +164,7 @@ const OtpScreen = ({ navigation, route }) => {
                 style={{ marginTop: 32 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Ya tienes una cuenta?
@@ -178,7 +178,7 @@ const OtpScreen = ({ navigation, route }) => {
                 style={{ marginTop: 16 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿No recibiste un código?
@@ -192,26 +192,26 @@ const OtpScreen = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8f9fa" },
-  content: { flex: 1, padding: 24, justifyContent: "center" },
+  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  content: { flex: 1, padding: 24, justifyContent: 'center' },
   title: {
     fontSize: 24,
-    fontWeight: "700",
-    textAlign: "center",
+    fontWeight: '700',
+    textAlign: 'center',
     marginBottom: 24,
   },
-  label: { fontSize: 14, color: "#444", marginTop: 12 },
+  label: { fontSize: 14, color: '#444', marginTop: 12 },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
     borderWidth: 1,
-    borderColor: "#e6e6e6",
+    borderColor: '#e6e6e6',
   },
   otpContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     gap: 8,
     marginTop: 8,
     marginBottom: 12,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e6e6e6",
+    borderColor: '#e6e6e6',
     fontSize: 20,
     marginHorizontal: 4,
   },
@@ -229,40 +229,40 @@ const styles = StyleSheet.create({
   cell: {
     width: 48,
     height: 56,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e6e6e6",
+    borderColor: '#e6e6e6',
     marginHorizontal: 6,
   },
   cellFocused: {
-    borderColor: "#6200ee",
-    shadowColor: "#000",
+    borderColor: '#6200ee',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 4,
     elevation: 2,
   },
-  cellText: { fontSize: 20, textAlign: "center" },
+  cellText: { fontSize: 20, textAlign: 'center' },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: '#007bff',
     padding: 14,
     borderRadius: 8,
     marginTop: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonSecondary: {
-    backgroundColor: "#007bff",
+    backgroundColor: '#007bff',
     padding: 12,
     borderRadius: 8,
     marginTop: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonDisabled: { opacity: 0.7 },
-  buttonText: { color: "#fff", fontWeight: "600" },
-  secondary: { marginTop: 16, alignItems: "center" },
-  secondaryText: { color: "#007bff" },
+  buttonText: { color: '#fff', fontWeight: '600' },
+  secondary: { marginTop: 16, alignItems: 'center' },
+  secondaryText: { color: '#007bff' },
 });
 
 export default OtpScreen;

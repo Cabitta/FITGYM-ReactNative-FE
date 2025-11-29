@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import UserFormEdit from "../componentes/UserformEdit";
-import { ActivityIndicator, View, ScrollView, TouchableOpacity, Linking, AppState } from "react-native";
+import React, { useEffect, useState } from 'react';
+import UserFormEdit from '../componentes/UserformEdit';
 import {
-  Button,
-  Card,
-  Text,
-  Switch,
-  Surface,
-} from "react-native-paper";
+  ActivityIndicator,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  AppState,
+} from 'react-native';
+import { Button, Card, Text, Switch, Surface } from 'react-native-paper';
 
-import UserInfoCard from "../componentes/UserInfoCard";
-import User from "../modelo/User";
-import api from "../../config/axios";
-import storage from "../../utils/storage";
-import { useTheme } from "../../config/theme";
+import UserInfoCard from '../componentes/UserInfoCard';
+import User from '../modelo/User';
+import api from '../../config/axios';
+import storage from '../../utils/storage';
+import { useTheme } from '../../config/theme';
 import * as Notifications from 'expo-notifications';
 
 export default function ProfileScreen({ navigation }) {
@@ -28,7 +29,7 @@ export default function ProfileScreen({ navigation }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const datosStorage = await storage.getItem("user_data");
+        const datosStorage = await storage.getItem('user_data');
         if (datosStorage) {
           const parsedData = JSON.parse(datosStorage);
           const id = parsedData.id;
@@ -36,46 +37,46 @@ export default function ProfileScreen({ navigation }) {
           setUser(new User(userData));
         }
       } catch (error) {
-        console.error("Error al obtener el usuario:", error);
+        console.error('Error al obtener el usuario:', error);
       }
     };
     fetchUser();
 
-      const verificarPermisos = async () => {
-        const { status } = await Notifications.getPermissionsAsync();
-        setNotificaciones(status);
+    const verificarPermisos = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      setNotificaciones(status);
+    };
+    verificarPermisos();
+
+    const estadoApp = AppState.addEventListener('change', async estado => {
+      if (estado === 'active') {
+        verificarPermisos();
       }
-      verificarPermisos();
+    });
 
-      const estadoApp = AppState.addEventListener("change", async(estado)=>{
-        if(estado === "active"){
-          verificarPermisos();
-        }
-      })
-
-      return ()=> estadoApp.remove();
+    return () => estadoApp.remove();
   }, []);
 
   function irAjustes() {
-    Linking.openSettings()
+    Linking.openSettings();
   }
 
   if (!user) {
     return (
-      <View 
+      <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View >
+      </View>
     );
   }
 
   return (
-    <View 
+    <View
       style={{
         flex: 1,
       }}
@@ -100,13 +101,16 @@ export default function ProfileScreen({ navigation }) {
         >
           <Card.Content
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              {isDarkMode ? "Modo Oscuro" : "Modo Claro"}
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              {isDarkMode ? 'Modo Oscuro' : 'Modo Claro'}
             </Text>
             <Switch
               value={isDarkMode}
@@ -127,37 +131,46 @@ export default function ProfileScreen({ navigation }) {
         </Surface>
 
         <Surface
-        style={{
-          padding: 8,
-          borderRadius: 12,
-          marginBottom: 12,
-          backgroundColor: theme.colors.surface,
-          elevation: 2,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        {notificaciones === 'granted' ?(
-          <>
-          <Text variant="bodyMedium" style={{
-            marginTop: 0,
-            marginLeft: 16,
-            }}>
-              Notificaciones Permitidas: ✔
-          </Text>
-          </>
-        ):(<>
-        <Text variant="bodyMedium"
           style={{
-            marginTop: 0,
-            marginLeft: 16,
-          }}>
-            Notificaciones No Permitidas : ❌
-        </Text>
-        <Button type="text" compact={true} onPress={() => irAjustes()}>Ir Ajustes</Button>
-        </>)}        
-      </Surface>
+            padding: 8,
+            borderRadius: 12,
+            marginBottom: 12,
+            backgroundColor: theme.colors.surface,
+            elevation: 2,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          {notificaciones === 'granted' ? (
+            <>
+              <Text
+                variant="bodyMedium"
+                style={{
+                  marginTop: 0,
+                  marginLeft: 16,
+                }}
+              >
+                Notificaciones Permitidas: ✔
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text
+                variant="bodyMedium"
+                style={{
+                  marginTop: 0,
+                  marginLeft: 16,
+                }}
+              >
+                Notificaciones No Permitidas : ❌
+              </Text>
+              <Button type="text" compact={true} onPress={() => irAjustes()}>
+                Ir Ajustes
+              </Button>
+            </>
+          )}
+        </Surface>
 
         {/* Tarjeta de información */}
         <TouchableOpacity
@@ -169,10 +182,10 @@ export default function ProfileScreen({ navigation }) {
 
         {/* Formulario de edición (solo visible si se tocó la card) */}
         {showEditForm && (
-          <View style={{ width: "100%", marginTop: 20 }}>
+          <View style={{ width: '100%', marginTop: 20 }}>
             <UserFormEdit
               user={user}
-              onUpdated={(u) => {
+              onUpdated={u => {
                 setUser({ ...user, ...u });
                 setShowEditForm(false); // 👈 ocultar el form luego de guardar
               }}
@@ -180,6 +193,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         )}
       </ScrollView>
-    </View >
+    </View>
   );
 }

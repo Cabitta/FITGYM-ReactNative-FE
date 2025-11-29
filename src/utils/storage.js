@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 class StorageService {
-
   async setItem(key, value) {
     try {
       if (Platform.OS === 'web') {
@@ -80,8 +79,6 @@ class StorageService {
       throw error;
     }
   }
-
-
 }
 
 export default new StorageService();

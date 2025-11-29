@@ -32,8 +32,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-background-task"
-    ]
+    "plugins": ["expo-background-task"]
   }
 }

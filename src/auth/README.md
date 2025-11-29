@@ -52,7 +52,7 @@ import {
   AuthInput,
   AuthButton,
   authService,
-} from "../auth";
+} from '../auth';
 ```
 
 ### Usar el servicio de autenticación

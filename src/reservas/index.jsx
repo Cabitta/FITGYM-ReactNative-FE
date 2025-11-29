@@ -1,7 +1,7 @@
 // src/screens/Reservas.jsx
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { FlatList, View } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+import { FlatList, View } from 'react-native';
 import {
   ActivityIndicator,
   Button,
@@ -10,11 +10,11 @@ import {
   Portal,
   Text,
   Icon,
-} from "react-native-paper";
-import useSWR from "swr";
-import { useAuth } from "../auth/AuthProvider";
-import api from "../config/axios";
-import { useTheme } from "../config/theme";
+} from 'react-native-paper';
+import useSWR from 'swr';
+import { useAuth } from '../auth/AuthProvider';
+import api from '../config/axios';
+import { useTheme } from '../config/theme';
 
 export default function Reservas({ navigation }) {
   const { user } = useAuth();
@@ -39,7 +39,7 @@ export default function Reservas({ navigation }) {
   );
 
   // Confirmar cancelación
-  const handleOpenConfirm = (idReserva) => {
+  const handleOpenConfirm = idReserva => {
     setReservaToCancel(idReserva);
     setConfirmVisible(true);
   };
@@ -60,7 +60,7 @@ export default function Reservas({ navigation }) {
       mutate();
     } catch (err) {
       console.error(
-        "Error cancelando reserva:",
+        'Error cancelando reserva:',
         err?.response?.data || err.message
       );
     } finally {
@@ -80,15 +80,15 @@ export default function Reservas({ navigation }) {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
+          justifyContent: 'center',
           backgroundColor: theme.colors.background,
         }}
       >
         <Text
           style={{
             color: theme.colors.error,
-            textAlign: "center",
-            fontWeight: "bold",
+            textAlign: 'center',
+            fontWeight: 'bold',
           }}
         >
           Error al cargar las reservas.
@@ -102,8 +102,8 @@ export default function Reservas({ navigation }) {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: theme.colors.background,
         }}
       >
@@ -117,15 +117,15 @@ export default function Reservas({ navigation }) {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
+          justifyContent: 'center',
           backgroundColor: theme.colors.background,
         }}
       >
         <Text
           style={{
             color: theme.colors.primary,
-            textAlign: "center",
-            fontWeight: "bold",
+            textAlign: 'center',
+            fontWeight: 'bold',
           }}
         >
           No tienes reservas registradas.
@@ -135,7 +135,7 @@ export default function Reservas({ navigation }) {
   }
 
   return (
-    <View 
+    <View
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
@@ -144,136 +144,157 @@ export default function Reservas({ navigation }) {
       <View style={{ flex: 1, padding: 16 }}>
         <FlatList
           data={reservas.data}
-          keyExtractor={(item) => item.idReserva.toString()}
+          keyExtractor={item => item.idReserva.toString()}
           contentContainerStyle={{ paddingBottom: 16 }}
           renderItem={({ item }) => (
-          <Card
-            onPress={() =>
-              setSelectedReservaId(
-                selectedReservaId === item.idReserva ? null : item.idReserva
-              )
-            }
-            style={{
-              marginBottom: 12,
-              borderRadius: 16,
-              backgroundColor: theme.colors.surface,
-              elevation: 4,
-            }}
-            mode="elevated"
-          >
-            <Card.Content style={{ padding: 16, gap: 12 }}>
-              {/* Header: clase */}
-              <Card.Content
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  variant="titleMedium"
+            <Card
+              onPress={() =>
+                setSelectedReservaId(
+                  selectedReservaId === item.idReserva ? null : item.idReserva
+                )
+              }
+              style={{
+                marginBottom: 12,
+                borderRadius: 16,
+                backgroundColor: theme.colors.surface,
+                elevation: 4,
+              }}
+              mode="elevated"
+            >
+              <Card.Content style={{ padding: 16, gap: 12 }}>
+                {/* Header: clase */}
+                <Card.Content
                   style={{
-                    color: theme.colors.primary,
-                    fontWeight: "bold",
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}
                 >
-                  {item.clase?.disciplina || "Clase sin nombre"}
-                </Text>
-                <Text
-                  variant="titleSmall"
-                  style={{
-                    color: theme.colors.secondary,
-                    fontWeight: "600",
-                  }}
+                  <Text
+                    variant="titleMedium"
+                    style={{
+                      color: theme.colors.primary,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {item.clase?.disciplina || 'Clase sin nombre'}
+                  </Text>
+                  <Text
+                    variant="titleSmall"
+                    style={{
+                      color: theme.colors.secondary,
+                      fontWeight: '600',
+                    }}
+                  >
+                    #{item.idReserva}
+                  </Text>
+                </Card.Content>
+
+                {/* Fecha */}
+
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 >
-                  #{item.idReserva}
-                </Text>
+                  <Icon
+                    source="calendar-outline"
+                    size={20}
+                    color={theme.colors.tertiary}
+                  />
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
+                    Fecha:{' '}
+                    <Text
+                      style={{
+                        color: theme.colors.tertiary,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {item.clase?.fecha || 'Fecha no disponible'}
+                    </Text>
+                  </Text>
+                </View>
+                {/* Sede */}
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                >
+                  <Icon
+                    source="map-marker-outline"
+                    size={20}
+                    color={theme.colors.tertiary}
+                  />
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
+                    Sede:{' '}
+                    <Text
+                      style={{
+                        color: theme.colors.tertiary,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {item.sede?.nombre || 'No disponible'}
+                    </Text>
+                  </Text>
+                </View>
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                >
+                  <Icon
+                    source="information-outline"
+                    size={20}
+                    color={theme.colors.tertiary}
+                  />
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
+                    Estado:{' '}
+                    <Text
+                      style={{
+                        color: theme.colors.tertiary,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                        ? 'VENCIDA'
+                        : item.estado || 'CONFIRMADA'}
+                    </Text>
+                  </Text>
+                </View>
+
+                {selectedReservaId === item.idReserva && (
+                  <Button
+                    mode="contained-tonal"
+                    buttonColor={theme.colors.errorContainer}
+                    textColor={theme.colors.onErrorContainer}
+                    style={{ marginTop: 8, borderRadius: 8 }}
+                    onPress={() => handleOpenConfirm(item.idReserva)}
+                    loading={isCancelling}
+                    disabled={
+                      isCancelling ||
+                      item.estado === 'CANCELADA' ||
+                      estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
+                    }
+                  >
+                    {isCancelling
+                      ? 'Cancelando...'
+                      : estaVencida(
+                            item.clase?.fecha,
+                            item.clase?.horarioInicio
+                          )
+                        ? 'Reserva vencida'
+                        : item.estado === 'CANCELADA'
+                          ? 'Reserva cancelada'
+                          : 'Cancelar reserva'}
+                  </Button>
+                )}
               </Card.Content>
-
-              {/* Fecha */}
-
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Icon source="calendar-outline" size={20} color={theme.colors.tertiary} />
-                <Text
-                  variant="bodyMedium"
-                  style={{ color: theme.colors.onSurfaceVariant }}
-                >
-                  Fecha:{" "}
-                  <Text
-                    style={{
-                      color: theme.colors.tertiary,
-                      fontWeight: "600",
-                    }}
-                  >
-                    {item.clase?.fecha || "Fecha no disponible"}
-                  </Text>
-                </Text>
-              </View>
-              {/* Sede */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Icon source="map-marker-outline" size={20} color={theme.colors.tertiary} />
-                <Text
-                  variant="bodyMedium"
-                  style={{ color: theme.colors.onSurfaceVariant }}
-                >
-                  Sede:{" "}
-                  <Text
-                    style={{
-                      color: theme.colors.tertiary,
-                      fontWeight: "600",
-                    }}
-                  >
-                    {item.sede?.nombre || "No disponible"}
-                  </Text>
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Icon source="information-outline" size={20} color={theme.colors.tertiary} />
-                <Text
-                  variant="bodyMedium"
-                  style={{ color: theme.colors.onSurfaceVariant }}
-                >
-                  Estado:{" "}
-                  <Text
-                    style={{
-                      color: theme.colors.tertiary,
-                      fontWeight: "600",
-                    }}
-                  >
-                    {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
-                      ? "VENCIDA"
-                      : item.estado || "CONFIRMADA"}
-                  </Text>
-                </Text>
-              </View>
-
-              {selectedReservaId === item.idReserva && (
-                <Button
-                  mode="contained-tonal"
-                  buttonColor={theme.colors.errorContainer}
-                  textColor={theme.colors.onErrorContainer}
-                  style={{ marginTop: 8, borderRadius: 8 }}
-                  onPress={() => handleOpenConfirm(item.idReserva)}
-                  loading={isCancelling}
-                  disabled={
-                    isCancelling ||
-                    item.estado === "CANCELADA" ||
-                    estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
-                  }
-                >
-                  {isCancelling
-                    ? "Cancelando..."
-                    : estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
-                    ? "Reserva vencida"
-                    : item.estado === "CANCELADA"
-                    ? "Reserva cancelada"
-                    : "Cancelar reserva"}
-                </Button>
-              )}
-            </Card.Content>
-          </Card>
-        )}
-      />
+            </Card>
+          )}
+        />
       </View>
 
       {/* Diálogo de confirmación */}

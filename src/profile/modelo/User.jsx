@@ -1,4 +1,3 @@
-
 export default class User {
   constructor({ id, nombre, email, foto, reservas = [], password }) {
     this.id = id;

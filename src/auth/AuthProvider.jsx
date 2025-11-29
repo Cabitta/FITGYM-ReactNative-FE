@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import storage from "../utils/storage";
-import tokenManager from "../utils/tokenManager";
-import authService from "./services/authService";
-import { authenticateBiometric } from "../utils/biometriaAuth";
-
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import storage from '../utils/storage';
+import tokenManager from '../utils/tokenManager';
+import authService from './services/authService';
+import { authenticateBiometric } from '../utils/biometriaAuth';
 
 const AuthContext = createContext(null);
 
@@ -16,15 +15,15 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const init = async () => {
       try {
-        const saved = await storage.getItem("access_token");
-        const userData = await storage.getItem("user_data");
+        const saved = await storage.getItem('access_token');
+        const userData = await storage.getItem('user_data');
         if (mounted && saved) {
           tokenManager.setToken(saved);
           setToken(saved);
           if (userData) setUser(JSON.parse(userData));
         }
       } catch (e) {
-        console.log("Error initializing auth state:", e);
+        console.log('Error initializing auth state:', e);
         // ignore
       } finally {
         if (mounted) setLoading(false);
@@ -47,21 +46,21 @@ export function AuthProvider({ children }) {
     return res;
   };
 
-  const register = async (userData) => {
+  const register = async userData => {
     // userData should contain at least { nombre, email, password }
     const res = await authService.register(userData);
     return res;
   };
 
   const loginWithBiometric = async () => {
-  const res = await authenticateBiometric();
+    const res = await authenticateBiometric();
     if (res.success) {
-    tokenManager.setToken(res.token);
-    setToken(res.token);
-    setUser(res.user);
-  }
+      tokenManager.setToken(res.token);
+      setToken(res.token);
+      setUser(res.user);
+    }
 
-  return res;
+    return res;
   };
 
   const verifyOtp = async (email, otp) => {
@@ -79,7 +78,7 @@ export function AuthProvider({ children }) {
     return res;
   };
 
-  const resendOtp = async (email) => {
+  const resendOtp = async email => {
     // Calls authService.resendOtp which uses POST /api/auth/send-otp
     const res = await authService.resendOtp(email);
     return res;
@@ -93,20 +92,20 @@ export function AuthProvider({ children }) {
     return res;
   };
 
-  const editProfile = async (id,user_data) => {
-    const res = await authService.editProfile(id,user_data);
+  const editProfile = async (id, user_data) => {
+    const res = await authService.editProfile(id, user_data);
     try {
       if (res.success) {
-        console.log("Usuario actualizado:", res.user);
-        const update=JSON.stringify(res.data)
+        console.log('Usuario actualizado:', res.user);
+        const update = JSON.stringify(res.data);
         setUser(update);
       }
       return res;
     } catch (error) {
-      console.error("Error updating profile:", error);
-      return { success: false, error: "Error updating profile" };
+      console.error('Error updating profile:', error);
+      return { success: false, error: 'Error updating profile' };
     }
-  }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -129,6 +128,6 @@ export function AuthProvider({ children }) {
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 };

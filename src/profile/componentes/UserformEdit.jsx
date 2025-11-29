@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Image } from "react-native";
+import React, { useState } from 'react';
+import { View, Image } from 'react-native';
 import {
   Card,
   TextInput,
@@ -7,18 +7,18 @@ import {
   Text,
   useTheme,
   Avatar,
-} from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
-import { useAuth } from "../../auth/AuthProvider"; 
-import storage from "../../utils/storage";
+} from 'react-native-paper';
+import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../../auth/AuthProvider';
+import storage from '../../utils/storage';
 
 const UserFormEdit = ({ user, onUpdated }) => {
   const { colors } = useTheme();
   const { editProfile } = useAuth();
   const [formData, setFormData] = useState({
-    nombre: user?.nombre || "",
-    email: user?.email || "",
-    foto: user?.foto || "",
+    nombre: user?.nombre || '',
+    email: user?.email || '',
+    foto: user?.foto || '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -35,44 +35,47 @@ const UserFormEdit = ({ user, onUpdated }) => {
         setFormData({ ...formData, foto: base64Image });
       }
     } catch (error) {
-      console.error("Error al seleccionar imagen:", error);
+      console.error('Error al seleccionar imagen:', error);
     }
   };
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const storedUser = await storage.getItem("user_data");
+      const storedUser = await storage.getItem('user_data');
       const parsedUser = JSON.parse(storedUser);
       const userId = parsedUser.id;
-        const res = await editProfile(userId, formData);
-        if (res.success) {
-            console.log(res)
-            console.log("Perfil actualizado:", res.user);
-            if (onUpdated) onUpdated(res.user);
-        } else {
-            console.error("Error al actualizar perfil:", res.error);
-        }
+      const res = await editProfile(userId, formData);
+      if (res.success) {
+        console.log(res);
+        console.log('Perfil actualizado:', res.user);
+        if (onUpdated) onUpdated(res.user);
+      } else {
+        console.error('Error al actualizar perfil:', res.error);
+      }
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
+      console.error('Error al actualizar perfil:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const cleanBase64 = formData.foto?.replace(/\s/g, "");
+  const cleanBase64 = formData.foto?.replace(/\s/g, '');
   const imageUri =
-    cleanBase64 && cleanBase64.startsWith("data:image")
+    cleanBase64 && cleanBase64.startsWith('data:image')
       ? cleanBase64
       : cleanBase64
-      ? `data:image/png;base64,${cleanBase64}`
-      : null;
+        ? `data:image/png;base64,${cleanBase64}`
+        : null;
 
   return (
     <Card style={{ marginVertical: 16, borderRadius: 12 }}>
-      <Card.Title title="Editar Perfil" titleStyle={{ color: colors.primary }} />
+      <Card.Title
+        title="Editar Perfil"
+        titleStyle={{ color: colors.primary }}
+      />
       <Card.Content>
-        <View style={{ alignItems: "center", marginBottom: 16 }}>
+        <View style={{ alignItems: 'center', marginBottom: 16 }}>
           {imageUri ? (
             <Image
               source={{ uri: imageUri }}
@@ -86,7 +89,7 @@ const UserFormEdit = ({ user, onUpdated }) => {
           ) : (
             <Avatar.Text
               size={100}
-              label={"🧟‍♂️"}
+              label={'🧟‍♂️'}
               style={{ backgroundColor: colors.secondaryContainer }}
             />
           )}
@@ -104,7 +107,7 @@ const UserFormEdit = ({ user, onUpdated }) => {
           label="Nombre"
           value={formData.nombre}
           mode="outlined"
-          onChangeText={(text) => setFormData({ ...formData, nombre: text })}
+          onChangeText={text => setFormData({ ...formData, nombre: text })}
           style={{ marginBottom: 12 }}
         />
 
@@ -112,7 +115,7 @@ const UserFormEdit = ({ user, onUpdated }) => {
           label="Email"
           value={formData.email}
           mode="outlined"
-          onChangeText={(text) => setFormData({ ...formData, email: text })}
+          onChangeText={text => setFormData({ ...formData, email: text })}
           keyboardType="email-address"
           style={{ marginBottom: 12 }}
         />
