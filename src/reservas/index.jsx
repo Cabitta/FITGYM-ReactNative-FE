@@ -14,7 +14,7 @@ import {
 } from 'react-native-paper';
 import useSWR from 'swr';
 import { useAuth } from '../auth/AuthProvider';
-import api from '../config/axios';
+import api from '../config/interceptors';
 import { useTheme } from '../config/theme';
 
 export default function Reservas({ navigation }) {

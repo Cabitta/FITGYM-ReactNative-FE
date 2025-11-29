@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../config/axios';
+import axiosInstance from '../config/interceptors';
 import { useAuth } from '../auth/AuthProvider';
 import ItemHistorial from './ItemHistorial';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';

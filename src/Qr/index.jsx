@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Text, ActivityIndicator, Button, Surface } from 'react-native-paper';
 import { CameraView, Camera } from 'expo-camera';
-import api from '../config/axios';
+import api from '../config/interceptors';
 import { useTheme } from '../config/theme';
 import { useAuth } from '../auth/AuthProvider';
 import {
