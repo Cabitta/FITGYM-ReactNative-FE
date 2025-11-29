@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Alert,
-} from "react-native";
+} from 'react-native';
 import {
   Text,
   TextInput,
@@ -12,16 +12,16 @@ import {
   useTheme as usePaperTheme,
   HelperText,
   Card,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../AuthProvider";
-import { useTheme } from "../../config/theme";
+} from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../AuthProvider';
+import { useTheme } from '../../config/theme';
 
 const EmailInputScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const paperTheme = usePaperTheme();
 
-  const [formData, setFormData] = useState({ email: "" });
+  const [formData, setFormData] = useState({ email: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -31,9 +31,9 @@ const EmailInputScreen = ({ navigation }) => {
     const newErrors = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = "El email es requerido";
+      newErrors.email = 'El email es requerido';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email inválido";
+      newErrors.email = 'Email inválido';
     }
 
     setErrors(newErrors);
@@ -41,9 +41,9 @@ const EmailInputScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -54,33 +54,33 @@ const EmailInputScreen = ({ navigation }) => {
     try {
       const r = await resendOtp(formData.email.trim());
       if (r.success) {
-        navigation.navigate("Otp", { email: formData.email });
+        navigation.navigate('Otp', { email: formData.email });
       } else {
-        Alert.alert("Error", "No se pudo enviar el código");
+        Alert.alert('Error', 'No se pudo enviar el código');
       }
     } catch (e) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
   };
 
   const handleLoginPress = () => {
-    navigation.navigate("Login");
+    navigation.navigate('Login');
   };
 
   const handleVerifyCodePress = () => {
-    navigation.navigate("Otp", { email: formData.email });
+    navigation.navigate('Otp', { email: formData.email });
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
         >
           <Card
@@ -97,9 +97,9 @@ const EmailInputScreen = ({ navigation }) => {
               <Text
                 variant="headlineMedium"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 Enviar código
@@ -109,7 +109,7 @@ const EmailInputScreen = ({ navigation }) => {
               <Text
                 variant="bodyLarge"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
                 }}
               >
@@ -121,7 +121,7 @@ const EmailInputScreen = ({ navigation }) => {
               <TextInput
                 label="Email"
                 value={formData.email}
-                onChangeText={(v) => handleInputChange("email", v)}
+                onChangeText={v => handleInputChange('email', v)}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 mode="outlined"
@@ -145,11 +145,11 @@ const EmailInputScreen = ({ navigation }) => {
                 loading={loading}
                 disabled={loading}
                 contentStyle={{ height: 50 }}
-                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                labelStyle={{ fontSize: 16, fontWeight: '600' }}
                 style={{ borderRadius: 12 }}
                 buttonColor={theme.colors.primary}
               >
-                {loading ? "Enviando código..." : "Enviar código"}
+                {loading ? 'Enviando código...' : 'Enviar código'}
               </Button>
 
               {/* Ir a Iniciar Sesión */}
@@ -160,7 +160,7 @@ const EmailInputScreen = ({ navigation }) => {
                 style={{ marginTop: 32 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Ya tienes una cuenta?
@@ -174,7 +174,7 @@ const EmailInputScreen = ({ navigation }) => {
                 style={{ marginTop: 16 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Ya recibiste un código?

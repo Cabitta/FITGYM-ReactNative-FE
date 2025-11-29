@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+
+# Build outputs
+.expo/
+android/
+ios/
+dist/
+build/
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.log
+coverage/

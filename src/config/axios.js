@@ -1,11 +1,11 @@
-import axios from "axios";
-import { Platform } from "react-native";
-import Constants from "expo-constants";
+import axios from 'axios';
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 export const getBaseURL = () => {
   // For web, use localhost
-  if (Platform.OS === "web") {
-    return "http://localhost:9090/api/";
+  if (Platform.OS === 'web') {
+    return 'http://localhost:9090/api/';
   }
 
   // Get the IP address from Expo's development server
@@ -21,16 +21,16 @@ export const getBaseURL = () => {
 
   // Fallback to localhost for iOS simulator
   // For Android emulator, use 10.0.2.2 which maps to host's localhost
-  return Platform.OS === "ios"
-    ? "http://localhost:9090/api/"
-    : "http://10.0.2.2:9090/api/";
+  return Platform.OS === 'ios'
+    ? 'http://localhost:9090/api/'
+    : 'http://10.0.2.2:9090/api/';
 };
 
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 

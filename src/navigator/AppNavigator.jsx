@@ -1,21 +1,21 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { useAuth } from "../auth/AuthProvider";
-import LoginScreen from "../auth/screens/LoginScreen";
-import RegisterScreen from "../auth/screens/RegisterScreen";
-import ClassDetail from "../classes/screens/ClassDetail";
-import ClassesScreen from "../classes/screens/ClassesScreen";
-import ProfileScreen from "../profile/section/ProfileScreen";
-import Reservas from "../reservas";
-import Historial from "../historial/Historial";
-import HistorialAxios from "../historial/HistorialAxios";
-import OtpScreen from "../auth/screens/OtpScreen";
-import EmailInputScreen from "../auth/screens/EmailInputScreen";
-import { useTheme } from "../config/theme";
-import QRScanner from "../Qr";
-import { Appbar, BottomNavigation } from "react-native-paper";
-import { useState } from "react";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useAuth } from '../auth/AuthProvider';
+import LoginScreen from '../auth/screens/LoginScreen';
+import RegisterScreen from '../auth/screens/RegisterScreen';
+import ClassDetail from '../classes/screens/ClassDetail';
+import ClassesScreen from '../classes/screens/ClassesScreen';
+import ProfileScreen from '../profile/section/ProfileScreen';
+import Reservas from '../reservas';
+import Historial from '../historial/Historial';
+import HistorialAxios from '../historial/HistorialAxios';
+import OtpScreen from '../auth/screens/OtpScreen';
+import EmailInputScreen from '../auth/screens/EmailInputScreen';
+import { useTheme } from '../config/theme';
+import QRScanner from '../Qr';
+import { Appbar, BottomNavigation } from 'react-native-paper';
+import { useState } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +39,7 @@ function AppStack() {
       <Stack.Screen
         name="ClassDetail"
         component={ClassDetail}
-        options={{ title: "Detalle de Clase" }}
+        options={{ title: 'Detalle de Clase' }}
       />
     </Stack.Navigator>
   );
@@ -51,7 +51,12 @@ function AppTab() {
   const [index, setIndex] = useState(0);
 
   const [routes] = useState([
-    { key: 'classes', title: 'Clases', focusedIcon: 'calendar-month', unfocusedIcon: 'calendar-month-outline' },
+    {
+      key: 'classes',
+      title: 'Clases',
+      focusedIcon: 'calendar-month',
+      unfocusedIcon: 'calendar-month-outline',
+    },
     { key: 'reservas', title: 'Reservas', focusedIcon: 'calendar-check' },
     { key: 'qrscanner', title: 'QR Scanner', focusedIcon: 'qrcode-scan' },
     { key: 'profile', title: 'Perfil', focusedIcon: 'account' },
@@ -69,12 +74,18 @@ function AppTab() {
   // Determinar el título según el índice actual
   const getTitle = () => {
     switch (index) {
-      case 0: return "Clases";
-      case 1: return "Reservas";
-      case 2: return "QR Scanner";
-      case 3: return "Perfil";
-      case 4: return "Historial";
-      default: return "FITGYM";
+      case 0:
+        return 'Clases';
+      case 1:
+        return 'Reservas';
+      case 2:
+        return 'QR Scanner';
+      case 3:
+        return 'Perfil';
+      case 4:
+        return 'Historial';
+      default:
+        return 'FITGYM';
     }
   };
 
@@ -83,13 +94,16 @@ function AppTab() {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header mode="center-aligned">
-        <Appbar.Content title={getTitle()} titleStyle={{ fontWeight: 'bold' }} />
+        <Appbar.Content
+          title={getTitle()}
+          titleStyle={{ fontWeight: 'bold' }}
+        />
         {showLogoutAction && (
-          <Appbar.Action 
-            icon="logout" 
+          <Appbar.Action
+            icon="logout"
             onPress={async () => {
               await logout();
-            }} 
+            }}
           />
         )}
       </Appbar.Header>
@@ -127,7 +141,7 @@ export default function AppNavigator() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

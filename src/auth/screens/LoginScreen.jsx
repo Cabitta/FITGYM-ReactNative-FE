@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,7 +6,7 @@ import {
   Alert,
   Linking,
   View,
-} from "react-native";
+} from 'react-native';
 import {
   Text,
   TextInput,
@@ -15,17 +15,17 @@ import {
   useTheme as usePaperTheme,
   HelperText,
   Card,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as LocalAuthentication from "expo-local-authentication";
-import { useAuth } from "../AuthProvider";
-import { useTheme } from "../../config/theme";
+} from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { useAuth } from '../AuthProvider';
+import { useTheme } from '../../config/theme';
 
 const LoginScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const paperTheme = usePaperTheme();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -44,11 +44,11 @@ const LoginScreen = ({ navigation }) => {
         setBiometricAvailable(false);
         if (compatible && enrolled === 0) {
           Alert.alert(
-            "Autenticación requerida",
-            "Configura huella o reconocimiento facial en Ajustes.",
+            'Autenticación requerida',
+            'Configura huella o reconocimiento facial en Ajustes.',
             [
-              { text: "Cancelar", style: "cancel" },
-              { text: "Ir a Ajustes", onPress: () => Linking.openSettings() },
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Ir a Ajustes', onPress: () => Linking.openSettings() },
             ]
           );
         }
@@ -62,13 +62,13 @@ const LoginScreen = ({ navigation }) => {
     const newErrors = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = "El email es requerido";
+      newErrors.email = 'El email es requerido';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email inválido";
+      newErrors.email = 'Email inválido';
     }
 
     if (!formData.password.trim()) {
-      newErrors.password = "La contraseña es requerida";
+      newErrors.password = 'La contraseña es requerida';
     }
 
     setErrors(newErrors);
@@ -76,9 +76,9 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -89,10 +89,10 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert("Error al iniciar sesión", "Credenciales inválidas");
+        Alert.alert('Error al iniciar sesión', 'Credenciales inválidas');
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado ");
+      Alert.alert('Error', 'Ocurrió un error inesperado ');
     } finally {
       setLoading(false);
     }
@@ -101,18 +101,18 @@ const LoginScreen = ({ navigation }) => {
   const handleBiometricLogin = async () => {
     const res = await loginWithBiometric();
     if (res.success) {
-      Alert.alert("Éxito", `Bienvenido, ${res.user.username}`);
+      Alert.alert('Éxito', `Bienvenido, ${res.user.username}`);
     } else {
-      Alert.alert("Error", res.error || "Autenticación biométrica fallida");
+      Alert.alert('Error', res.error || 'Autenticación biométrica fallida');
     }
   };
 
   const handleRegisterPress = () => {
-    navigation.navigate("Register");
+    navigation.navigate('Register');
   };
 
   const handleEmailInputPress = () => {
-    navigation.navigate("EmailInput", {
+    navigation.navigate('EmailInput', {
       email: formData.email.trim(),
     });
   };
@@ -125,11 +125,11 @@ const LoginScreen = ({ navigation }) => {
       }}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flex: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
         >
           <Card
@@ -146,9 +146,9 @@ const LoginScreen = ({ navigation }) => {
               <Text
                 variant="headlineMedium"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 Iniciar Sesión
@@ -158,7 +158,7 @@ const LoginScreen = ({ navigation }) => {
                 <TextInput
                   label="Email"
                   value={formData.email}
-                  onChangeText={(v) => handleInputChange("email", v)}
+                  onChangeText={v => handleInputChange('email', v)}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   mode="outlined"
@@ -181,7 +181,7 @@ const LoginScreen = ({ navigation }) => {
                 <TextInput
                   label="Contraseña"
                   value={formData.password}
-                  onChangeText={(v) => handleInputChange("password", v)}
+                  onChangeText={v => handleInputChange('password', v)}
                   secureTextEntry={!showPassword}
                   mode="outlined"
                   error={!!errors.password}
@@ -193,7 +193,7 @@ const LoginScreen = ({ navigation }) => {
                   activeOutlineColor={theme.colors.primary}
                   right={
                     <TextInput.Icon
-                      icon={showPassword ? "eye-off" : "eye"}
+                      icon={showPassword ? 'eye-off' : 'eye'}
                       onPress={() => setShowPassword(!showPassword)}
                       forceTextInputFocus={false}
                     />
@@ -211,11 +211,11 @@ const LoginScreen = ({ navigation }) => {
                 loading={loading}
                 disabled={loading}
                 contentStyle={{ height: 50 }}
-                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                labelStyle={{ fontSize: 16, fontWeight: '600' }}
                 style={{ borderRadius: 12 }}
                 buttonColor={theme.colors.primary}
               >
-                {loading ? "Iniciando..." : "Iniciar Sesión"}
+                {loading ? 'Iniciando...' : 'Iniciar Sesión'}
               </Button>
 
               {/* Biometría */}
@@ -223,7 +223,7 @@ const LoginScreen = ({ navigation }) => {
                 <Button
                   mode="outlined"
                   onPress={handleBiometricLogin}
-                  icon={isDarkMode ? "fingerprint" : "face-recognition"}
+                  icon={isDarkMode ? 'fingerprint' : 'face-recognition'}
                   contentStyle={{ height: 48 }}
                   style={{
                     borderRadius: 12,
@@ -244,7 +244,7 @@ const LoginScreen = ({ navigation }) => {
                 style={{ marginTop: 32 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿No tienes cuenta?
@@ -258,7 +258,7 @@ const LoginScreen = ({ navigation }) => {
                 style={{ marginTop: 16 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Tu cuenta está deshabilitada?

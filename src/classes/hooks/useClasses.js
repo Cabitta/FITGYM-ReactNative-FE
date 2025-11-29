@@ -20,7 +20,6 @@ export const useClasses = () => {
     }
   };
 
-
   useEffect(() => {
     fetchClases();
   }, []);

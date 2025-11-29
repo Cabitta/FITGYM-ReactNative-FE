@@ -17,7 +17,13 @@ async function refreshAccessToken() {
       refreshToken: refreshToken,
     });
     console.log('Token refresh response:', response.data);
-    const { access_token, refresh_token: newRefresh, user_Id, username, email } = response.data;
+    const {
+      access_token,
+      refresh_token: newRefresh,
+      user_Id,
+      username,
+      email,
+    } = response.data;
 
     await storage.setItem('access_token', access_token);
     await storage.setItem('refresh_token', newRefresh);
@@ -47,7 +53,7 @@ async function refreshAccessToken() {
 // 🧩 Interceptor de REQUEST
 // ---------------------------------------------------------------------------
 axiosInstance.interceptors.request.use(
-  async (config) => {
+  async config => {
     if (config?.headers?.['X-Skip-Auth'] || config?.skipAuth) {
       return config;
     }
@@ -68,7 +74,7 @@ axiosInstance.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 );
 
 // ---------------------------------------------------------------------------
@@ -78,7 +84,7 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach(prom => {
     if (error) prom.reject(error);
     else prom.resolve(token);
   });
@@ -86,8 +92,8 @@ const processQueue = (error, token = null) => {
 };
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     const originalRequest = error.config;
 
     if (
@@ -100,11 +106,11 @@ axiosInstance.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
+          .then(token => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
             return axiosInstance(originalRequest);
           })
-          .catch((err) => Promise.reject(err));
+          .catch(err => Promise.reject(err));
       }
 
       isRefreshing = true;

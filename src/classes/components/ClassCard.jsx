@@ -5,6 +5,7 @@ import {
   Text,
   useTheme as usePaperTheme,
   Icon,
+  Divider,
 } from 'react-native-paper';
 import { View } from 'react-native';
 import { useTheme } from '../../config/theme';
@@ -13,13 +14,15 @@ export default function ClassCard({ clase, onPress }) {
   const { theme } = useTheme();
 
   const cupoText = clase.cupo > 0 ? `Cupos: ${clase.cupo}` : 'Sin cupo';
-  const cupoColor = clase.cupo > 0 ? theme.colors.secondary : theme.colors.error;
+  const cupoColor =
+    clase.cupo > 0 ? theme.colors.secondary : theme.colors.error;
 
   return (
     <Card
       onPress={onPress}
       style={{
         marginBottom: 12,
+        padding: 10,
         borderRadius: 16,
         backgroundColor: theme.colors.surface,
         elevation: 4,
@@ -28,23 +31,20 @@ export default function ClassCard({ clase, onPress }) {
     >
       <Card.Content
         style={{
-          padding: 16,
           gap: 12,
         }}
       >
-        {/* Header: Disciplina + Cupos */}
-        <Card.Content
+        <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'baseline',
           }}
         >
+          {/* Header: Disciplina + Cupos */}
           <Text
             variant="titleMedium"
-            style={{color: theme.colors.primary, 
-              fontWeight: 'bold',
-            }}
+            style={{ color: theme.colors.primary, fontWeight: 'bold' }}
           >
             {clase.disciplina}
           </Text>
@@ -57,27 +57,38 @@ export default function ClassCard({ clase, onPress }) {
           >
             {cupoText}
           </Text>
-        </Card.Content>
+        </View>
+
+        <Divider />
 
         {/* Fecha y Horario */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Icon source="clock-outline" size={20} color={theme.colors.tertiary} />
+          <Icon
+            source="clock-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
           <Text
             variant="bodyMedium"
             style={{
-              color: theme.colors.tertiary, 
+              color: theme.colors.tertiary,
             }}
           >
-            {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} - {clase.horarioFin?.substring(0, 5)}
+            {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} -{' '}
+            {clase.horarioFin?.substring(0, 5)}
           </Text>
         </View>
 
         {/* Sede */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Icon source="map-marker-outline" size={20} color={theme.colors.tertiary} />
+          <Icon
+            source="map-marker-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
           <Text
             variant="bodyMedium"
-            style={{color: theme.colors.onSurfaceVariant}}
+            style={{ color: theme.colors.onSurfaceVariant }}
           >
             <Text
               variant="bodyMedium"
@@ -93,7 +104,11 @@ export default function ClassCard({ clase, onPress }) {
 
         {/* Profesor */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Icon source="account-outline" size={20} color={theme.colors.tertiary} />
+          <Icon
+            source="account-outline"
+            size={20}
+            color={theme.colors.tertiary}
+          />
           <Text
             variant="bodyMedium"
             style={{

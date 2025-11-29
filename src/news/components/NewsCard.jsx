@@ -1,6 +1,6 @@
-import React from "react";
-import { Card, Text } from "react-native-paper";
-import { useTheme } from "../../config/theme";
+import React from 'react';
+import { Card, Text } from 'react-native-paper';
+import { useTheme } from '../../config/theme';
 
 const NewsCard = ({ item }) => {
   const { theme } = useTheme();
@@ -19,7 +19,7 @@ const NewsCard = ({ item }) => {
         <Text
           variant="titleMedium"
           style={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             color: theme.colors.primary,
           }}
           numberOfLines={1}
@@ -30,7 +30,7 @@ const NewsCard = ({ item }) => {
           variant="bodyMedium"
           style={{
             color: theme.colors.onSurfaceVariant,
-            minHeight: 50, 
+            minHeight: 50,
           }}
           numberOfLines={3}
         >
@@ -39,9 +39,8 @@ const NewsCard = ({ item }) => {
       </Card.Content>
       <Card.Actions>
         <Text
-          style={{ fontStyle: "italic", color: theme.colors.onSurfaceVariant }}
-        >
-        </Text>
+          style={{ fontStyle: 'italic', color: theme.colors.onSurfaceVariant }}
+        ></Text>
       </Card.Actions>
     </Card>
   );

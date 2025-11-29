@@ -3,7 +3,7 @@ import api from '../../config/axios';
 const batchFetchByIds = async (ids, buildUrl, pick) => {
   const uniq = Array.from(new Set(ids.filter(Boolean)));
   const entries = await Promise.all(
-    uniq.map(async (id) => {
+    uniq.map(async id => {
       try {
         const { data } = await api.get(buildUrl(id));
         return [id, pick(data)];
@@ -24,14 +24,14 @@ export const getClasesEnriched = async () => {
 
   const sedeMap = await batchFetchByIds(
     sedeIds,
-    (id) => `/sedes/${id}`,
-    (s) => s?.nombre ?? null
+    id => `/sedes/${id}`,
+    s => s?.nombre ?? null
   );
 
   const profMap = await batchFetchByIds(
     profIds,
-    (id) => `/profesores/${id}`,
-    (p) => p?.nombre ?? null
+    id => `/profesores/${id}`,
+    p => p?.nombre ?? null
   );
 
   return clases.map(c => ({

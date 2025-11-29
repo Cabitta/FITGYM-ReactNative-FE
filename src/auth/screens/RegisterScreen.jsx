@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Alert,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,
   TextInput,
@@ -15,19 +15,19 @@ import {
   Card,
   HelperText,
   useTheme as usePaperTheme,
-} from "react-native-paper";
-import { useAuth } from "../AuthProvider";
-import { useTheme } from "../../config/theme";
+} from 'react-native-paper';
+import { useAuth } from '../AuthProvider';
+import { useTheme } from '../../config/theme';
 
 const RegisterScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const paperTheme = usePaperTheme();
 
   const [formData, setFormData] = useState({
-    nombre: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    nombre: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -40,28 +40,28 @@ const RegisterScreen = ({ navigation }) => {
 
     // Validar nombre
     if (!formData.nombre.trim()) {
-      newErrors.nombre = "El nombre es requerido";
+      newErrors.nombre = 'El nombre es requerido';
     }
 
     // Validar email
     if (!formData.email.trim()) {
-      newErrors.email = "El email es requerido";
+      newErrors.email = 'El email es requerido';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "El email no es válido";
+      newErrors.email = 'El email no es válido';
     }
 
     // Validar password
     if (!formData.password.trim()) {
-      newErrors.password = "La contraseña es requerida";
+      newErrors.password = 'La contraseña es requerida';
     } else if (formData.password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres";
+      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
     }
 
     // Validar confirmación de password
     if (!formData.confirmPassword.trim()) {
-      newErrors.confirmPassword = "Debes confirmar la contraseña";
+      newErrors.confirmPassword = 'Debes confirmar la contraseña';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Las contraseñas no coinciden";
+      newErrors.confirmPassword = 'Las contraseñas no coinciden';
     }
 
     setErrors(newErrors);
@@ -69,9 +69,9 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -92,25 +92,25 @@ const RegisterScreen = ({ navigation }) => {
       const result = await register(userData);
 
       if (!result.success) {
-        Alert.alert("Error", "No se pudo registrar el usuario");
+        Alert.alert('Error', 'No se pudo registrar el usuario');
       } else {
         // Si el registro fue exitoso, navegar a la pantalla de OTP para
         // completar la verificación y obtener los tokens.
-        navigation.navigate("Otp", { email: userData.email });
+        navigation.navigate('Otp', { email: userData.email });
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
   };
 
   const handleLoginPress = () => {
-    navigation.navigate("Login");
+    navigation.navigate('Login');
   };
 
   const handleEmailInputPress = () => {
-    navigation.navigate("EmailInput", {
+    navigation.navigate('EmailInput', {
       email: formData.email.trim(),
     });
   };
@@ -118,13 +118,13 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
-            justifyContent: "center",
+            justifyContent: 'center',
           }}
           keyboardShouldPersistTaps="handled"
         >
@@ -142,9 +142,9 @@ const RegisterScreen = ({ navigation }) => {
               <Text
                 variant="headlineMedium"
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   marginBottom: 32,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 Registrarse
@@ -153,7 +153,7 @@ const RegisterScreen = ({ navigation }) => {
               <TextInput
                 label="Nombre"
                 value={formData.nombre}
-                onChangeText={(v) => handleInputChange("nombre", v)}
+                onChangeText={v => handleInputChange('nombre', v)}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
                 outlineColor={
@@ -171,7 +171,7 @@ const RegisterScreen = ({ navigation }) => {
               <TextInput
                 label="Email"
                 value={formData.email}
-                onChangeText={(v) => handleInputChange("email", v)}
+                onChangeText={v => handleInputChange('email', v)}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 mode="outlined"
@@ -191,7 +191,7 @@ const RegisterScreen = ({ navigation }) => {
               <TextInput
                 label="Contraseña"
                 value={formData.password}
-                onChangeText={(v) => handleInputChange("password", v)}
+                onChangeText={v => handleInputChange('password', v)}
                 secureTextEntry={!showPassword}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
@@ -202,7 +202,7 @@ const RegisterScreen = ({ navigation }) => {
                 theme={{ roundness: 10 }}
                 right={
                   <TextInput.Icon
-                    icon={showPassword ? "eye-off" : "eye"}
+                    icon={showPassword ? 'eye-off' : 'eye'}
                     onPress={() => setShowPassword(!showPassword)}
                     forceTextInputFocus={false}
                   />
@@ -216,7 +216,7 @@ const RegisterScreen = ({ navigation }) => {
               <TextInput
                 label="Confirmar Contraseña"
                 value={formData.confirmPassword}
-                onChangeText={(v) => handleInputChange("confirmPassword", v)}
+                onChangeText={v => handleInputChange('confirmPassword', v)}
                 secureTextEntry={!showConfirmPassword}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
@@ -229,7 +229,7 @@ const RegisterScreen = ({ navigation }) => {
                 theme={{ roundness: 10 }}
                 right={
                   <TextInput.Icon
-                    icon={showConfirmPassword ? "eye-off" : "eye"}
+                    icon={showConfirmPassword ? 'eye-off' : 'eye'}
                     onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                     forceTextInputFocus={false}
                   />
@@ -246,11 +246,11 @@ const RegisterScreen = ({ navigation }) => {
                 loading={loading}
                 disabled={loading}
                 contentStyle={{ height: 50 }}
-                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                labelStyle={{ fontSize: 16, fontWeight: '600' }}
                 buttonColor={theme.colors.primary}
                 style={{ borderRadius: 12, marginTop: 8 }}
               >
-                {loading ? "Registrando..." : "Registrarse"}
+                {loading ? 'Registrando...' : 'Registrarse'}
               </Button>
               {/* Ir a Iniciar Sesión */}
               <Button
@@ -260,7 +260,7 @@ const RegisterScreen = ({ navigation }) => {
                 style={{ marginTop: 32 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Ya tienes una cuenta?
@@ -274,7 +274,7 @@ const RegisterScreen = ({ navigation }) => {
                 style={{ marginTop: 16 }}
                 labelStyle={{
                   color: theme.colors.primary,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
               >
                 ¿Tu cuenta está deshabilitada?

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { FlatList, Alert, ScrollView, View } from "react-native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { FlatList, Alert, ScrollView, View } from 'react-native';
 import {
   Surface,
   Text,
@@ -7,13 +7,13 @@ import {
   List,
   IconButton,
   Appbar,
-} from "react-native-paper";
-import Filters from "../components/Filters";
-import ClassCard from "../components/ClassCard";
-import { getClasesEnriched } from "../services/classService";
-import { useTheme } from "../../config/theme";
-import NewsSection from "../../news/components/NewsSection";
-import { useFocusEffect } from "@react-navigation/native";
+} from 'react-native-paper';
+import Filters from '../components/Filters';
+import ClassCard from '../components/ClassCard';
+import { getClasesEnriched } from '../services/classService';
+import { useTheme } from '../../config/theme';
+import NewsSection from '../../news/components/NewsSection';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ClassesScreen({ navigation }) {
   const { theme } = useTheme();
@@ -32,7 +32,7 @@ export default function ClassesScreen({ navigation }) {
   const [disciplinaOpen, setDisciplinaOpen] = useState(false);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
 
-  const ymd = (d) => {
+  const ymd = d => {
     if (!d) return null;
     const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
     return local.toISOString().slice(0, 10);
@@ -47,25 +47,25 @@ export default function ClassesScreen({ navigation }) {
           setFiltered(data);
 
           const sedesUnicas = Array.from(
-            new Set(data.map((c) => c.sedeNombre))
+            new Set(data.map(c => c.sedeNombre))
           ).filter(Boolean);
           const disciplinasUnicas = Array.from(
-            new Set(data.map((c) => c.disciplina))
+            new Set(data.map(c => c.disciplina))
           ).filter(Boolean);
 
           setSedes([
-            { label: "Todas las sedes", value: null },
-            ...sedesUnicas.map((s) => ({ label: s, value: s })),
+            { label: 'Todas las sedes', value: null },
+            ...sedesUnicas.map(s => ({ label: s, value: s })),
           ]);
           setDisciplinas([
-            { label: "Todas las disciplinas", value: null },
-            ...disciplinasUnicas.map((d) => ({ label: d, value: d })),
+            { label: 'Todas las disciplinas', value: null },
+            ...disciplinasUnicas.map(d => ({ label: d, value: d })),
           ]);
         } catch (error) {
-          console.error("Error al obtener clases:", error);
+          console.error('Error al obtener clases:', error);
           Alert.alert(
-            "Error",
-            "No se pudieron cargar las clases. Intenta más tarde."
+            'Error',
+            'No se pudieron cargar las clases. Intenta más tarde.'
           );
         } finally {
           setLoading(false);
@@ -76,9 +76,9 @@ export default function ClassesScreen({ navigation }) {
 
   useEffect(() => {
     let result = [...clases];
-    if (sede) result = result.filter((c) => c.sedeNombre === sede);
-    if (disciplina) result = result.filter((c) => c.disciplina === disciplina);
-    if (fecha) result = result.filter((c) => c.fecha === ymd(fecha));
+    if (sede) result = result.filter(c => c.sedeNombre === sede);
+    if (disciplina) result = result.filter(c => c.disciplina === disciplina);
+    if (fecha) result = result.filter(c => c.fecha === ymd(fecha));
     setFiltered(result);
   }, [sede, disciplina, fecha, clases]);
 
@@ -92,8 +92,8 @@ export default function ClassesScreen({ navigation }) {
     <Surface
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 32,
         backgroundColor: theme.colors.background,
       }}
@@ -108,7 +108,7 @@ export default function ClassesScreen({ navigation }) {
         style={{
           color: theme.colors.onSurfaceVariant,
           marginTop: 16,
-          textAlign: "center",
+          textAlign: 'center',
         }}
       >
         No hay clases disponibles
@@ -117,7 +117,7 @@ export default function ClassesScreen({ navigation }) {
         variant="bodyMedium"
         style={{
           color: theme.colors.onSurfaceVariant,
-          textAlign: "center",
+          textAlign: 'center',
           marginTop: 8,
         }}
       >
@@ -131,8 +131,8 @@ export default function ClassesScreen({ navigation }) {
       <Surface
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: theme.colors.background,
         }}
       >
@@ -151,14 +151,13 @@ export default function ClassesScreen({ navigation }) {
   }
 
   return (
-    <View 
+    <View
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
       }}
     >
       <ScrollView style={{ padding: 14 }}>
-
         <NewsSection />
 
         <Filters
@@ -182,12 +181,12 @@ export default function ClassesScreen({ navigation }) {
         {filtered.length > 0 ? (
           <FlatList
             data={filtered}
-            keyExtractor={(item) => item.idClase}
+            keyExtractor={item => item.idClase}
             renderItem={({ item }) => (
               <ClassCard
                 clase={item}
                 onPress={() =>
-                  navigation.navigate("ClassDetail", { clase: item })
+                  navigation.navigate('ClassDetail', { clase: item })
                 }
               />
             )}
@@ -198,7 +197,6 @@ export default function ClassesScreen({ navigation }) {
           renderEmpty()
         )}
       </ScrollView>
-    </View >
+    </View>
   );
 }
-

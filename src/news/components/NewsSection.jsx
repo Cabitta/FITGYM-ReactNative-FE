@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { FlatList, View } from "react-native";
-import { ActivityIndicator, Text } from "react-native-paper";
-import { getNewsAndPromotions } from "../services/newsService";
-import NewsCard from "./NewsCard";
-import { useTheme } from "../../config/theme";
+import React, { useState, useEffect } from 'react';
+import { FlatList, View } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { getNewsAndPromotions } from '../services/newsService';
+import NewsCard from './NewsCard';
+import { useTheme } from '../../config/theme';
 
 const NewsSection = () => {
   const { theme } = useTheme();
@@ -16,7 +16,7 @@ const NewsSection = () => {
         const data = await getNewsAndPromotions();
         setNews(data);
       } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error('Error fetching news:', error);
       } finally {
         setLoading(false);
       }
@@ -27,7 +27,7 @@ const NewsSection = () => {
 
   if (loading) {
     return (
-      <View style={{ height: 300, justifyContent: "center" }}>
+      <View style={{ height: 300, justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
@@ -39,7 +39,7 @@ const NewsSection = () => {
         variant="headlineSmall"
         style={{
           color: theme.colors.onSurface,
-          fontWeight: "bold",
+          fontWeight: 'bold',
           marginBottom: 12,
           marginLeft: 8,
         }}
@@ -49,12 +49,12 @@ const NewsSection = () => {
       <FlatList
         data={news}
         renderItem={({ item }) => <NewsCard item={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          paddingLeft: 8, 
-          paddingRight: 16, 
+          paddingLeft: 8,
+          paddingRight: 16,
         }}
       />
     </View>

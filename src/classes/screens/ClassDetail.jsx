@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Alert, Linking, View } from "react-native";
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { Alert, Linking, View } from 'react-native';
 import {
   Surface,
   Text,
@@ -9,11 +9,11 @@ import {
   ActivityIndicator,
   useTheme as usePaperTheme,
   Icon,
-} from "react-native-paper";
-import api from "../../config/axios";
-import { useAuth } from "../../auth/AuthProvider";
-import { useTheme } from "../../config/theme";
-import useSWR from "swr";
+} from 'react-native-paper';
+import api from '../../config/axios';
+import { useAuth } from '../../auth/AuthProvider';
+import { useTheme } from '../../config/theme';
+import useSWR from 'swr';
 
 export default function ClassDetail({ route }) {
   const { user } = useAuth();
@@ -50,7 +50,7 @@ export default function ClassDetail({ route }) {
   }, [clase]);
 
   const cupoDisponible = clase?.data.cupo > 0;
-  const estaReservada = reservas?.data.some((r) => r.idClase === idClase);
+  const estaReservada = reservas?.data.some(r => r.idClase === idClase);
   const puedeReservar =
     cupoDisponible && !estaReservada && !claseVencida && !claseEnCurso;
 
@@ -71,30 +71,30 @@ export default function ClassDetail({ route }) {
     if (!clase || estaReservada) return;
 
     try {
-      const res = await api.post("/reservas", {
+      const res = await api.post('/reservas', {
         idClase: clase.data.idClase,
         idUsuario: user.id,
-        estado: "CONFIRMADA",
+        estado: 'CONFIRMADA',
         timestampCreacion: new Date().toISOString(),
       });
 
       if (res.data?.idReserva) {
-        Alert.alert("Éxito", "Reserva creada con éxito.");
+        Alert.alert('Éxito', 'Reserva creada con éxito.');
       } else {
-        Alert.alert("Error", "No se pudo crear la reserva.");
+        Alert.alert('Error', 'No se pudo crear la reserva.');
       }
     } catch (error) {
-      console.error("Error al reservar:", error);
-      Alert.alert("Error", "Ocurrió un error al reservar la clase.");
+      console.error('Error al reservar:', error);
+      Alert.alert('Error', 'Ocurrió un error al reservar la clase.');
     } finally {
-      actualizarClase((clase) => ({ ...clase, cupo: clase.cupo - 1 }));
+      actualizarClase(clase => ({ ...clase, cupo: clase.cupo - 1 }));
       actualizarReservas();
     }
   };
 
   const handleAbrirEnMaps = useCallback(() => {
     if (!clase?.data?.ubicacionSede) {
-      Alert.alert("Error", "No hay dirección disponible para la sede.");
+      Alert.alert('Error', 'No hay dirección disponible para la sede.');
       return;
     }
 
@@ -102,7 +102,7 @@ export default function ClassDetail({ route }) {
     const url = `https://www.google.com/maps/search/?api=1&query=${direccion}`;
 
     Linking.openURL(url).catch(() => {
-      Alert.alert("Error", "No se pudo abrir Google Maps.");
+      Alert.alert('Error', 'No se pudo abrir Google Maps.');
     });
 
     console.log({ direccion });
@@ -113,8 +113,8 @@ export default function ClassDetail({ route }) {
       <Surface
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: theme.colors.background,
         }}
       >
@@ -145,8 +145,8 @@ export default function ClassDetail({ route }) {
             variant="headlineMedium"
             style={{
               color: theme.colors.primary,
-              fontWeight: "bold",
-              textAlign: "center",
+              fontWeight: 'bold',
+              textAlign: 'center',
             }}
           >
             {clase.data.disciplina}
@@ -156,12 +156,19 @@ export default function ClassDetail({ route }) {
 
           {/* Detalles */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="account-outline" size={24} color={theme.colors.tertiary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Profesor:{" "}
+            <Icon
+              source="account-outline"
+              size={24}
+              color={theme.colors.tertiary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Profesor:{' '}
               <Text
                 variant="titleMedium"
-                style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+                style={{ color: theme.colors.tertiary, fontWeight: '600' }}
               >
                 {clase.data.nombreProfesor}
               </Text>
@@ -169,12 +176,19 @@ export default function ClassDetail({ route }) {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="map-marker-outline" size={24} color={theme.colors.tertiary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Sede:{" "}
+            <Icon
+              source="map-marker-outline"
+              size={24}
+              color={theme.colors.tertiary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Sede:{' '}
               <Text
                 variant="titleMedium"
-                style={{ color: theme.colors.tertiary, fontWeight: "600" }}
+                style={{ color: theme.colors.tertiary, fontWeight: '600' }}
               >
                 {clase.data.nombreSede}
               </Text>
@@ -182,9 +196,16 @@ export default function ClassDetail({ route }) {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="calendar-outline" size={24} color={theme.colors.secondary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Fecha:{" "}
+            <Icon
+              source="calendar-outline"
+              size={24}
+              color={theme.colors.secondary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Fecha:{' '}
               <Text
                 variant="titleMedium"
                 style={{ color: theme.colors.secondary }}
@@ -195,23 +216,37 @@ export default function ClassDetail({ route }) {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="clock-outline" size={24} color={theme.colors.secondary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Horario:{" "}
+            <Icon
+              source="clock-outline"
+              size={24}
+              color={theme.colors.secondary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Horario:{' '}
               <Text
                 variant="titleMedium"
                 style={{ color: theme.colors.secondary }}
               >
-                {clase.data.horarioInicio?.substring(0, 5)} -{" "}
+                {clase.data.horarioInicio?.substring(0, 5)} -{' '}
                 {clase.data.horarioFin?.substring(0, 5)}
               </Text>
             </Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="timer-outline" size={24} color={theme.colors.secondary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Duración:{" "}
+            <Icon
+              source="timer-outline"
+              size={24}
+              color={theme.colors.secondary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Duración:{' '}
               <Text
                 variant="titleMedium"
                 style={{ color: theme.colors.secondary }}
@@ -222,16 +257,25 @@ export default function ClassDetail({ route }) {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="account-group-outline" size={24} color={cupoDisponible ? theme.colors.secondary : theme.colors.error} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Cupos disponibles:{" "}
+            <Icon
+              source="account-group-outline"
+              size={24}
+              color={
+                cupoDisponible ? theme.colors.secondary : theme.colors.error
+              }
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Cupos disponibles:{' '}
               <Text
                 variant="titleMedium"
                 style={{
                   color: cupoDisponible
                     ? theme.colors.secondary
                     : theme.colors.error,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 {clase.data.cupo}
@@ -240,9 +284,16 @@ export default function ClassDetail({ route }) {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon source="star-outline" size={24} color={theme.colors.tertiary} />
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              Estrellas promedio:{" "}
+            <Icon
+              source="star-outline"
+              size={24}
+              color={theme.colors.tertiary}
+            />
+            <Text
+              variant="titleMedium"
+              style={{ color: theme.colors.onSurface }}
+            >
+              Estrellas promedio:{' '}
               <Text
                 variant="titleMedium"
                 style={{ color: theme.colors.tertiary }}
@@ -274,7 +325,7 @@ export default function ClassDetail({ route }) {
                 color: theme.colors.onSurfaceVariant,
                 marginLeft: 16,
                 marginTop: 4,
-                fontStyle: "italic",
+                fontStyle: 'italic',
               }}
             >
               No hay calificaciones disponibles
@@ -301,17 +352,17 @@ export default function ClassDetail({ route }) {
                 ? theme.colors.primary
                 : theme.colors.surfaceDisabled
             }
-            labelStyle={{ fontWeight: "bold", fontSize: 16 }}
+            labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
           >
             {claseEnCurso
-              ? "En curso"
+              ? 'En curso'
               : claseVencida
-              ? "Ya terminó"
-              : estaReservada
-              ? "Ya reservada"
-              : !cupoDisponible
-              ? "Cupo lleno"
-              : "Reservar"}
+                ? 'Ya terminó'
+                : estaReservada
+                  ? 'Ya reservada'
+                  : !cupoDisponible
+                    ? 'Cupo lleno'
+                    : 'Reservar'}
           </Button>
         </Card.Actions>
       </Card>

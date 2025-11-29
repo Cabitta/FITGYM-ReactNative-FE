@@ -1,5 +1,5 @@
-import React from "react";
-import { formatHumanDate, formatHumanTime } from "../utils/date";
+import React from 'react';
+import { formatHumanDate, formatHumanTime } from '../utils/date';
 
 import {
   Surface,
@@ -8,25 +8,24 @@ import {
   Divider,
   List,
   useTheme as usePaperTheme,
-} from "react-native-paper";
-import { useTheme } from "../../config/theme";
+} from 'react-native-paper';
+import { useTheme } from '../../config/theme';
 
 export default function Reserva({ route }) {
   const { reserva, actualizar } = route.params;
   const { theme } = useTheme();
 
   // Formatear fecha y hora si es necesario
-   const formatDate = formatHumanDate;
+  const formatDate = formatHumanDate;
   const formatTime = formatHumanTime;
 
-
-  const getEstadoColor = (estado) => {
+  const getEstadoColor = estado => {
     switch (estado?.toUpperCase()) {
-      case "CONFIRMADA":
+      case 'CONFIRMADA':
         return theme.colors.secondary; // Amarillo
-      case "CANCELADA":
+      case 'CANCELADA':
         return theme.colors.error;
-      case "PENDIENTE":
+      case 'PENDIENTE':
         return theme.colors.tertiary; // Azul
       default:
         return theme.colors.onSurfaceVariant;
@@ -44,10 +43,10 @@ export default function Reserva({ route }) {
       <Text
         variant="headlineMedium"
         style={{
-          textAlign: "center",
+          textAlign: 'center',
           marginBottom: 24,
           color: theme.colors.primary,
-          fontWeight: "bold",
+          fontWeight: 'bold',
         }}
       >
         Detalle de la Reserva
@@ -65,10 +64,10 @@ export default function Reserva({ route }) {
           {/* ID Reserva */}
           <List.Item
             title="ID Reserva"
-            description={reserva.id || "—"}
+            description={reserva.id || '—'}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.tertiary,
@@ -81,15 +80,17 @@ export default function Reserva({ route }) {
           {/* Nombre del usuario */}
           <List.Item
             title="Nombre"
-            description={reserva.nombre || "No disponible"}
+            description={reserva.nombre || 'No disponible'}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.tertiary,
             }}
-            left={() => <List.Icon icon="account" color={theme.colors.tertiary} />}
+            left={() => (
+              <List.Icon icon="account" color={theme.colors.tertiary} />
+            )}
           />
 
           <Divider />
@@ -100,12 +101,14 @@ export default function Reserva({ route }) {
             description={formatDate(reserva.fecha)}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.secondary,
             }}
-            left={() => <List.Icon icon="calendar" color={theme.colors.secondary} />}
+            left={() => (
+              <List.Icon icon="calendar" color={theme.colors.secondary} />
+            )}
           />
 
           <Divider />
@@ -116,12 +119,14 @@ export default function Reserva({ route }) {
             description={formatTime(reserva.hora)}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.secondary,
             }}
-            left={() => <List.Icon icon="clock-outline" color={theme.colors.secondary} />}
+            left={() => (
+              <List.Icon icon="clock-outline" color={theme.colors.secondary} />
+            )}
           />
 
           <Divider />
@@ -129,16 +134,21 @@ export default function Reserva({ route }) {
           {/* Estado */}
           <List.Item
             title="Estado"
-            description={reserva.estado || "—"}
+            description={reserva.estado || '—'}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: getEstadoColor(reserva.estado),
-              fontWeight: "bold",
+              fontWeight: 'bold',
             }}
-            left={() => <List.Icon icon="check-circle" color={getEstadoColor(reserva.estado)} />}
+            left={() => (
+              <List.Icon
+                icon="check-circle"
+                color={getEstadoColor(reserva.estado)}
+              />
+            )}
           />
 
           <Divider />
@@ -146,15 +156,17 @@ export default function Reserva({ route }) {
           {/* Clase ID */}
           <List.Item
             title="Clase ID"
-            description={reserva.claseId || "—"}
+            description={reserva.claseId || '—'}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.tertiary,
             }}
-            left={() => <List.Icon icon="dumbbell" color={theme.colors.tertiary} />}
+            left={() => (
+              <List.Icon icon="dumbbell" color={theme.colors.tertiary} />
+            )}
           />
 
           <Divider />
@@ -162,15 +174,17 @@ export default function Reserva({ route }) {
           {/* Usuario ID */}
           <List.Item
             title="Usuario ID"
-            description={reserva.usuarioId || "—"}
+            description={reserva.usuarioId || '—'}
             titleStyle={{
               color: theme.colors.onSurface,
-              fontWeight: "600",
+              fontWeight: '600',
             }}
             descriptionStyle={{
               color: theme.colors.tertiary,
             }}
-            left={() => <List.Icon icon="account-circle" color={theme.colors.tertiary} />}
+            left={() => (
+              <List.Icon icon="account-circle" color={theme.colors.tertiary} />
+            )}
           />
         </Card.Content>
       </Card>
