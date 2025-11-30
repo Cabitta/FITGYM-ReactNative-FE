@@ -208,12 +208,7 @@ export default function Reservas({ navigation }) {
                     style={{ color: theme.colors.onSurfaceVariant }}
                   >
                     Fecha:{' '}
-                    <Text
-                      style={{
-                        color: theme.colors.tertiary,
-                        fontWeight: '600',
-                      }}
-                    >
+                    <Text variant="bodyMedium">
                       {item.clase?.fecha || 'Fecha no disponible'}
                     </Text>
                   </Text>
@@ -233,12 +228,7 @@ export default function Reservas({ navigation }) {
                     style={{ color: theme.colors.onSurfaceVariant }}
                   >
                     Sede:{' '}
-                    <Text
-                      style={{
-                        color: theme.colors.tertiary,
-                        fontWeight: '600',
-                      }}
-                    >
+                    <Text variant="bodyMedium">
                       {item.sede?.nombre || 'No disponible'}
                     </Text>
                   </Text>
@@ -258,12 +248,7 @@ export default function Reservas({ navigation }) {
                     style={{ color: theme.colors.onSurfaceVariant }}
                   >
                     Estado:{' '}
-                    <Text
-                      style={{
-                        color: theme.colors.tertiary,
-                        fontWeight: '600',
-                      }}
-                    >
+                    <Text variant="bodyMedium">
                       {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                         ? 'VENCIDA'
                         : item.estado || 'CONFIRMADA'}

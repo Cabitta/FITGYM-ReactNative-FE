@@ -15,6 +15,7 @@ import { getClasesEnriched } from '../services/classService';
 import { useTheme } from '../../config/theme';
 import NewsSection from '../../news/components/NewsSection';
 import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function ClassesScreen({ navigation }) {
   const { theme } = useTheme();
@@ -156,53 +157,50 @@ export default function ClassesScreen({ navigation }) {
   }
 
   return (
-    <View
+    <SafeAreaProvider
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
       }}
     >
-      <ScrollView style={{ padding: 14 }}>
-        <NewsSection />
-
-        <Filters
-          sede={sede}
-          setSede={setSede}
-          sedes={sedes}
-          sedeOpen={sedeOpen}
-          setSedeOpen={setSedeOpen}
-          disciplina={disciplina}
-          setDisciplina={setDisciplina}
-          disciplinas={disciplinas}
-          disciplinaOpen={disciplinaOpen}
-          setDisciplinaOpen={setDisciplinaOpen}
-          fecha={fecha}
-          setFecha={setFecha}
-          limpiarFiltros={limpiarFiltros}
-          datePickerVisible={datePickerVisible}
-          setDatePickerVisible={setDatePickerVisible}
-        />
-
-        {filtered.length > 0 ? (
-          <FlatList
-            data={filtered}
-            keyExtractor={item => item.idClase}
-            renderItem={({ item }) => (
-              <ClassCard
-                clase={item}
-                onPress={() => {
-                  setSelectedClase(item);
-                  setModalVisible(true);
-                }}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 16 }}
+      <FlatList
+        contentContainerStyle={{ margin: 14, paddingBottom: 18 }}
+        data={filtered}
+        keyExtractor={item => item.idClase}
+        ListHeaderComponent={
+          <View>
+            <Filters
+              sede={sede}
+              setSede={setSede}
+              sedes={sedes}
+              sedeOpen={sedeOpen}
+              setSedeOpen={setSedeOpen}
+              disciplina={disciplina}
+              setDisciplina={setDisciplina}
+              disciplinas={disciplinas}
+              disciplinaOpen={disciplinaOpen}
+              setDisciplinaOpen={setDisciplinaOpen}
+              fecha={fecha}
+              setFecha={setFecha}
+              limpiarFiltros={limpiarFiltros}
+              datePickerVisible={datePickerVisible}
+              setDatePickerVisible={setDatePickerVisible}
+            />
+          </View>
+        }
+        renderItem={({ item }) => (
+          <ClassCard
+            clase={item}
+            onPress={() => {
+              setSelectedClase(item);
+              setModalVisible(true);
+            }}
           />
-        ) : (
-          renderEmpty()
         )}
-      </ScrollView>
+        ListEmptyComponent={renderEmpty()}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={<NewsSection />}
+      />
 
       <ClassDetailModal
         visible={modalVisible}
@@ -212,6 +210,6 @@ export default function ClassesScreen({ navigation }) {
         }}
         clase={selectedClase}
       />
-    </View>
+    </SafeAreaProvider>
   );
 }

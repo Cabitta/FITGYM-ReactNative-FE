@@ -121,7 +121,7 @@ const LoginScreen = ({ navigation }) => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.colors.background,
       }}
     >
       <KeyboardAvoidingView
