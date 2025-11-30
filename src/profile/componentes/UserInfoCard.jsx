@@ -7,7 +7,7 @@ const UserInfoCard = ({ user }) => {
 
   if (!user) {
     return (
-      <Card style={{ margin: 16 }}>
+      <Card>
         <Card.Content style={{ alignItems: 'center', paddingVertical: 24 }}>
           <Text variant="titleLarge">Usuario no disponible</Text>
         </Card.Content>
@@ -25,35 +25,37 @@ const UserInfoCard = ({ user }) => {
 
   // Si no tiene imagen, usa un emoji o inicial
   const hasImage = !!imageUri;
-  const displayText = '🧟‍♂️';
 
   return (
-    <Card style={{ margin: 16, borderRadius: 16, elevation: 3 }}>
-      <Card.Content style={{ alignItems: 'center', paddingVertical: 24 }}>
+    <Card
+      style={{
+        backgroundColor: theme.colors.surface,
+        borderRadius: 16,
+        elevation: 3,
+      }}
+    >
+      <Card.Title
+        title="Editar Perfil"
+        titleStyle={{ color: theme.colors.primary }}
+      />
+      <Card.Content style={{ alignItems: 'center' }}>
         {hasImage ? (
           <Avatar.Image
-            size={128}
+            size={130}
             source={{ uri: imageUri }}
             style={{ marginBottom: 16 }}
           />
         ) : (
           <Avatar.Text
-            size={128}
-            label={displayText}
-            style={{
-              backgroundColor: '#e0e0e0',
-              marginBottom: 16,
-            }}
-            color="#424242"
+            size={130}
+            label={'👤'}
+            style={{ backgroundColor: theme.colors.disabled }}
           />
         )}
 
         <Text variant="headlineSmall">{user.nombre || 'Sin nombre'}</Text>
         <Text variant="bodyMedium" style={{ color: '#666' }}>
           {user.email || 'Sin email'}
-        </Text>
-        <Text variant="labelSmall" style={{ color: theme.colors.primary }}>
-          Editar
         </Text>
       </Card.Content>
     </Card>

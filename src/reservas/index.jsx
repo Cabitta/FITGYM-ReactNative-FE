@@ -142,11 +142,11 @@ export default function Reservas({ navigation }) {
         backgroundColor: theme.colors.background,
       }}
     >
-      <View style={{ flex: 1, padding: 16 }}>
+      <View>
         <FlatList
           data={reservas.data}
           keyExtractor={item => item.idReserva.toString()}
-          contentContainerStyle={{ paddingBottom: 16 }}
+          contentContainerStyle={{ margin: 16, paddingBottom: 20 }}
           renderItem={({ item }) => (
             <Card
               onPress={() =>

@@ -84,8 +84,8 @@ export default function ProfileScreen({ navigation }) {
       <ScrollView
         style={{ flex: 1, backgroundColor: theme.colors.background }}
         contentContainerStyle={{
-          padding: 16,
-          paddingBottom: 40,
+          margin: 16,
+          paddingBottom: 20,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -110,7 +110,7 @@ export default function ProfileScreen({ navigation }) {
               variant="titleMedium"
               style={{ color: theme.colors.onSurface }}
             >
-              {isDarkMode ? 'Modo Oscuro' : 'Modo Claro'}
+              {isDarkMode ? 'Tema Oscuro' : 'Tema Claro'}
             </Text>
             <Switch
               value={isDarkMode}
@@ -118,16 +118,6 @@ export default function ProfileScreen({ navigation }) {
               color={theme.colors.secondary}
             />
           </Card.Content>
-          <Text
-            variant="bodyMedium"
-            style={{
-              color: theme.colors.onSurfaceVariant,
-              marginTop: 8,
-              marginLeft: 16,
-            }}
-          >
-            Cambia entre tema claro y oscuro
-          </Text>
         </Surface>
 
         <Surface
@@ -172,25 +162,26 @@ export default function ProfileScreen({ navigation }) {
           )}
         </Surface>
 
-        {/* Tarjeta de información */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => setShowEditForm(!showEditForm)} // 👈 alterna visibilidad del form
-        >
-          <UserInfoCard user={user} theme={theme} />
-        </TouchableOpacity>
+        {/* Tarjeta de información - solo visible cuando NO está editando */}
+        {!showEditForm && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setShowEditForm(true)}
+          >
+            <UserInfoCard user={user} theme={theme} />
+          </TouchableOpacity>
+        )}
 
-        {/* Formulario de edición (solo visible si se tocó la card) */}
+        {/* Formulario de edición - solo visible cuando está editando */}
         {showEditForm && (
-          <View style={{ width: '100%', marginTop: 20 }}>
-            <UserFormEdit
-              user={user}
-              onUpdated={u => {
-                setUser({ ...user, ...u });
-                setShowEditForm(false); // 👈 ocultar el form luego de guardar
-              }}
-            />
-          </View>
+          <UserFormEdit
+            user={user}
+            onUpdated={u => {
+              setUser({ ...user, ...u });
+              setShowEditForm(false);
+            }}
+            onCancel={() => setShowEditForm(false)}
+          />
         )}
       </ScrollView>
     </View>

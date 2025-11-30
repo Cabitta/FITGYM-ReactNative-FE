@@ -38,7 +38,6 @@ function AppTab() {
         screenOptions={({ route }) => ({
           animation: 'shift',
           headerShown: true,
-          sceneContainerStyle: { margin: 14 },
           header: ({ navigation, route, options }) => {
             // Determinar el título según la ruta
             let title = 'FITGYM';
@@ -76,6 +75,7 @@ function AppTab() {
             safeAreaInsets={props.insets}
             style={{ backgroundColor: theme.colors.surface }}
             activeColor={theme.colors.primary}
+            inactiveColor="gray"
             activeIndicatorStyle={{ backgroundColor: 'transparent' }}
             onTabPress={({ route, preventDefault }) => {
               const event = props.navigation.emit({

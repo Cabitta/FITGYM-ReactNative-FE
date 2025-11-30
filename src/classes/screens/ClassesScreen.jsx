@@ -15,7 +15,6 @@ import { getClasesEnriched } from '../services/classService';
 import { useTheme } from '../../config/theme';
 import NewsSection from '../../news/components/NewsSection';
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function ClassesScreen({ navigation }) {
   const { theme } = useTheme();
@@ -157,7 +156,7 @@ export default function ClassesScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaProvider
+    <View
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
@@ -210,6 +209,6 @@ export default function ClassesScreen({ navigation }) {
         }}
         clase={selectedClase}
       />
-    </SafeAreaProvider>
+    </View>
   );
 }
