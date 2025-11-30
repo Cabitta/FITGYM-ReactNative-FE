@@ -162,47 +162,44 @@ export default function ClassesScreen({ navigation }) {
         backgroundColor: theme.colors.background,
       }}
     >
-      <ScrollView style={{ padding: 14 }}>
-        <NewsSection />
-
-        <Filters
-          sede={sede}
-          setSede={setSede}
-          sedes={sedes}
-          sedeOpen={sedeOpen}
-          setSedeOpen={setSedeOpen}
-          disciplina={disciplina}
-          setDisciplina={setDisciplina}
-          disciplinas={disciplinas}
-          disciplinaOpen={disciplinaOpen}
-          setDisciplinaOpen={setDisciplinaOpen}
-          fecha={fecha}
-          setFecha={setFecha}
-          limpiarFiltros={limpiarFiltros}
-          datePickerVisible={datePickerVisible}
-          setDatePickerVisible={setDatePickerVisible}
-        />
-
-        {filtered.length > 0 ? (
-          <FlatList
-            data={filtered}
-            keyExtractor={item => item.idClase}
-            renderItem={({ item }) => (
-              <ClassCard
-                clase={item}
-                onPress={() => {
-                  setSelectedClase(item);
-                  setModalVisible(true);
-                }}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 16 }}
+      <FlatList
+        contentContainerStyle={{ margin: 14, paddingBottom: 18 }}
+        data={filtered}
+        keyExtractor={item => item.idClase}
+        ListHeaderComponent={
+          <View>
+            <Filters
+              sede={sede}
+              setSede={setSede}
+              sedes={sedes}
+              sedeOpen={sedeOpen}
+              setSedeOpen={setSedeOpen}
+              disciplina={disciplina}
+              setDisciplina={setDisciplina}
+              disciplinas={disciplinas}
+              disciplinaOpen={disciplinaOpen}
+              setDisciplinaOpen={setDisciplinaOpen}
+              fecha={fecha}
+              setFecha={setFecha}
+              limpiarFiltros={limpiarFiltros}
+              datePickerVisible={datePickerVisible}
+              setDatePickerVisible={setDatePickerVisible}
+            />
+          </View>
+        }
+        renderItem={({ item }) => (
+          <ClassCard
+            clase={item}
+            onPress={() => {
+              setSelectedClase(item);
+              setModalVisible(true);
+            }}
           />
-        ) : (
-          renderEmpty()
         )}
-      </ScrollView>
+        ListEmptyComponent={renderEmpty()}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={<NewsSection />}
+      />
 
       <ClassDetailModal
         visible={modalVisible}

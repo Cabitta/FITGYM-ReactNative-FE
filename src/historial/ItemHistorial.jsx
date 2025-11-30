@@ -70,15 +70,7 @@ export default function ItemHistorial({ item = null }) {
             variant="bodyMedium"
             style={{ color: theme.colors.onSurfaceVariant }}
           >
-            Dia:{' '}
-            <Text
-              style={{
-                color: theme.colors.tertiary,
-                fontWeight: '600',
-              }}
-            >
-              {item.fecha}
-            </Text>
+            Dia: <Text variant="bodyMedium">{item.fecha}</Text>
           </Text>
         </View>
 
@@ -94,12 +86,7 @@ export default function ItemHistorial({ item = null }) {
             style={{ color: theme.colors.onSurfaceVariant }}
           >
             Horario:{' '}
-            <Text
-              style={{
-                color: theme.colors.tertiary,
-                fontWeight: '600',
-              }}
-            >
+            <Text variant="bodyMedium">
               {item.horarioInicio?.substring(0, 5)} -{' '}
               {item.horarioFin?.substring(0, 5)}
             </Text>
@@ -118,12 +105,7 @@ export default function ItemHistorial({ item = null }) {
             style={{ color: theme.colors.onSurfaceVariant }}
           >
             Sede:{' '}
-            <Text
-              style={{
-                color: theme.colors.tertiary,
-                fontWeight: '600',
-              }}
-            >
+            <Text variant="bodyMedium">
               {item.sede} - {item.barrio}
             </Text>
           </Text>
@@ -141,12 +123,7 @@ export default function ItemHistorial({ item = null }) {
             style={{ color: theme.colors.onSurfaceVariant }}
           >
             Estado:{' '}
-            <Text
-              style={{
-                color: estadoColor,
-                fontWeight: 'bold',
-              }}
-            >
+            <Text variant="bodyMedium" style={{ color: estadoColor }}>
               {item.estado}
             </Text>
           </Text>

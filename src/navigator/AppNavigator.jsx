@@ -73,6 +73,10 @@ function AppTab() {
           <BottomNavigation.Bar
             navigationState={props.state}
             safeAreaInsets={props.insets}
+            style={{ backgroundColor: theme.colors.surface }}
+            activeColor={theme.colors.primary}
+            inactiveColor="gray"
+            activeIndicatorStyle={{ backgroundColor: 'transparent' }}
             onTabPress={({ route, preventDefault }) => {
               const event = props.navigation.emit({
                 type: 'tabPress',

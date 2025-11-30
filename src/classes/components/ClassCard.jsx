@@ -68,12 +68,7 @@ export default function ClassCard({ clase, onPress }) {
             size={20}
             color={theme.colors.tertiary}
           />
-          <Text
-            variant="bodyMedium"
-            style={{
-              color: theme.colors.tertiary,
-            }}
-          >
+          <Text variant="bodyMedium">
             {clase.fecha} • {clase.horarioInicio?.substring(0, 5)} -{' '}
             {clase.horarioFin?.substring(0, 5)}
           </Text>
@@ -90,13 +85,7 @@ export default function ClassCard({ clase, onPress }) {
             variant="bodyMedium"
             style={{ color: theme.colors.onSurfaceVariant }}
           >
-            <Text
-              variant="bodyMedium"
-              style={{
-                color: theme.colors.tertiary,
-                fontWeight: '600',
-              }}
-            >
+            <Text variant="bodyMedium">
               {clase.sedeNombre || 'No disponible'}
             </Text>
           </Text>
@@ -115,13 +104,7 @@ export default function ClassCard({ clase, onPress }) {
               color: theme.colors.onSurfaceVariant,
             }}
           >
-            <Text
-              variant="bodyMedium"
-              style={{
-                color: theme.colors.tertiary,
-                fontWeight: '600',
-              }}
-            >
+            <Text variant="bodyMedium">
               {clase.profesorNombre || 'No asignado'}
             </Text>
           </Text>

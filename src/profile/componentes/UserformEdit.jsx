@@ -12,7 +12,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../auth/AuthProvider';
 import storage from '../../utils/storage';
 
-const UserFormEdit = ({ user, onUpdated }) => {
+const UserFormEdit = ({ user, onUpdated, onCancel }) => {
   const { colors } = useTheme();
   const { editProfile } = useAuth();
   const [formData, setFormData] = useState({
@@ -69,7 +69,7 @@ const UserFormEdit = ({ user, onUpdated }) => {
         : null;
 
   return (
-    <Card style={{ marginVertical: 16, borderRadius: 12 }}>
+    <Card style={{ backgroundColor: colors.surface, borderRadius: 12 }}>
       <Card.Title
         title="Editar Perfil"
         titleStyle={{ color: colors.primary }}
@@ -77,20 +77,16 @@ const UserFormEdit = ({ user, onUpdated }) => {
       <Card.Content>
         <View style={{ alignItems: 'center', marginBottom: 16 }}>
           {imageUri ? (
-            <Image
+            <Avatar.Image
+              size={130}
               source={{ uri: imageUri }}
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                marginBottom: 8,
-              }}
+              style={{ marginBottom: 16 }}
             />
           ) : (
             <Avatar.Text
-              size={100}
-              label={'🧟‍♂️'}
-              style={{ backgroundColor: colors.secondaryContainer }}
+              size={130}
+              label={'👤'}
+              style={{ backgroundColor: colors.disabled }}
             />
           )}
           <Button
@@ -108,7 +104,7 @@ const UserFormEdit = ({ user, onUpdated }) => {
           value={formData.nombre}
           mode="outlined"
           onChangeText={text => setFormData({ ...formData, nombre: text })}
-          style={{ marginBottom: 12 }}
+          style={{ backgroundColor: colors.surface, marginBottom: 12 }}
         />
 
         <TextInput
@@ -117,19 +113,29 @@ const UserFormEdit = ({ user, onUpdated }) => {
           mode="outlined"
           onChangeText={text => setFormData({ ...formData, email: text })}
           keyboardType="email-address"
-          style={{ marginBottom: 12 }}
+          style={{ backgroundColor: colors.surface, marginBottom: 12 }}
         />
 
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          loading={loading}
-          disabled={loading}
-          buttonColor={colors.primary}
-          style={{ borderRadius: 8, marginTop: 8 }}
-        >
-          Guardar Cambios
-        </Button>
+        <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+          <Button
+            mode="outlined"
+            onPress={onCancel}
+            disabled={loading}
+            style={{ flex: 1, borderRadius: 8, borderColor: colors.primary }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            loading={loading}
+            disabled={loading}
+            buttonColor={colors.primary}
+            style={{ flex: 1, borderRadius: 8 }}
+          >
+            Guardar
+          </Button>
+        </View>
       </Card.Content>
     </Card>
   );

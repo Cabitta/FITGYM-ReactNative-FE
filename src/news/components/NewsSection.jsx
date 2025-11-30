@@ -53,7 +53,6 @@ const NewsSection = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          paddingLeft: 8,
           paddingRight: 16,
         }}
       />
