@@ -62,11 +62,19 @@ export default function HistorialAxios() {
 
   return (
     <>
-      <View style={{ flex: 1, padding: 16 }}>
+      <View
+        style={{
+          flex: 1,
+          padding: 16,
+          backgroundColor: theme.colors.background,
+        }}
+      >
         {cargando ? (
           <ActivityIndicator size={'large'} />
         ) : error ? (
-          <Text style={styles.alerta}>Error al hacer Fetch</Text>
+          <Text style={{ color: theme.colors.error }}>
+            Error al hacer Fetch
+          </Text>
         ) : (
           //Caso del axios exitoso
           <>
@@ -196,29 +204,3 @@ export default function HistorialAxios() {
     }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f7f8fc',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#1c1c1e',
-    textAlign: 'center',
-  },
-  alerta: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  separador: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#000000ff',
-    marginVertical: 12,
-    alignSelf: 'stretch',
-  },
-});

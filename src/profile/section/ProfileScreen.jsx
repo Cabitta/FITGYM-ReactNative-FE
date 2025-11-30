@@ -86,15 +86,14 @@ export default function ProfileScreen({ navigation }) {
         contentContainerStyle={{
           margin: 16,
           paddingBottom: 20,
+          gap: 16,
         }}
         showsVerticalScrollIndicator={false}
       >
         {/* Control de Tema */}
         <Surface
           style={{
-            padding: 16,
             borderRadius: 12,
-            marginBottom: 24,
             backgroundColor: theme.colors.surface,
             elevation: 2,
           }}
@@ -102,14 +101,12 @@ export default function ProfileScreen({ navigation }) {
           <Card.Content
             style={{
               flexDirection: 'row',
+              padding: 6,
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
-            <Text
-              variant="titleMedium"
-              style={{ color: theme.colors.onSurface }}
-            >
+            <Text variant="titleMedium">
               {isDarkMode ? 'Tema Oscuro' : 'Tema Claro'}
             </Text>
             <Switch
@@ -122,9 +119,8 @@ export default function ProfileScreen({ navigation }) {
 
         <Surface
           style={{
-            padding: 8,
             borderRadius: 12,
-            marginBottom: 12,
+            padding: 16,
             backgroundColor: theme.colors.surface,
             elevation: 2,
             display: 'flex',
@@ -134,26 +130,12 @@ export default function ProfileScreen({ navigation }) {
         >
           {notificaciones === 'granted' ? (
             <>
-              <Text
-                variant="bodyMedium"
-                style={{
-                  marginTop: 0,
-                  marginLeft: 16,
-                }}
-              >
-                Notificaciones Permitidas: ✔
-              </Text>
+              <Text variant="titleMedium">Notificaciones Permitidas: ✔</Text>
             </>
           ) : (
             <>
-              <Text
-                variant="bodyMedium"
-                style={{
-                  marginTop: 0,
-                  marginLeft: 16,
-                }}
-              >
-                Notificaciones No Permitidas : ❌
+              <Text variant="titleMedium">
+                Notifiscaciones No Permitidas : ❌
               </Text>
               <Button type="text" compact={true} onPress={() => irAjustes()}>
                 Ir Ajustes
