@@ -66,6 +66,11 @@ export default function App() {
             'La tarea de notificación en segundo plano ya está registrada.'
           );
         }
+
+        //muestra las tareas registradas
+        TaskManager.getRegisteredTasksAsync().then(tasks => {
+          console.log(tasks);
+        });
       } catch (error) {
         console.log('Error al asignar notificación en background', error);
       }

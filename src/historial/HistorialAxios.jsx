@@ -131,41 +131,9 @@ export default function HistorialAxios() {
         <Button mode="outlined" onPress={() => notificacionLocal()}>
           Enviar Notificación
         </Button>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            marginTop: 8,
-          }}
-        >
-          <Button
-            style={{ flex: 1 }}
-            mode="outlined"
-            onPress={() => probarTareaSecundaria()}
-          >
-            Probar Notificacion
-          </Button>
-          <Button
-            style={{ flex: 1 }}
-            mode="outlined"
-            onPress={() => verTareas()}
-          >
-            Ver Permisos
-          </Button>
-        </View>
       </View>
     </>
   );
-
-  async function probarTareaSecundaria() {
-    await BackgroundTask.triggerTaskWorkerForTestingAsync();
-  }
-
-  async function verTareas() {
-    TaskManager.getRegisteredTasksAsync().then(tasks => {
-      console.log(tasks);
-    });
-  }
 
   //Notificacion Manual
   async function notificacionLocal() {
