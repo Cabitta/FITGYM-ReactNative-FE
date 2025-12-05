@@ -67,7 +67,6 @@ export default function ClassesScreen({ navigation }) {
             ...disciplinasUnicas.map(d => ({ label: d, value: d })),
           ]);
         } catch (error) {
-          console.error('Error al obtener clases:', error);
           Alert.alert(
             'Error',
             'No se pudieron cargar las clases. Intenta más tarde.'

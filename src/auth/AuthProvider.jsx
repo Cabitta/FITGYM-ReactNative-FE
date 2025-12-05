@@ -102,7 +102,6 @@ export function AuthProvider({ children }) {
       }
       return res;
     } catch (error) {
-      console.error('Error updating profile:', error);
       return { success: false, error: 'Error updating profile' };
     }
   };

@@ -60,10 +60,7 @@ export default function Reservas({ navigation }) {
       setSelectedReservaId(null);
       mutate();
     } catch (err) {
-      console.error(
-        'Error cancelando reserva:',
-        err?.response?.data || err.message
-      );
+      Alert.alert('Error', 'No se pudo cancelar la reserva.');
     } finally {
       setIsCancelling(false);
     }

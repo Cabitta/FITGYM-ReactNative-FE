@@ -37,7 +37,7 @@ export default function ProfileScreen({ navigation }) {
           setUser(new User(userData));
         }
       } catch (error) {
-        console.error('Error al obtener el usuario:', error);
+        Alert.alert('Error', 'No se pudo obtener el usuario.');
       }
     };
     fetchUser();
