@@ -15,7 +15,7 @@ const lightTheme = {
     tertiary: '#3399FF',
     disabled: '#E0E0E0',
     // Estados
-    sucess: '#00CC99',
+    success: '#00CC99',
     warning: '#FFC700',
     danger: '#FF3B30',
   },
@@ -35,7 +35,7 @@ const darkTheme = {
     tertiary: '#A0A0A0',
     disabled: '#4A4A4A',
     // Estados
-    sucess: '#00CC99',
+    success: '#00CC99',
     warning: '#FFC700',
     danger: '#FF3B30',
   },

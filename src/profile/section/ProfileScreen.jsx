@@ -117,6 +117,7 @@ export default function ProfileScreen({ navigation }) {
           </Card.Content>
         </Surface>
 
+        {/* Control de Notificaciones */}
         <Surface
           style={{
             borderRadius: 12,
@@ -130,12 +131,16 @@ export default function ProfileScreen({ navigation }) {
         >
           {notificaciones === 'granted' ? (
             <>
-              <Text variant="titleMedium">Notificaciones Permitidas: ✔</Text>
+              <Text variant="titleMedium">
+                Notificaciones:{' '}
+                <Text style={{ color: theme.colors.success }}>Permitidas</Text>
+              </Text>
             </>
           ) : (
             <>
               <Text variant="titleMedium">
-                Notifiscaciones No Permitidas : ❌
+                Notificaciones:{' '}
+                <Text style={{ color: theme.colors.error }}>No Permitidas</Text>
               </Text>
               <Button type="text" compact={true} onPress={() => irAjustes()}>
                 Ir Ajustes

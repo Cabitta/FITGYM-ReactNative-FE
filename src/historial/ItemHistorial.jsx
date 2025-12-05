@@ -16,9 +16,9 @@ export default function ItemHistorial({ item = null }) {
 
   // Determinar color del estado
   let estadoColor = theme.colors.onSurface;
-  if (item.estado === 'CONFIRMADA') estadoColor = theme.colors.secondary;
+  if (item.estado === 'CONFIRMADA') estadoColor = theme.colors.success;
   else if (item.estado === 'CANCELADA') estadoColor = theme.colors.error;
-  else if (item.estado === 'EXPIRADA') estadoColor = theme.colors.tertiary;
+  else if (item.estado === 'EXPIRADA') estadoColor = theme.colors.warning;
 
   return (
     <Card
