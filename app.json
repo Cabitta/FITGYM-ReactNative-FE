@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "FITGYM-ReactNative-FE",
+    "name": "FITGYM",
     "slug": "FITGYM-ReactNative-FE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icono-app.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/logo-fitgym.png",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1B2228"
     },
     "ios": {
       "supportsTablet": true,
@@ -18,8 +18,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icono-app.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logo-fitgym.png",
+        "backgroundColor": "#1B2228"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.FITGYMReactNativeFE",

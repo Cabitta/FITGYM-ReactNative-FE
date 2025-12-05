@@ -81,6 +81,7 @@ export default function Filters({
             textStyle={{
               color: theme.colors.onSurface,
               fontSize: 16,
+              paddingHorizontal: 13,
             }}
             ArrowUpIconComponent={() => (
               <IconButton
@@ -123,6 +124,7 @@ export default function Filters({
             textStyle={{
               color: theme.colors.onSurface,
               fontSize: 16,
+              paddingHorizontal: 13,
             }}
             ArrowUpIconComponent={() => (
               <IconButton
@@ -145,8 +147,19 @@ export default function Filters({
         <Button
           mode="outlined"
           onPress={() => setDatePickerVisible(true)}
-          icon="calendar-month-outline"
-          contentStyle={{ justifyContent: 'flex-start', height: 48 }}
+          icon={({ size }) => (
+            <IconButton
+              icon="calendar-month-outline"
+              size={20}
+              iconColor={theme.colors.primary}
+              style={{ margin: 0 }}
+            />
+          )}
+          contentStyle={{
+            justifyContent: 'space-between',
+            height: 52,
+            flexDirection: 'row-reverse',
+          }}
           style={{
             borderRadius: 12,
             borderColor: theme.colors.outline,
@@ -155,7 +168,7 @@ export default function Filters({
           labelStyle={{
             color: theme.colors.onSurface,
             fontSize: 16,
-            marginLeft: 8,
+            fontWeight: '300',
           }}
         >
           {fecha ? formatDate(fecha) : 'Seleccionar fecha'}

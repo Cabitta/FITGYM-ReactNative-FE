@@ -119,14 +119,14 @@ const QRScanner = ({ navigation }) => {
 
       if (ahora < inicioClase) {
         Alert.alert(
-          'Todavía no',
+          'La clase no ha comenzado',
           `La clase empieza a las ${formatHumanTime(reservaValida.clase.horarioInicio)}`
         );
         return;
       }
 
       if (ahora > finClase) {
-        Alert.alert('Expirada', 'Esta clase ya terminó.');
+        Alert.alert('La clase ha terminado', 'Esta clase ya finalizó.');
         return;
       }
 
