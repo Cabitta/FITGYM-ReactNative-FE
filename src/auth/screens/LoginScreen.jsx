@@ -89,10 +89,27 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert(
-          'Error al iniciar sesión',
-          result.error || 'Credenciales inválidas'
-        );
+        const errorMessage = result.error || 'Credenciales inválidas';
+
+        // Si el error es por cuenta deshabilitada, navegar a OTP
+        if (errorMessage.toLowerCase().includes('no habilitada')) {
+          Alert.alert(
+            'Error al iniciar sesión',
+            'Tu cuenta está deshabilitada.',
+            [
+              {
+                text: 'Habilitar ahora',
+                onPress: () => {
+                  navigation.navigate('Otp', {
+                    email: formData.email.trim(),
+                  });
+                },
+              },
+            ]
+          );
+        } else {
+          Alert.alert('Error al iniciar sesión', errorMessage);
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Ocurrió un error inesperado');
