@@ -60,10 +60,7 @@ export default function Reservas({ navigation }) {
       setSelectedReservaId(null);
       mutate();
     } catch (err) {
-      console.error(
-        'Error cancelando reserva:',
-        err?.response?.data || err.message
-      );
+      Alert.alert('Error', 'No se pudo cancelar la reserva.');
     } finally {
       setIsCancelling(false);
     }
@@ -248,7 +245,19 @@ export default function Reservas({ navigation }) {
                     style={{ color: theme.colors.onSurfaceVariant }}
                   >
                     Estado:{' '}
-                    <Text variant="bodyMedium">
+                    <Text
+                      variant="bodyMedium"
+                      style={{
+                        color: estaVencida(
+                          item.clase?.fecha,
+                          item.clase?.horarioInicio
+                        )
+                          ? theme.colors.warning
+                          : item.estado === 'CANCELADA'
+                            ? theme.colors.error
+                            : theme.colors.success,
+                      }}
+                    >
                       {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                         ? 'VENCIDA'
                         : item.estado || 'CONFIRMADA'}

@@ -90,6 +90,7 @@ export default function HistorialAxios() {
                 backgroundColor: theme.colors.surface,
                 borderRadius: 12,
                 minHeight: 48,
+                marginBottom: 16,
               }}
               dropDownContainerStyle={{
                 borderColor: theme.colors.outline,
@@ -100,6 +101,7 @@ export default function HistorialAxios() {
               textStyle={{
                 color: theme.colors.onSurface,
                 fontSize: 16,
+                paddingHorizontal: 13,
               }}
               ArrowUpIconComponent={() => (
                 <IconButton
@@ -128,44 +130,19 @@ export default function HistorialAxios() {
             />
           </>
         )}
-        <Button mode="outlined" onPress={() => notificacionLocal()}>
+        <Button
+          mode="contained"
+          onPress={() => notificacionLocal()}
+          contentStyle={{ height: 50 }}
+          labelStyle={{ fontSize: 16, fontWeight: '600' }}
+          style={{ borderRadius: 12, marginTop: 16 }}
+          buttonColor={theme.colors.primary}
+        >
           Enviar Notificación
         </Button>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            marginTop: 8,
-          }}
-        >
-          <Button
-            style={{ flex: 1 }}
-            mode="outlined"
-            onPress={() => probarTareaSecundaria()}
-          >
-            Probar Notificacion
-          </Button>
-          <Button
-            style={{ flex: 1 }}
-            mode="outlined"
-            onPress={() => verTareas()}
-          >
-            Ver Permisos
-          </Button>
-        </View>
       </View>
     </>
   );
-
-  async function probarTareaSecundaria() {
-    await BackgroundTask.triggerTaskWorkerForTestingAsync();
-  }
-
-  async function verTareas() {
-    TaskManager.getRegisteredTasksAsync().then(tasks => {
-      console.log(tasks);
-    });
-  }
 
   //Notificacion Manual
   async function notificacionLocal() {

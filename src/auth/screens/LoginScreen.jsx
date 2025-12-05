@@ -89,10 +89,30 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert('Error al iniciar sesión', 'Credenciales inválidas');
+        const errorMessage = result.error || 'Credenciales inválidas';
+
+        // Si el error es por cuenta deshabilitada, navegar a OTP
+        if (errorMessage.toLowerCase().includes('no habilitada')) {
+          Alert.alert(
+            'Error al iniciar sesión',
+            'Tu cuenta está deshabilitada.',
+            [
+              {
+                text: 'Habilitar ahora',
+                onPress: () => {
+                  navigation.navigate('Otp', {
+                    email: formData.email.trim(),
+                  });
+                },
+              },
+            ]
+          );
+        } else {
+          Alert.alert('Error al iniciar sesión', errorMessage);
+        }
       }
     } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error inesperado ');
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
@@ -100,10 +120,8 @@ const LoginScreen = ({ navigation }) => {
 
   const handleBiometricLogin = async () => {
     const res = await loginWithBiometric();
-    if (res.success) {
-      Alert.alert('Éxito', `Bienvenido, ${res.user.username}`);
-    } else {
-      Alert.alert('Error', res.error || 'Autenticación biométrica fallida');
+    if (!res.success) {
+      Alert.alert('Error', 'Autenticación biométrica fallida');
     }
   };
 

@@ -37,7 +37,7 @@ export default function ProfileScreen({ navigation }) {
           setUser(new User(userData));
         }
       } catch (error) {
-        console.error('Error al obtener el usuario:', error);
+        Alert.alert('Error', 'No se pudo obtener el usuario.');
       }
     };
     fetchUser();
@@ -68,6 +68,7 @@ export default function ProfileScreen({ navigation }) {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
+          backgroundColor: theme.colors.background,
         }}
       >
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -117,6 +118,7 @@ export default function ProfileScreen({ navigation }) {
           </Card.Content>
         </Surface>
 
+        {/* Control de Notificaciones */}
         <Surface
           style={{
             borderRadius: 12,
@@ -130,12 +132,16 @@ export default function ProfileScreen({ navigation }) {
         >
           {notificaciones === 'granted' ? (
             <>
-              <Text variant="titleMedium">Notificaciones Permitidas: ✔</Text>
+              <Text variant="titleMedium">
+                Notificaciones:{' '}
+                <Text style={{ color: theme.colors.success }}>Permitidas</Text>
+              </Text>
             </>
           ) : (
             <>
               <Text variant="titleMedium">
-                Notifiscaciones No Permitidas : ❌
+                Notificaciones:{' '}
+                <Text style={{ color: theme.colors.error }}>No Permitidas</Text>
               </Text>
               <Button type="text" compact={true} onPress={() => irAjustes()}>
                 Ir Ajustes

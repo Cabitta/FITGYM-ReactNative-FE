@@ -35,7 +35,7 @@ const UserFormEdit = ({ user, onUpdated, onCancel }) => {
         setFormData({ ...formData, foto: base64Image });
       }
     } catch (error) {
-      console.error('Error al seleccionar imagen:', error);
+      Alert.alert('Error', 'No se pudo seleccionar la imagen.');
     }
   };
 
@@ -51,10 +51,10 @@ const UserFormEdit = ({ user, onUpdated, onCancel }) => {
         console.log('Perfil actualizado:', res.user);
         if (onUpdated) onUpdated(res.user);
       } else {
-        console.error('Error al actualizar perfil:', res.error);
+        Alert.alert('Error', 'No se pudo actualizar el perfil.');
       }
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
+      Alert.alert('Error', 'No se pudo actualizar el perfil.');
     } finally {
       setLoading(false);
     }

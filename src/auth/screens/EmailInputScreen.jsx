@@ -69,8 +69,8 @@ const EmailInputScreen = ({ navigation }) => {
     navigation.navigate('Login');
   };
 
-  const handleVerifyCodePress = () => {
-    navigation.navigate('Otp', { email: formData.email });
+  const handleRegisterPress = () => {
+    navigation.navigate('Register');
   };
 
   return (
@@ -166,10 +166,10 @@ const EmailInputScreen = ({ navigation }) => {
                 ¿Ya tienes una cuenta?
               </Button>
 
-              {/* Ir a Verificar Código */}
+              {/* Ir a Registro */}
               <Button
                 mode="text"
-                onPress={handleVerifyCodePress}
+                onPress={handleRegisterPress}
                 compact
                 style={{ marginTop: 16 }}
                 labelStyle={{
@@ -177,7 +177,7 @@ const EmailInputScreen = ({ navigation }) => {
                   fontWeight: '600',
                 }}
               >
-                ¿Ya recibiste un código?
+                ¿No tienes cuenta?
               </Button>
             </Card.Content>
           </Card>
