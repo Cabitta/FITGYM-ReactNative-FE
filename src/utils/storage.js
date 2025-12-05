@@ -79,6 +79,34 @@ class StorageService {
       throw error;
     }
   }
+
+  // Métodos para preferencias de UI (no sensibles) - solo AsyncStorage
+  async setPreference(key, value) {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.error(`Error setting preference ${key}:`, error);
+      throw error;
+    }
+  }
+
+  async getPreference(key) {
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch (error) {
+      console.error(`Error getting preference ${key}:`, error);
+      return null;
+    }
+  }
+
+  async removePreference(key) {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Error removing preference ${key}:`, error);
+      throw error;
+    }
+  }
 }
 
 export default new StorageService();

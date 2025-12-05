@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import storage from '../utils/storage';
 
 const lightTheme = {
   ...MD3LightTheme,
@@ -45,12 +46,44 @@ export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+  // Cargar tema guardado al iniciar
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await storage.getPreference('theme_preference');
+        if (savedTheme !== null) {
+          setIsDarkMode(savedTheme === 'dark');
+        }
+      } catch (error) {
+        console.error('Error cargando tema:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  const toggleTheme = async () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    try {
+      await storage.setPreference(
+        'theme_preference',
+        newTheme ? 'dark' : 'light'
+      );
+    } catch (error) {
+      console.error('Error guardando tema:', error);
+    }
   };
 
   const theme = isDarkMode ? darkTheme : lightTheme;
+
+  // Mientras carga, retornar el tema por defecto sin mostrar nada
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, isDarkMode, toggleTheme }}>

@@ -248,7 +248,19 @@ export default function Reservas({ navigation }) {
                     style={{ color: theme.colors.onSurfaceVariant }}
                   >
                     Estado:{' '}
-                    <Text variant="bodyMedium">
+                    <Text
+                      variant="bodyMedium"
+                      style={{
+                        color: estaVencida(
+                          item.clase?.fecha,
+                          item.clase?.horarioInicio
+                        )
+                          ? theme.colors.warning
+                          : item.estado === 'CANCELADA'
+                            ? theme.colors.error
+                            : theme.colors.success,
+                      }}
+                    >
                       {estaVencida(item.clase?.fecha, item.clase?.horarioInicio)
                         ? 'VENCIDA'
                         : item.estado || 'CONFIRMADA'}
