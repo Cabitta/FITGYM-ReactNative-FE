@@ -89,10 +89,13 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        Alert.alert('Error al iniciar sesión', 'Credenciales inválidas');
+        Alert.alert(
+          'Error al iniciar sesión',
+          result.error || 'Credenciales inválidas'
+        );
       }
     } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error inesperado ');
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
@@ -100,10 +103,8 @@ const LoginScreen = ({ navigation }) => {
 
   const handleBiometricLogin = async () => {
     const res = await loginWithBiometric();
-    if (res.success) {
-      Alert.alert('Éxito', `Bienvenido, ${res.user.username}`);
-    } else {
-      Alert.alert('Error', res.error || 'Autenticación biométrica fallida');
+    if (!res.success) {
+      Alert.alert('Error', 'Autenticación biométrica fallida');
     }
   };
 

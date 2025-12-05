@@ -96,9 +96,22 @@ axiosInstance.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
+    // No intentar refrescar token en endpoints de autenticación
+    const authEndpoints = [
+      '/auth/login',
+      '/auth/register',
+      '/auth/verify-otp',
+      '/auth/send-otp',
+      '/auth/refresh',
+    ];
+    const isAuthEndpoint = authEndpoints.some(endpoint =>
+      originalRequest.url?.includes(endpoint)
+    );
+
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isAuthEndpoint // ← No refrescar en endpoints de auth
     ) {
       originalRequest._retry = true;
 
