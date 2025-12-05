@@ -160,33 +160,30 @@ export default function ClassesScreen({ navigation }) {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
+        paddingHorizontal: 14,
       }}
     >
+      <Filters
+        sede={sede}
+        setSede={setSede}
+        sedes={sedes}
+        sedeOpen={sedeOpen}
+        setSedeOpen={setSedeOpen}
+        disciplina={disciplina}
+        setDisciplina={setDisciplina}
+        disciplinas={disciplinas}
+        disciplinaOpen={disciplinaOpen}
+        setDisciplinaOpen={setDisciplinaOpen}
+        fecha={fecha}
+        setFecha={setFecha}
+        limpiarFiltros={limpiarFiltros}
+        datePickerVisible={datePickerVisible}
+        setDatePickerVisible={setDatePickerVisible}
+      />
       <FlatList
-        contentContainerStyle={{ margin: 14, paddingBottom: 18 }}
+        contentContainerStyle={{ paddingTop: 14, paddingBottom: 18 }}
         data={filtered}
         keyExtractor={item => item.idClase}
-        ListHeaderComponent={
-          <View>
-            <Filters
-              sede={sede}
-              setSede={setSede}
-              sedes={sedes}
-              sedeOpen={sedeOpen}
-              setSedeOpen={setSedeOpen}
-              disciplina={disciplina}
-              setDisciplina={setDisciplina}
-              disciplinas={disciplinas}
-              disciplinaOpen={disciplinaOpen}
-              setDisciplinaOpen={setDisciplinaOpen}
-              fecha={fecha}
-              setFecha={setFecha}
-              limpiarFiltros={limpiarFiltros}
-              datePickerVisible={datePickerVisible}
-              setDatePickerVisible={setDatePickerVisible}
-            />
-          </View>
-        }
         renderItem={({ item }) => (
           <ClassCard
             clase={item}
