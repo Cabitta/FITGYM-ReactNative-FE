@@ -67,7 +67,6 @@ export async function authenticateBiometric() {
     );
     return { success: false, error: 'No hay sesión guardada' };
   } catch (error) {
-    console.error('Error en authenticateBiometric:', error);
     Alert.alert('Error', 'Ocurrió un error verificando la autenticación.');
     return { success: false, error: error.message };
   }

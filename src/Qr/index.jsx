@@ -143,7 +143,6 @@ const QRScanner = ({ navigation }) => {
         [{ text: 'Genial!', onPress: () => navigation.goBack() }]
       );
     } catch (error) {
-      console.error('Error en QR:', error);
       Alert.alert('Error', 'No se pudo procesar el QR. Intenta de nuevo.');
     } finally {
       setScanned(false);

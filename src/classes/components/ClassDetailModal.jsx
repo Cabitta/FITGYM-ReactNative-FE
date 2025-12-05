@@ -87,7 +87,6 @@ export default function ClassDetailModal({
         Alert.alert('Error', 'No se pudo crear la reserva.');
       }
     } catch (error) {
-      console.error('Error al reservar:', error);
       Alert.alert('Error', 'Ocurrió un error al reservar la clase.');
     } finally {
       actualizarClase(clase => ({ ...clase, cupo: clase.cupo - 1 }));

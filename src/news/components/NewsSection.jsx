@@ -16,7 +16,7 @@ const NewsSection = () => {
         const data = await getNewsAndPromotions();
         setNews(data);
       } catch (error) {
-        console.error('Error fetching news:', error);
+        Alert.alert('Error', 'No se pudo obtener las noticias.');
       } finally {
         setLoading(false);
       }
